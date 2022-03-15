@@ -1,0 +1,13 @@
+[dependencies]
+
+[package]
+authors = ["Kevin Amado <kamadorueda@gmail.com>"]
+description = "Santiago is a parsing toolkit for Rust, built with a focus on ergonomics, performance and modularity"
+edition = "2021"
+name = "santiago"
+repository = "https://github.com/kamadorueda/santiago"
+version = "0.1.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
