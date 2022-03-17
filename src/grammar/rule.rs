@@ -1,4 +1,4 @@
-use crate::production::Production;
+use crate::grammar::production::Production;
 use std::hash::Hasher;
 
 #[derive(Clone)]

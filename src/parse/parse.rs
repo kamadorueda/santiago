@@ -1,10 +1,8 @@
 use crate::{
     forest::{build_trees, Forest},
+    grammar::{production::Production, rule::Rule, symbol::Symbol},
     lex::lexeme::Lexeme,
     parse::{column::Column, state::State},
-    production::Production,
-    rule::Rule,
-    symbol::Symbol,
     START_RULE_NAME,
 };
 use std::collections::HashSet;

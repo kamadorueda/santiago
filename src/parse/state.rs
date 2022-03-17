@@ -1,4 +1,4 @@
-use crate::{production::Production, symbol::Symbol};
+use crate::grammar::{production::Production, symbol::Symbol};
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},

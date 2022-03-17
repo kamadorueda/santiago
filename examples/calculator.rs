@@ -1,9 +1,7 @@
 use santiago::{
+    grammar::{production::Production, rule::Rule, symbol::Symbol},
     lex::{lexeme::Lexeme, lexer::Lexer},
     parse::parse::parse,
-    production::Production,
-    rule::Rule,
-    symbol::Symbol,
 };
 
 fn main() {

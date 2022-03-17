@@ -1,9 +1,7 @@
 use crate::{
-    lex::lexeme::Lexeme,
+    grammar::{rule::Rule, symbol::Symbol},
+    lex::{lexeme::Lexeme, position::Position},
     parse::{column::Column, state::State},
-    position::Position,
-    rule::Rule,
-    symbol::Symbol,
 };
 
 #[derive(Clone, Debug, Hash)]

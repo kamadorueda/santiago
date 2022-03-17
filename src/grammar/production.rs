@@ -1,4 +1,4 @@
-use crate::symbol::Symbol;
+use crate::grammar::symbol::Symbol;
 
 use std;
 

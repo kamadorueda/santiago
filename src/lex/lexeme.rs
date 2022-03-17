@@ -1,4 +1,4 @@
-use crate::position::Position;
+use crate::lex::position::Position;
 
 #[derive(Clone, Debug)]
 pub struct Lexeme {

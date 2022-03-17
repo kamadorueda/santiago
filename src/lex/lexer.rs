@@ -1,4 +1,4 @@
-use crate::{lex::lexeme::Lexeme, position::Position};
+use crate::lex::{lexeme::Lexeme, position::Position};
 use std::collections::LinkedList;
 
 pub struct Lexer<'a> {
