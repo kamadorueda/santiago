@@ -99,10 +99,17 @@ fn build_trees_helper(
             }];
             leaves_extended.append(&mut leaves.clone());
 
-            forests.push(Forest::Node {
-                kind:   state.name.clone(),
-                leaves: leaves_extended,
-            });
+            for node in build_trees_helper(
+                rules,
+                lexemes,
+                columns,
+                leaves_extended,
+                state,
+                symbol_index.overflowing_sub(1).0,
+                state.start_column,
+            ) {
+                forests.push(node);
+            }
         }
         Symbol::Rule(name) => {
             for st in &columns[end_column].states {
