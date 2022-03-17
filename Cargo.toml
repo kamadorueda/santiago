@@ -2,7 +2,7 @@
 
 [package]
 authors = ["Kevin Amado <kamadorueda@gmail.com>"]
-description = "Santiago is a lexing and parsing toolkit for Rust, built with a focus on ergonomics, performance and modularity"
+description = "A lexing and parsing toolkit for Rust"
 edition = "2021"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
