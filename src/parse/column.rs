@@ -1,4 +1,4 @@
-use crate::state::State;
+use crate::parse::state::State;
 use std::collections::HashSet;
 
 pub(crate) struct Column {

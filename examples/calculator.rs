@@ -1,7 +1,6 @@
 use santiago::{
-    lexeme::Lexeme,
-    lexer::Lexer,
-    parse::parse,
+    lex::{lexeme::Lexeme, lexer::Lexer},
+    parse::parse::parse,
     production::Production,
     rule::Rule,
     symbol::Symbol,

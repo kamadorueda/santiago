@@ -1,10 +1,9 @@
 use crate::{
-    column::Column,
     forest::{build_trees, Forest},
-    lexeme::Lexeme,
+    lex::lexeme::Lexeme,
+    parse::{column::Column, state::State},
     production::Production,
     rule::Rule,
-    state::State,
     symbol::Symbol,
     START_RULE_NAME,
 };

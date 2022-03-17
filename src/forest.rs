@@ -1,9 +1,8 @@
 use crate::{
-    column::Column,
-    lexeme::Lexeme,
+    lex::lexeme::Lexeme,
+    parse::{column::Column, state::State},
     position::Position,
     rule::Rule,
-    state::State,
     symbol::Symbol,
 };
 
