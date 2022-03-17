@@ -1,21 +1,53 @@
 <h1 align="center">:leopard: Santiago</h2>
 
-<p align="center">A parsing toolkit for Rust</p>
+<p align="center">A lexing and parsing toolkit for Rust</p>
 
-Santiago is a parsing toolkit for Rust :crab:,
-built with a focus on ergonomics, performance and modularity.
+## Features
 
-Santiago can parse all [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar).
-To put it simply,
-it's is capable of parsing
-almost anything out there
-including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar) and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars
-using the most efficient algorithms known to date.
+- ✔️ **Crab friendly** :crab:
 
-Santiago is a [Rust](https://www.rust-lang.org/) alternative to
+  It's written in [Rust](https://www.rust-lang.org/),
+  with zero dependencies,
+  maximum portability.
+
+- ✔️ **Human friendly**
+
+  Built with a focus on ergonomics,
+  defining a grammar is closely the same to its
+  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+
+- ✔️ **Powerful**
+
+  Santiago can parse all [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar),
+  including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar)
+  and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars.
+
+- ✔️ **Cutting-edge**
+
+  Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
+  Its time and space performance is close to the current theoretical minimum.
+
+## Getting started
+
+Just checkout the examples:
+
+- [calculator](./examples/calculator.rs)
+
+You can run the examples by cloning this project and executing:
+
+```sh
+/santiago $ cargo run --example calculator
+```
+
+## Alternatives
+
+Santiago is an alternative to
 [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
 [Yacc](https://en.wikipedia.org/wiki/Yacc) and
 [Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>).
+
+Sadly those long standing tools do not offer
+[Rust](https://www.rust-lang.org/) compatibility.
 
 <!--
 Parsing takes (theoretical worst case):
@@ -26,9 +58,15 @@ Parsing takes (theoretical worst case):
 
 In practice the theoretical worst case is just theoretical, and performance is normally linear. -->
 
-Short term goals:
+# Short term goals
 
-- Generalize the lexeme kinds from `char` to an `Enum`.
-- Implement a lexer that turns a `&str` into an `&[Enum]`
-- Generalize non terminals to another `Enum`.
-  So that the AST is statically defined.
+- Generalize the parser so it works on an input of `&str` instead of `char`.
+
+  This is important since in many languages lexemes can be composite, e.g. `==` is two `char`s.
+
+- Implement a lexer that turns a `&str` into an `&[&str]`,
+  so that people do not have to implement their own ad-hoc lexers.
+
+- Implement a grammar builder, so that defining a grammar is not that verbose
+
+- Release `1.0.0`.
