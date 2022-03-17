@@ -62,8 +62,6 @@ In practice the theoretical worst case is just theoretical, and performance is n
 
 In order:
 
-1. Propagate position counters from the lexer to the parser.
-
 1. Enforce resolving ambiguities in the input grammar.
 
 1. Implement a grammar builder, so that defining a grammar is not that verbose

@@ -129,7 +129,7 @@ pub fn parse(
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build_trees(rules, &columns, state));
+            return Ok(build_trees(rules, lexemes, &columns, state));
         }
     }
 

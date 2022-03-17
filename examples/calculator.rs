@@ -16,9 +16,10 @@ fn main() {
         println!("  {lexeme:?}");
     }
 
-    // Sum := Sum Plus Sum | Int
-    // Int := "1" | "2" | "3"
-    // Plus := "+"
+    // This is an example of an ambiguous grammar:
+    //   Sum := Sum Plus Sum | Int
+    //   Int := "1" | "2" | "3"
+    //   Plus := "+"
     let grammar = &[
         Rule {
             name:        "Sum".to_string(),

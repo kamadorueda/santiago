@@ -1,8 +1,15 @@
-use crate::{column::Column, rule::Rule, state::State};
+use crate::{
+    column::Column,
+    lexeme::Lexeme,
+    position::Position,
+    rule::Rule,
+    state::State,
+    symbol::Symbol,
+};
 
 #[derive(Clone, Debug, Hash)]
 pub enum Forest {
-    Leaf { kind: String },
+    Leaf { kind: String, position: Position },
     Node { kind: String, leaves: Vec<Forest> },
     Nodes { options: Vec<Forest> },
 }
@@ -57,21 +64,24 @@ impl std::fmt::Display for Forest {
 
 pub(crate) fn build_trees(
     rules: &[Rule],
+    lexemes: &[Lexeme],
     columns: &Vec<Column>,
     state: &State,
 ) -> Vec<Forest> {
     return build_trees_helper(
         rules,
+        lexemes,
         columns,
         vec![],
         state,
-        state.production.rules().len().overflowing_sub(1).0,
+        state.production.terms.len().overflowing_sub(1).0,
         state.end_column,
     );
 }
 
 fn build_trees_helper(
     rules: &[Rule],
+    lexemes: &[Lexeme],
     columns: &Vec<Column>,
 
     leaves: Vec<Forest>,
@@ -83,59 +93,55 @@ fn build_trees_helper(
         return vec![Forest::Node { kind: state.name.clone(), leaves }];
     }
 
-    // println!("build_trees_helper:");
-    // println!("  state: {state}");
-    // println!("  symbol_index: {symbol_index}");
-    // println!("  end_column: {end_column}");
+    let mut forests = Vec::new();
+    match &state.production.terms[symbol_index] {
+        Symbol::Lexeme(raw) => {
+            let mut leaves_extended = vec![Forest::Leaf {
+                kind:     raw.clone(),
+                position: lexemes[state.start_column].position.clone(),
+            }];
+            leaves_extended.append(&mut leaves.clone());
 
-    let symbol = &state.production.rules()[symbol_index];
-    // println!("  symbol: {symbol}");
-    let mut outputs = Vec::new();
-
-    for st in &columns[end_column].states {
-        // name:         String,
-        // production:   Production,
-        // dot_index:    usize,
-        // start_column: usize,
-        // end_column:   usize,
-        if st == state {
-            break;
+            forests.push(Forest::Node {
+                kind:   state.name.clone(),
+                leaves: leaves_extended,
+            });
         }
+        Symbol::Rule(name) => {
+            for st in &columns[end_column].states {
+                if symbol_index > 0 && st == state {
+                    break;
+                }
 
-        if !st.completed()
-            || st.name != *symbol
-            || (symbol_index == 0 && st.start_column != state.start_column)
-        {
-            continue;
-        }
-        // println!("  loop: {st}");
+                if st.name != *name
+                    || !st.completed()
+                    || (symbol_index == 0
+                        && st.start_column != state.start_column)
+                {
+                    continue;
+                }
 
-        let forests = build_trees(rules, columns, st);
-        if forests.len() >= 2 {
-            for forest in &forests {
-                println!("  forest: {forest}");
+                let alternatives = build_trees(rules, lexemes, columns, st);
+
+                for alternative in alternatives {
+                    let mut leaves_extended = vec![alternative];
+                    leaves_extended.append(&mut leaves.clone());
+
+                    for node in build_trees_helper(
+                        rules,
+                        lexemes,
+                        columns,
+                        leaves_extended,
+                        state,
+                        symbol_index.overflowing_sub(1).0,
+                        st.start_column,
+                    ) {
+                        forests.push(node);
+                    }
+                }
             }
         }
-        for forest in forests {
-            // println!("  forest: {forest:?}");
-            let mut x = vec![forest];
-            x.append(&mut leaves.clone());
-
-            let trees = build_trees_helper(
-                rules,
-                columns,
-                x,
-                state,
-                symbol_index.overflowing_sub(1).0,
-                st.start_column,
-            );
-
-            for node in trees {
-                outputs.push(node);
-            }
-        }
-        // println!("  forests-end")
     }
 
-    return outputs;
+    return forests;
 }
