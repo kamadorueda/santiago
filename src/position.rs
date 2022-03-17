@@ -1,4 +1,4 @@
-#[derive(Clone, Eq)]
+#[derive(Clone, Eq, Hash)]
 pub struct Position {
     pub column: usize,
     pub index:  usize,

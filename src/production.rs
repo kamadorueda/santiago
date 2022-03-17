@@ -20,15 +20,3 @@ impl std::fmt::Display for Production {
         )
     }
 }
-
-impl Production {
-    pub(crate) fn rules(&self) -> Vec<String> {
-        self.terms
-            .iter()
-            .filter_map(|symbol| match symbol {
-                Symbol::Lexeme(_) => None,
-                Symbol::Rule(name) => Some(name.clone()),
-            })
-            .collect()
-    }
-}

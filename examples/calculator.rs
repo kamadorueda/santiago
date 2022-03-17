@@ -16,24 +16,25 @@ fn main() {
         println!("  {lexeme:?}");
     }
 
-    // S := S + S | T
-    // T := 1 | 2 | 3
+    // Sum := Sum Plus Sum | Int
+    // Int := "1" | "2" | "3"
+    // Plus := "+"
     let grammar = &[
         Rule {
-            name:        "S".to_string(),
+            name:        "Sum".to_string(),
             productions: vec![
                 Production {
                     terms: vec![
-                        Symbol::Rule("S".to_string()),
+                        Symbol::Rule("Sum".to_string()),
                         Symbol::Rule("Plus".to_string()),
-                        Symbol::Rule("S".to_string()),
+                        Symbol::Rule("Sum".to_string()),
                     ],
                 },
-                Production { terms: vec![Symbol::Rule("T".to_string())] },
+                Production { terms: vec![Symbol::Rule("Int".to_string())] },
             ],
         },
         Rule {
-            name:        "T".to_string(),
+            name:        "Int".to_string(),
             productions: vec![
                 Production { terms: vec![Symbol::Lexeme("1".to_string())] },
                 Production { terms: vec![Symbol::Lexeme("2".to_string())] },
@@ -53,10 +54,10 @@ fn main() {
     for rule in grammar {
         println!("  {rule}");
     }
+    let result = parse(grammar, &input);
 
     println!();
     println!("Forest:");
-    let result = parse(grammar, &input);
     match result {
         Ok(forests) => {
             for forest in forests {

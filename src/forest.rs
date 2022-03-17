@@ -11,8 +11,8 @@ impl std::fmt::Display for Forest {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fn recurse(depth: usize, forest: &Forest) -> String {
             match forest {
-                Forest::Leaf { kind } => {
-                    format!("{}{kind}\n", "  ".repeat(depth + 1),)
+                Forest::Leaf { kind, position } => {
+                    format!("{}{kind} {position}\n", "  ".repeat(depth + 1),)
                 }
                 Forest::Node { kind, leaves } => {
                     let mut result = String::new();
