@@ -60,10 +60,6 @@ In practice the theoretical worst case is just theoretical, and performance is n
 
 # Short term goals
 
-- Generalize the parser so it works on an input of `&str` instead of `char`.
-
-  This is important since in many languages lexemes can be composite, e.g. `==` is two `char`s.
-
 - Implement a lexer that turns a `&str` into an `&[&str]`,
   so that people do not have to implement their own ad-hoc lexers.
 
