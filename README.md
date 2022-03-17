@@ -25,7 +25,7 @@
 - ✔️ **Cutting-edge**
 
   Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
-  Its time and space performance is close to the current theoretical minimum.
+  Its time and space performance is close to the known theoretical minimum.
 
 ## Getting started
 
@@ -41,7 +41,7 @@ You can run the examples by cloning this project and executing:
 
 ## Alternatives
 
-Santiago is an alternative to
+Santiago aims to be an alternative to
 [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
 [Yacc](https://en.wikipedia.org/wiki/Yacc) and
 [Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>).
@@ -58,11 +58,18 @@ Parsing takes (theoretical worst case):
 
 In practice the theoretical worst case is just theoretical, and performance is normally linear. -->
 
-# Short term goals
+## Short term goals
 
-- Implement a lexer that turns a `&str` into an `&[&str]`,
-  so that people do not have to implement their own ad-hoc lexers.
+In order:
 
-- Implement a grammar builder, so that defining a grammar is not that verbose
+1. Propagate position counters from the lexer to the parser.
 
-- Release `1.0.0`.
+1. Enforce resolving ambiguities in the input grammar.
+
+1. Implement a grammar builder, so that defining a grammar is not that verbose
+
+1. Implement a Flex-like interface for the lexer,
+   so that you can really
+   do complex lexing beyond 'char-by-char'
+
+1. Release `1.0.0`.
