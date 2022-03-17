@@ -1,6 +1,7 @@
 use crate::{
     column::Column,
     forest::{build_trees, Forest},
+    lexeme::Lexeme,
     production::Production,
     rule::Rule,
     state::State,
@@ -21,8 +22,8 @@ fn predict(column: &mut Column, rule: &Rule) {
     }
 }
 
-fn scan(column: &mut Column, state: &State, token: char) {
-    if token == column.token {
+fn scan(column: &mut Column, state: &State, raw: &str) {
+    if raw == column.raw {
         column.add(State {
             name:         state.name.clone(),
             production:   state.production.clone(),
@@ -52,20 +53,23 @@ fn complete(columns: &mut Vec<Column>, column_index: usize, state: &State) {
     }
 }
 
-pub fn parse(rules: &[Rule], lexemes: &[char]) -> Result<Vec<Forest>, String> {
+pub fn parse(
+    rules: &[Rule],
+    lexemes: &[Lexeme],
+) -> Result<Vec<Forest>, String> {
     let mut columns: Vec<Column> = (0..=lexemes.len())
         .map(|index| {
             if index == 0 {
                 Column {
                     index,
-                    token: '^',
+                    raw: '^'.to_string(),
                     states: vec![],
                     unique: HashSet::new(),
                 }
             } else {
                 Column {
                     index,
-                    token: lexemes[index - 1],
+                    raw: lexemes[index - 1].raw.clone(),
                     states: Vec::new(),
                     unique: HashSet::new(),
                 }
@@ -101,9 +105,9 @@ pub fn parse(rules: &[Rule], lexemes: &[char]) -> Result<Vec<Forest>, String> {
                             .unwrap();
                         predict(&mut columns[column_index], &rule);
                     }
-                    Symbol::Char(char) => {
+                    Symbol::Lexeme(raw) => {
                         if column_index + 1 < columns.len() {
-                            scan(&mut columns[column_index + 1], &state, char);
+                            scan(&mut columns[column_index + 1], &state, &raw);
                         }
                     }
                 }

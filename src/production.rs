@@ -26,7 +26,7 @@ impl Production {
         self.terms
             .iter()
             .filter_map(|symbol| match symbol {
-                Symbol::Char(_) => None,
+                Symbol::Lexeme(_) => None,
                 Symbol::Rule(name) => Some(name.clone()),
             })
             .collect()

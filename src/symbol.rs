@@ -2,14 +2,14 @@ use std::hash::Hasher;
 
 #[derive(Clone, Eq, PartialEq)]
 pub enum Symbol {
-    Char(char),
+    Lexeme(String),
     Rule(String),
 }
 
 impl std::fmt::Display for Symbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Symbol::Char(char) => write!(f, "{char:?}"),
+            Symbol::Lexeme(raw) => write!(f, "{raw:?}"),
             Symbol::Rule(rule) => write!(f, "{rule}"),
         }
     }
@@ -18,7 +18,7 @@ impl std::fmt::Display for Symbol {
 impl std::hash::Hash for Symbol {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
-            Symbol::Char(char) => char.hash(state),
+            Symbol::Lexeme(raw) => raw.hash(state),
             Symbol::Rule(rule) => rule.hash(state),
         }
     }

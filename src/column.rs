@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 pub(crate) struct Column {
     pub(crate) index:  usize,
-    pub(crate) token:  char,
+    pub(crate) raw:    String,
     pub(crate) states: Vec<State>,
     pub(crate) unique: HashSet<u64>,
 }

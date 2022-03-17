@@ -1,5 +1,5 @@
 #[derive(Clone, Eq)]
-pub(crate) struct Position {
+pub struct Position {
     pub column: usize,
     pub index:  usize,
     pub line:   usize,
