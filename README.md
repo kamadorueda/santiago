@@ -2,6 +2,18 @@
 
 <p align="center">A lexing and parsing toolkit for Rust</p>
 
+<p align="center">
+  <a
+    href="https://buildkite.com/kamadorueda/santiago"
+  >
+    <img
+      alt="CI/CD"
+      src="https://badge.buildkite.com/4b931515838b1cf833c90ef188b455f4fbb336f2b416fec20c.svg?branch=main"
+    >
+    </img>
+  </a>
+</p>
+
 ## Features
 
 - ✔️ **Crab friendly** :crab:
