@@ -1,16 +1,16 @@
-<h1 align="center">Santiago :leopard:</h2>
+<h1 align="center">:leopard: Santiago</h2>
 
 <p align="center">A parsing toolkit for Rust</p>
 
-Santiago is a parsing toolkit for Rust :crab,
+Santiago is a parsing toolkit for Rust :crab:,
 built with a focus on ergonomics, performance and modularity.
 
 Santiago can parse all [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar).
-
 To put it simply,
 it's is capable of parsing
 almost anything out there
-including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar) and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars.
+including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar) and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars
+using the most efficient algorithms known to date.
 
 Santiago is a [Rust](https://www.rust-lang.org/) alternative to
 [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
