@@ -1,5 +1,8 @@
-use crate::lex::{lexeme::Lexeme, position::Position};
+use crate::lexer::{lexeme::Lexeme, position::Position};
 use std::collections::LinkedList;
+
+pub mod lexeme;
+pub mod position;
 
 pub struct Lexer<'a> {
     input:       &'a str,

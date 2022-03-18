@@ -1,7 +1,7 @@
 use santiago::{
     grammar::{builder::Builder, rule::Rule},
-    lex::{lexeme::Lexeme, lexer::Lexer},
-    parse::parse::parse,
+    lexer::{lexeme::Lexeme, Lexer},
+    parser::parse::parse,
 };
 
 fn main() {

@@ -1,5 +1,5 @@
 pub mod grammar;
-pub mod lex;
-pub mod parse;
+pub mod lexer;
+pub mod parser;
 
 const START_RULE_NAME: &str = "Γ";

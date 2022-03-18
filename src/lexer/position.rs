@@ -1,4 +1,6 @@
-#[derive(Clone, Eq, Hash)]
+use std::hash::Hasher;
+
+#[derive(Clone, Eq)]
 pub struct Position {
     pub column: usize,
     pub index:  usize,
@@ -17,20 +19,26 @@ impl std::fmt::Display for Position {
     }
 }
 
+impl std::hash::Hash for Position {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.index.hash(state);
+    }
+}
+
 impl std::cmp::Ord for Position {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Position) -> std::cmp::Ordering {
         self.index.cmp(&other.index)
     }
 }
 
 impl std::cmp::PartialOrd for Position {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(&other))
+    fn partial_cmp(&self, other: &Position) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
 impl std::cmp::PartialEq for Position {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &Position) -> bool {
         self.index == other.index
     }
 }

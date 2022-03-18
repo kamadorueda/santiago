@@ -7,6 +7,14 @@ steps:
       - echo +++ Check
       - cargo check
 
+  - label: lint
+    command:
+      - echo --- Prepare environment
+      - direnv allow
+      - eval "$(direnv export bash)"
+      - echo +++ Lint
+      - cargo clippy
+
   - label: test
     command:
       - echo --- Prepare environment

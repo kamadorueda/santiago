@@ -1,9 +1,9 @@
 use crate::{
     grammar::{production::Production, rule::Rule, symbol::Symbol},
-    lex::lexeme::Lexeme,
-    parse::{
+    lexer::lexeme::Lexeme,
+    parser::{
         column::Column,
-        forest::{build_trees, Forest},
+        forest::{build_forest, Forest},
         state::State,
     },
     START_RULE_NAME,
@@ -103,7 +103,7 @@ pub fn parse(
                             .iter()
                             .find(|rule| rule.name == name)
                             .unwrap();
-                        predict(&mut columns[column_index], &rule);
+                        predict(&mut columns[column_index], rule);
                     }
                     Symbol::Lexeme(raw) => {
                         if column_index + 1 < columns.len() {
@@ -118,13 +118,9 @@ pub fn parse(
         }
     }
 
-    for index in 0..columns.len() {
-        columns[index].states = columns[index]
-            .states
-            .iter()
-            .filter(|c| c.completed())
-            .cloned()
-            .collect();
+    for column in columns.iter_mut() {
+        column.states =
+            column.states.iter().filter(|c| c.completed()).cloned().collect();
     }
 
     println!();
@@ -138,7 +134,7 @@ pub fn parse(
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build_trees(rules, lexemes, &columns, state));
+            return Ok(build_forest(rules, lexemes, &columns, state));
         }
     }
 

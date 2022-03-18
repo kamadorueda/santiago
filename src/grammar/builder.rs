@@ -1,9 +1,13 @@
-use std::collections::HashMap;
-
 use super::{production::Production, rule::Rule, symbol::Symbol};
 
 pub struct Builder {
     grammar: Vec<Rule>,
+}
+
+impl Default for Builder {
+    fn default() -> Builder {
+        Builder::new()
+    }
 }
 
 impl Builder {

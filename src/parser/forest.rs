@@ -1,7 +1,7 @@
 use crate::{
     grammar::{rule::Rule, symbol::Symbol},
-    lex::{lexeme::Lexeme, position::Position},
-    parse::{column::Column, state::State},
+    lexer::{lexeme::Lexeme, position::Position},
+    parser::{column::Column, state::State},
 };
 
 #[derive(Clone, Debug, Hash)]
@@ -46,7 +46,7 @@ impl std::fmt::Display for Forest {
                                     Forest::Node { .. } => 1,
                                     Forest::Nodes { .. } => 1,
                                 },
-                            &option,
+                            option,
                         );
                     }
 
@@ -59,13 +59,13 @@ impl std::fmt::Display for Forest {
     }
 }
 
-pub(crate) fn build_trees(
+pub(crate) fn build_forest(
     rules: &[Rule],
     lexemes: &[Lexeme],
-    columns: &Vec<Column>,
+    columns: &[Column],
     state: &State,
 ) -> Vec<Forest> {
-    return build_trees_helper(
+    build_forest_helper(
         rules,
         lexemes,
         columns,
@@ -73,13 +73,13 @@ pub(crate) fn build_trees(
         state,
         state.production.terms.len().overflowing_sub(1).0,
         state.end_column,
-    );
+    )
 }
 
-fn build_trees_helper(
+fn build_forest_helper(
     rules: &[Rule],
     lexemes: &[Lexeme],
-    columns: &Vec<Column>,
+    columns: &[Column],
 
     leaves: Vec<Forest>,
     state: &State,
@@ -93,13 +93,14 @@ fn build_trees_helper(
     let mut forests = Vec::new();
     match &state.production.terms[symbol_index] {
         Symbol::Lexeme(raw) => {
+            let mut leaves = leaves;
             let mut leaves_extended = vec![Forest::Leaf {
                 kind:     raw.clone(),
                 position: lexemes[end_column - 1].position.clone(),
             }];
-            leaves_extended.append(&mut leaves.clone());
+            leaves_extended.append(&mut leaves);
 
-            for node in build_trees_helper(
+            for node in build_forest_helper(
                 rules,
                 lexemes,
                 columns,
@@ -124,13 +125,13 @@ fn build_trees_helper(
                     continue;
                 }
 
-                let alternatives = build_trees(rules, lexemes, columns, st);
+                let alternatives = build_forest(rules, lexemes, columns, st);
 
                 for alternative in alternatives {
                     let mut leaves_extended = vec![alternative];
                     leaves_extended.append(&mut leaves.clone());
 
-                    for node in build_trees_helper(
+                    for node in build_forest_helper(
                         rules,
                         lexemes,
                         columns,
@@ -146,5 +147,5 @@ fn build_trees_helper(
         }
     }
 
-    return forests;
+    forests
 }
