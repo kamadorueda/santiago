@@ -1,4 +1,3 @@
-pub mod forest;
 pub mod grammar;
 pub mod lex;
 pub mod parse;

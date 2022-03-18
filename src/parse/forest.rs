@@ -95,7 +95,7 @@ fn build_trees_helper(
         Symbol::Lexeme(raw) => {
             let mut leaves_extended = vec![Forest::Leaf {
                 kind:     raw.clone(),
-                position: lexemes[state.start_column].position.clone(),
+                position: lexemes[end_column - 1].position.clone(),
             }];
             leaves_extended.append(&mut leaves.clone());
 
@@ -106,19 +106,18 @@ fn build_trees_helper(
                 leaves_extended,
                 state,
                 symbol_index.overflowing_sub(1).0,
-                state.start_column,
+                state.end_column - 1,
             ) {
                 forests.push(node);
             }
         }
         Symbol::Rule(name) => {
             for st in &columns[end_column].states {
-                if symbol_index > 0 && st == state {
+                if st == state {
                     break;
                 }
 
                 if st.name != *name
-                    || !st.completed()
                     || (symbol_index == 0
                         && st.start_column != state.start_column)
                 {

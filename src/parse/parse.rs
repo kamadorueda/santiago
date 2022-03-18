@@ -1,8 +1,11 @@
 use crate::{
-    forest::{build_trees, Forest},
     grammar::{production::Production, rule::Rule, symbol::Symbol},
     lex::lexeme::Lexeme,
-    parse::{column::Column, state::State},
+    parse::{
+        column::Column,
+        forest::{build_trees, Forest},
+        state::State,
+    },
     START_RULE_NAME,
 };
 use std::collections::HashSet;
@@ -113,6 +116,15 @@ pub fn parse(
             state_index += 1;
             state_len = columns[column_index].states.len();
         }
+    }
+
+    for index in 0..columns.len() {
+        columns[index].states = columns[index]
+            .states
+            .iter()
+            .filter(|c| c.completed())
+            .cloned()
+            .collect();
     }
 
     println!();
