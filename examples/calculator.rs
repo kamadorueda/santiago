@@ -1,5 +1,5 @@
 use santiago::{
-    grammar::{production::Production, rule::Rule, symbol::Symbol},
+    grammar::{builder::Builder, rule::Rule},
     lex::{lexeme::Lexeme, lexer::Lexer},
     parse::parse::parse,
 };
@@ -17,42 +17,22 @@ fn main() {
     //   Sum := Sum Plus Sum | Int
     //   Int := "1" | "2" | "3"
     //   Plus := "+"
-    let grammar = &[
-        Rule {
-            name:        "Sum".to_string(),
-            productions: vec![
-                Production {
-                    terms: vec![
-                        Symbol::Rule("Sum".to_string()),
-                        Symbol::Rule("Plus".to_string()),
-                        Symbol::Rule("Sum".to_string()),
-                    ],
-                },
-                Production { terms: vec![Symbol::Rule("Int".to_string())] },
-            ],
-        },
-        Rule {
-            name:        "Int".to_string(),
-            productions: vec![
-                Production { terms: vec![Symbol::Lexeme("1".to_string())] },
-                Production { terms: vec![Symbol::Lexeme("2".to_string())] },
-                Production { terms: vec![Symbol::Lexeme("3".to_string())] },
-            ],
-        },
-        Rule {
-            name:        "Plus".to_string(),
-            productions: vec![Production {
-                terms: vec![Symbol::Lexeme("+".to_string())],
-            }],
-        },
-    ];
+    let mut builder = Builder::new();
+    builder.map_to_rules("Sum", &["Sum", "Plus", "Sum"]);
+    builder.map_to_rules("Sum", &["Int"]);
+    builder.map_to_lexemes("Int", &["1"]);
+    builder.map_to_lexemes("Int", &["2"]);
+    builder.map_to_lexemes("Int", &["3"]);
+    builder.map_to_lexemes("Plus", &["+"]);
+
+    let grammar: Vec<Rule> = builder.finish();
 
     println!();
     println!("Grammar:");
-    for rule in grammar {
+    for rule in &grammar {
         println!("  {rule}");
     }
-    let result = parse(grammar, &input);
+    let result = parse(&grammar, &input);
 
     println!();
     println!("Forest:");

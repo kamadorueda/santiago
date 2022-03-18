@@ -76,8 +76,6 @@ In order:
 
 1. Enforce resolving ambiguities in the input grammar.
 
-1. Implement a grammar builder, so that defining a grammar is not that verbose
-
 1. Implement a Flex-like interface for the lexer,
    so that you can really
    do complex lexing beyond 'char-by-char'

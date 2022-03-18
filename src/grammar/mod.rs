@@ -1,3 +1,4 @@
-pub mod production;
+pub mod builder;
+pub(crate) mod production;
 pub mod rule;
-pub mod symbol;
+pub(crate) mod symbol;
