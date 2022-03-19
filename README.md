@@ -19,14 +19,14 @@ SPDX-License-Identifier: GPL-3.0-only
   <a href="https://crates.io/crates/santiago">
     <img
       alt="Version"
-      src="https://img.shields.io/crates/v/santiago"
+      src="https://img.shields.io/crates/v/santiago?color=brightgreen"
     >
     </img>
   </a>
-  <a href="https://github.com/kamadorueda/santiago/blob/main/LICENSES">
+  <a href="https://spdx.org/licenses/GPL-3.0-only.html">
     <img
       alt="License"
-      src="https://img.shields.io/github/license/kamadorueda/santiago"
+      src="https://img.shields.io/crates/l/santiago?color=brightgreen"
     >
     </img>
   </a>
