@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 <h1 align="center">:leopard: Santiago</h2>
 
 <p align="center">A lexing and parsing toolkit for Rust</p>

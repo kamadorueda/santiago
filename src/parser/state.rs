@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 use crate::grammar::{production::Production, symbol::Symbol};
 use std::{
     collections::hash_map::DefaultHasher,

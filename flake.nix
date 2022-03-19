@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-only
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -16,8 +19,33 @@
           cargo
           clippy
           jq
+          reuse
           rustc
         ];
       };
+
+    apps."x86_64-linux".license = with nixpkgs."x86_64-linux"; {
+      type = "app";
+      program =
+        (writeShellScript "license" ''
+          copyright='Kevin Amado <kamadorueda@gmail.com>'
+          license='GPL-3.0-only'
+
+          git ls-files | xargs reuse addheader \
+            --copyright="$copyright" \
+            --license="$license" \
+            --skip-unrecognised
+
+          reuse addheader \
+            --copyright="$copyright" \
+            --license="$license" \
+            --explicit-license \
+            .envrc \
+            Cargo.lock \
+            flake.lock \
+
+        '')
+        .outPath;
+    };
   };
 }

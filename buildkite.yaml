@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
 steps:
   - label: check
     command:
@@ -6,6 +10,14 @@ steps:
       - eval "$(direnv export bash)"
       - echo +++ Check
       - cargo check
+
+  - label: legal
+    command:
+      - echo --- Prepare environment
+      - direnv allow
+      - eval "$(direnv export bash)"
+      - echo +++ Legal
+      - reuse lint
 
   - label: lint
     command:
