@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{
-    grammar::{rule::Rule, symbol::Symbol},
-    lexer::{lexeme::Lexeme, position::Position},
-    parser::{column::Column, state::State},
-};
+use crate::grammar::rule::Rule;
+use crate::grammar::symbol::Symbol;
+use crate::lexer::lexeme::Lexeme;
+use crate::lexer::position::Position;
+use crate::parser::column::Column;
+use crate::parser::state::State;
 
 #[derive(Clone, Debug, Hash)]
 pub enum Forest {

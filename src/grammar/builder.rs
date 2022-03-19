@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use super::{production::Production, rule::Rule, symbol::Symbol};
+use super::production::Production;
+use super::rule::Rule;
+use super::symbol::Symbol;
 
 pub struct Builder {
     grammar: Vec<Rule>,

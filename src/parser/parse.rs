@@ -2,16 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{
-    grammar::{production::Production, rule::Rule, symbol::Symbol},
-    lexer::lexeme::Lexeme,
-    parser::{
-        column::Column,
-        forest::{build_forest, Forest},
-        state::State,
-    },
-    START_RULE_NAME,
-};
+use crate::grammar::production::Production;
+use crate::grammar::rule::Rule;
+use crate::grammar::symbol::Symbol;
+use crate::lexer::lexeme::Lexeme;
+use crate::parser::column::Column;
+use crate::parser::forest::build_forest;
+use crate::parser::forest::Forest;
+use crate::parser::state::State;
+use crate::START_RULE_NAME;
 use std::collections::HashSet;
 
 fn predict(column: &mut Column, rule: &Rule) {
@@ -26,8 +25,8 @@ fn predict(column: &mut Column, rule: &Rule) {
     }
 }
 
-fn scan(column: &mut Column, state: &State, raw: &str) {
-    if raw == column.raw {
+fn scan(column: &mut Column, state: &State, kind: &str) {
+    if kind == column.kind {
         column.add(State {
             name:         state.name.clone(),
             production:   state.production.clone(),
@@ -66,14 +65,14 @@ pub fn parse(
             if index == 0 {
                 Column {
                     index,
-                    raw: '^'.to_string(),
+                    kind: '^'.to_string(),
                     states: vec![],
                     unique: HashSet::new(),
                 }
             } else {
                 Column {
                     index,
-                    raw: lexemes[index - 1].raw.clone(),
+                    kind: lexemes[index - 1].kind.clone(),
                     states: Vec::new(),
                     unique: HashSet::new(),
                 }
@@ -109,9 +108,9 @@ pub fn parse(
                             .unwrap();
                         predict(&mut columns[column_index], rule);
                     }
-                    Symbol::Lexeme(raw) => {
+                    Symbol::Lexeme(kind) => {
                         if column_index + 1 < columns.len() {
-                            scan(&mut columns[column_index + 1], &state, &raw);
+                            scan(&mut columns[column_index + 1], &state, &kind);
                         }
                     }
                 }

@@ -3,6 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 [dependencies]
+regex = { version = "*", optional = true }
+
+[features]
+default = ["regular-expressions"]
+regular-expressions = ["regex"]
 
 [package]
 authors = ["Kevin Amado <kamadorueda@gmail.com>"]

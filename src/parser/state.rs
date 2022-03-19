@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::grammar::{production::Production, symbol::Symbol};
-use std::{
-    collections::hash_map::DefaultHasher,
-    hash::{Hash, Hasher},
-};
+use crate::grammar::production::Production;
+use crate::grammar::symbol::Symbol;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::Hash;
+use std::hash::Hasher;
 
 #[derive(Clone, Eq, Hash, PartialEq)]
 pub(crate) struct State {
