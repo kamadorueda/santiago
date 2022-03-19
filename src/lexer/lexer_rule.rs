@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::lexer::Lexer;
+use crate::lexer::NextLexeme;
 use std::collections::HashSet;
 use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct LexerRule {
-    pub(crate) action:
-        Rc<dyn for<'a> Fn(&'a str, &mut Lexer) -> Option<(&'a str, &'a str)>>,
+    pub(crate) action:  Rc<dyn Fn(&mut Lexer) -> NextLexeme>,
     pub(crate) matcher: Rc<dyn Fn(&str) -> Option<usize>>,
     pub(crate) states:  HashSet<String>,
 }

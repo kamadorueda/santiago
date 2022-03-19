@@ -31,18 +31,21 @@ fn main() -> Result<(), String> {
     //     ∅    := " " (ignore whitespace)
     //
     let lexing_rules: Vec<LexerRule> = LexerBuilder::new()
-        .string(&["initial"], "+", |matched, _| Some(("plus", matched)))
-        .pattern(&["initial"], r"\d+", |matched, _| Some(("int", matched)))
-        .string(&["initial"], " ", |_, _| None)
+        .string(&["initial"], "+", |lexer| lexer.consume_as("plus"))
+        .pattern(&["initial"], r"\d+", |lexer| lexer.consume_as("int"))
+        .string(&["initial"], " ", |lexer| lexer.ignore())
         .finish();
 
     // Let's start by tokenizing the input
-    let lexemes: Vec<Lexeme> = lex(&lexing_rules, "11 + 22 + 33");
+    let input = "1 + 2 + 3";
+    let lexemes: Vec<Lexeme> = lex(&lexing_rules, input);
 
     // Now parse!
     let abstract_syntax_trees = parse(&grammar, &lexemes)?;
 
-    // And inspect the results that we just got
+    // And print the results:
+    println!("input: {:?}", input.chars());
+
     println!("lexemes:");
     for lexeme in &lexemes {
         println!("  {lexeme:?}");

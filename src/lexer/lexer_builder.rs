@@ -4,6 +4,7 @@
 
 use crate::lexer::Lexer;
 use crate::lexer::LexerRule;
+use crate::lexer::NextLexeme;
 use regex::Regex;
 use std::rc::Rc;
 
@@ -26,7 +27,7 @@ impl LexerBuilder {
         &mut self,
         states: &[&str],
         string: &'static str,
-        action: for<'a> fn(&'a str, &mut Lexer) -> Option<(&'a str, &'a str)>,
+        action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
         self.table.push(LexerRule {
             action:  Rc::new(action),
@@ -48,7 +49,7 @@ impl LexerBuilder {
         &mut self,
         states: &[&str],
         pattern: &str,
-        action: for<'a> fn(&'a str, &mut Lexer) -> Option<(&'a str, &'a str)>,
+        action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
         let regex = Regex::new(&format!("^(:?{pattern})")).unwrap();
 
