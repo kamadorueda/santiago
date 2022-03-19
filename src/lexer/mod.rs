@@ -27,7 +27,7 @@ pub enum NextLexeme {
 
 impl<'a> Lexer<'a> {
     fn next_lexeme(&mut self, rules: &[LexerRule]) -> NextLexeme {
-        while self.position.index < self.input.len() {
+        if self.position.index < self.input.len() {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
             let input = &self.input[self.position.index..];
             let state = self.states_stack.back().unwrap();
@@ -36,11 +36,8 @@ impl<'a> Lexer<'a> {
                 if rule.states.contains(*state) {
                     let matcher = &rule.matcher;
 
-                    match matcher(input) {
-                        Some(len) => {
-                            matches_.push_back((len, rule_index));
-                        }
-                        None => {}
+                    if let Some(len) = matcher(input) {
+                        matches_.push_back((len, rule_index));
                     }
                 }
             }
@@ -56,10 +53,10 @@ impl<'a> Lexer<'a> {
 
             self.current_match_len = len;
 
-            return rules[rule_index].action.clone()(self);
+            rules[rule_index].action.clone()(self)
+        } else {
+            NextLexeme::Finished
         }
-
-        NextLexeme::Finished
     }
 
     pub fn matched(&self) -> &str {
@@ -89,8 +86,8 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer {
         input,
         current_match_len: 0,
-        position:          Position::new(),
-        states_stack:      LinkedList::new(),
+        position: Position::new(),
+        states_stack: LinkedList::new(),
     };
 
     lexer.states_stack.push_back("initial");
