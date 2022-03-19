@@ -33,18 +33,26 @@ impl Builder {
         }
     }
 
-    pub fn map_to_lexemes(&mut self, name: &str, rules: &[&str]) {
+    pub fn map_to_lexemes(
+        &mut self,
+        name: &str,
+        rules: &[&str],
+    ) -> &mut Builder {
         self.map_rule_to_terms(
             name,
             rules.iter().map(|name| Symbol::Lexeme(name.to_string())).collect(),
-        )
+        );
+
+        self
     }
 
-    pub fn map_to_rules(&mut self, name: &str, rules: &[&str]) {
+    pub fn map_to_rules(&mut self, name: &str, rules: &[&str]) -> &mut Builder {
         self.map_rule_to_terms(
             name,
             rules.iter().map(|name| Symbol::Rule(name.to_string())).collect(),
-        )
+        );
+
+        self
     }
 
     pub fn finish(&self) -> Vec<Rule> {

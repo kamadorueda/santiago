@@ -21,15 +21,14 @@ fn main() {
     //   Sum := Sum Plus Sum | Int
     //   Int := "1" | "2" | "3"
     //   Plus := "+"
-    let mut builder = Builder::new();
-    builder.map_to_rules("Sum", &["Sum", "Plus", "Sum"]);
-    builder.map_to_rules("Sum", &["Int"]);
-    builder.map_to_lexemes("Int", &["1"]);
-    builder.map_to_lexemes("Int", &["2"]);
-    builder.map_to_lexemes("Int", &["3"]);
-    builder.map_to_lexemes("Plus", &["+"]);
-
-    let grammar: Vec<Rule> = builder.finish();
+    let grammar: Vec<Rule> = Builder::new()
+        .map_to_rules("Sum", &["Sum", "Plus", "Sum"])
+        .map_to_rules("Sum", &["Int"])
+        .map_to_lexemes("Int", &["1"])
+        .map_to_lexemes("Int", &["2"])
+        .map_to_lexemes("Int", &["3"])
+        .map_to_lexemes("Plus", &["+"])
+        .finish();
 
     println!();
     println!("Grammar:");
