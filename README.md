@@ -4,25 +4,45 @@ SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
 SPDX-License-Identifier: GPL-3.0-only
 -->
 
-<h1 align="center">:leopard: Santiago</h2>
+<h1 align="center">🐆 Santiago</h2>
 
 <p align="center">A lexing and parsing toolkit for Rust</p>
 
 <p align="center">
-  <a
-    href="https://buildkite.com/kamadorueda/santiago"
-  >
+  <a href="https://buildkite.com/kamadorueda/santiago">
     <img
       alt="CI/CD"
       src="https://badge.buildkite.com/4b931515838b1cf833c90ef188b455f4fbb336f2b416fec20c.svg?branch=main"
     >
     </img>
   </a>
+  <a href="https://crates.io/crates/santiago">
+    <img
+      alt="Version"
+      src="https://img.shields.io/crates/v/santiago"
+    >
+    </img>
+  </a>
+  <a href="https://github.com/kamadorueda/santiago/blob/main/LICENSES">
+    <img
+      alt="License"
+      src="https://img.shields.io/github/license/kamadorueda/santiago"
+    >
+    </img>
+  </a>
+  <!-- <a href="https://crates.io/crates/santiago">
+    <img
+      alt="Downloads"
+      src="https://img.shields.io/crates/d/santiago"
+    >
+    </img>
+  </a> -->
+
 </p>
 
 ## Features
 
-- ✔️ **Crab friendly** :crab:
+- ✔️ **Crab friendly** 🦀
 
   It's written in [Rust](https://www.rust-lang.org/),
   with zero dependencies,
