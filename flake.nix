@@ -32,20 +32,20 @@
           copyright='Kevin Amado <kamadorueda@gmail.com>'
           license='GPL-3.0-only'
 
-          git ls-files | xargs reuse addheader \
-            --copyright="$copyright" \
-            --license="$license" \
-            --skip-unrecognised
-
           reuse addheader \
             --copyright="$copyright" \
             --license="$license" \
             --explicit-license \
             .envrc \
             Cargo.lock \
+            Cargo.toml \
             examples/*.rs \
             flake.lock \
 
+          git ls-files | xargs reuse addheader \
+            --copyright="$copyright" \
+            --license="$license" \
+            --skip-unrecognised
         '')
         .outPath;
     };

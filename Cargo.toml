@@ -1,7 +1,3 @@
-# SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
-#
-# SPDX-License-Identifier: GPL-3.0-only
-
 [dependencies]
 regex = { version = "1", optional = true }
 
@@ -11,9 +7,17 @@ regular-expressions = ["regex"]
 
 [package]
 authors = ["Kevin Amado <kamadorueda@gmail.com>"]
+categories = [
+  "parsing",
+  "algorithms",
+  "compilers",
+  "parser-implementations",
+  "text-processing"
+]
 description = "A lexing and parsing toolkit for Rust"
 edition = "2021"
+keywords = ["parser", "api", "framework", "text", "serialization"]
 license = "GPL-3.0-only"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
-version = "0.3.0"
+version = "0.3.1"
