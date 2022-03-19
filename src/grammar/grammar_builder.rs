@@ -6,19 +6,19 @@ use super::production::Production;
 use super::rule::Rule;
 use super::symbol::Symbol;
 
-pub struct Builder {
+pub struct GrammarBuilder {
     grammar: Vec<Rule>,
 }
 
-impl Default for Builder {
-    fn default() -> Builder {
-        Builder::new()
+impl Default for GrammarBuilder {
+    fn default() -> GrammarBuilder {
+        GrammarBuilder::new()
     }
 }
 
-impl Builder {
-    pub fn new() -> Builder {
-        Builder { grammar: Vec::new() }
+impl GrammarBuilder {
+    pub fn new() -> GrammarBuilder {
+        GrammarBuilder { grammar: Vec::new() }
     }
 
     fn map_rule_to_terms(&mut self, name: &str, terms: Vec<Symbol>) {
@@ -39,7 +39,7 @@ impl Builder {
         &mut self,
         name: &str,
         rules: &[&str],
-    ) -> &mut Builder {
+    ) -> &mut GrammarBuilder {
         self.map_rule_to_terms(
             name,
             rules.iter().map(|name| Symbol::Lexeme(name.to_string())).collect(),
@@ -48,7 +48,11 @@ impl Builder {
         self
     }
 
-    pub fn map_to_rules(&mut self, name: &str, rules: &[&str]) -> &mut Builder {
+    pub fn map_to_rules(
+        &mut self,
+        name: &str,
+        rules: &[&str],
+    ) -> &mut GrammarBuilder {
         self.map_rule_to_terms(
             name,
             rules.iter().map(|name| Symbol::Rule(name.to_string())).collect(),

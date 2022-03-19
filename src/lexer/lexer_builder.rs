@@ -3,23 +3,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::lexer::Lexer;
-use crate::lexer::Rule;
+use crate::lexer::LexerRule;
 use regex::Regex;
 use std::rc::Rc;
 
-pub struct Builder {
-    table: Vec<Rule>,
+pub struct LexerBuilder {
+    table: Vec<LexerRule>,
 }
 
-impl Default for Builder {
-    fn default() -> Builder {
-        Builder::new()
+impl Default for LexerBuilder {
+    fn default() -> LexerBuilder {
+        LexerBuilder::new()
     }
 }
 
-impl Builder {
-    pub fn new() -> Builder {
-        Builder { table: Vec::new() }
+impl LexerBuilder {
+    pub fn new() -> LexerBuilder {
+        LexerBuilder { table: Vec::new() }
     }
 
     pub fn string(
@@ -27,8 +27,8 @@ impl Builder {
         states: &[&str],
         string: &'static str,
         action: for<'a> fn(&'a str, &mut Lexer) -> Option<(&'a str, &'a str)>,
-    ) -> &mut Builder {
-        self.table.push(Rule {
+    ) -> &mut LexerBuilder {
+        self.table.push(LexerRule {
             action:  Rc::new(action),
             matcher: Rc::new(move |input: &str| -> Option<usize> {
                 if input.starts_with(&string) {
@@ -49,10 +49,10 @@ impl Builder {
         states: &[&str],
         pattern: &str,
         action: for<'a> fn(&'a str, &mut Lexer) -> Option<(&'a str, &'a str)>,
-    ) -> &mut Builder {
+    ) -> &mut LexerBuilder {
         let regex = Regex::new(&format!("^(:?{pattern})")).unwrap();
 
-        self.table.push(Rule {
+        self.table.push(LexerRule {
             action:  Rc::new(action),
             matcher: Rc::new(move |input: &str| -> Option<usize> {
                 match regex.find(input) {
@@ -66,7 +66,7 @@ impl Builder {
         self
     }
 
-    pub fn finish(&self) -> Vec<Rule> {
+    pub fn finish(&self) -> Vec<LexerRule> {
         self.table.clone()
     }
 }

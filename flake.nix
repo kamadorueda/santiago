@@ -43,6 +43,7 @@
             --explicit-license \
             .envrc \
             Cargo.lock \
+            examples/*.rs \
             flake.lock \
 
         '')

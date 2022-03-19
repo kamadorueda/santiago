@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-pub mod builder;
 pub mod lexeme;
+pub mod lexer_builder;
+pub mod lexer_rule;
 pub mod position;
-pub mod rule;
 
 use self::lexeme::Lexeme;
+use self::lexer_rule::LexerRule;
 use self::position::Position;
-use self::rule::Rule;
 use std::collections::LinkedList;
 
 pub struct Lexer {
@@ -20,7 +20,7 @@ pub struct Lexer {
 impl Lexer {
     fn next_lexeme(
         &mut self,
-        rules: &[Rule],
+        rules: &[LexerRule],
         input: &str,
     ) -> Option<(String, String)> {
         while self.input_index < input.len() {
@@ -77,7 +77,7 @@ impl Lexer {
     }
 }
 
-pub fn lex(rules: &[Rule], input: &str) -> Vec<Lexeme> {
+pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer { input_index: 0, states_stack: LinkedList::new() };
 
     lexer.states_stack.push_back("initial".to_string());

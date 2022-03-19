@@ -12,6 +12,12 @@
 //! [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
 //! [Yacc](https://en.wikipedia.org/wiki/Yacc) and
 //! [Flex](https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)).
+//!
+//! # Example
+//!
+//! ```rust
+#![doc = include_str!("../examples/calculator.rs")]
+//! ```
 pub mod grammar;
 pub mod lexer;
 pub mod parser;
