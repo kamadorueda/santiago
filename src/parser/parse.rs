@@ -126,14 +126,14 @@ pub fn parse(
             column.states.iter().filter(|c| c.completed()).cloned().collect();
     }
 
-    println!();
-    println!("Columns:");
-    for (column_index, column) in columns.iter().enumerate() {
-        println!("  {column_index}");
-        for state in &column.states {
-            println!("    {state}");
-        }
-    }
+    // println!();
+    // println!("Columns:");
+    // for (column_index, column) in columns.iter().enumerate() {
+    //     println!("  {column_index}");
+    //     for state in &column.states {
+    //         println!("    {state}");
+    //     }
+    // }
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {

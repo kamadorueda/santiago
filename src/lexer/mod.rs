@@ -16,7 +16,7 @@ pub struct Lexer<'a> {
     input:             &'a str,
     current_match_len: usize,
     position:          Position,
-    states_stack:      LinkedList<String>,
+    states_stack:      LinkedList<&'a str>,
 }
 
 pub enum NextLexeme {
@@ -33,7 +33,7 @@ impl<'a> Lexer<'a> {
             let state = self.states_stack.back().unwrap();
 
             for (rule_index, rule) in rules.iter().enumerate() {
-                if rule.states.contains(state) {
+                if rule.states.contains(*state) {
                     let matcher = &rule.matcher;
 
                     match matcher(input) {
@@ -93,7 +93,7 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         states_stack:      LinkedList::new(),
     };
 
-    lexer.states_stack.push_back("initial".to_string());
+    lexer.states_stack.push_back("initial");
 
     let mut lexemes = LinkedList::new();
 
