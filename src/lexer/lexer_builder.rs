@@ -56,10 +56,7 @@ impl LexerBuilder {
         self.table.push(LexerRule {
             action:  Rc::new(action),
             matcher: Rc::new(move |input: &str| -> Option<usize> {
-                match regex.find(input) {
-                    Some(match_) => Some(match_.end()),
-                    None => None,
-                }
+                regex.find(input).map(|match_| match_.end())
             }),
             states:  states.iter().map(|state| state.to_string()).collect(),
         });

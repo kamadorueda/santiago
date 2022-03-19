@@ -45,7 +45,7 @@ impl<'a> Lexer<'a> {
                 }
             }
 
-            if matches_.len() == 0 {
+            if matches_.is_empty() {
                 panic!("Unable to lex input with the provided rules: {input}");
             }
 
@@ -87,7 +87,7 @@ impl<'a> Lexer<'a> {
 
 pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer {
-        input:             &input,
+        input,
         current_match_len: 0,
         position:          Position::new(),
         states_stack:      LinkedList::new(),
