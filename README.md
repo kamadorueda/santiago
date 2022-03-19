@@ -65,6 +65,13 @@ SPDX-License-Identifier: GPL-3.0-only
   Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
   Its time and space performance is close to the known theoretical minimum.
 
+- ✔️ **Modern**
+
+  Santiago is inspired and aims to be an alternative to
+  [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
+  [Yacc](https://en.wikipedia.org/wiki/Yacc) and
+  [Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>).
+
 ## Getting started
 
 Just checkout the examples:
@@ -74,27 +81,8 @@ Just checkout the examples:
 You can run the examples by cloning this project and executing:
 
 ```sh
-/santiago $ cargo run --example calculator
+/santiago $ cargo run --example $name
 ```
-
-## Alternatives
-
-Santiago aims to be an alternative to
-[GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
-[Yacc](https://en.wikipedia.org/wiki/Yacc) and
-[Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>).
-
-Sadly those long standing tools do not offer
-[Rust](https://www.rust-lang.org/) compatibility.
-
-<!--
-Parsing takes (theoretical worst case):
-
-- Linear time for [deterministic context-free grammars](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar).
-- Quadratic time for [unambiguous-grammars](https://en.wikipedia.org/wiki/Ambiguous_grammar).
-- Cubic time in the general case.
-
-In practice the theoretical worst case is just theoretical, and performance is normally linear. -->
 
 ## Short term goals
 
