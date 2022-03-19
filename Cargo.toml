@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 [dependencies]
-regex = { version = "*", optional = true }
+regex = { version = "1", optional = true }
 
 [features]
 default = ["regular-expressions"]
@@ -16,4 +16,4 @@ edition = "2021"
 license = "GPL-3.0-only"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
-version = "0.2.0"
+version = "0.3.0"
