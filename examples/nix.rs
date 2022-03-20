@@ -9,16 +9,17 @@ use santiago::parser::parse::parse;
 
 fn main() -> Result<(), String> {
     let lexing_rules: Vec<LexerRule> = lexing_rules();
-    let grammar_rules: Vec<GrammarRule> = grammar_rules();
+    let grammar_rules: Vec<GrammarRule> = grammar_rules(&lexing_rules);
 
     let stdin = get_stdin();
     let lexemes: Vec<Lexeme> = lex(&lexing_rules, &stdin);
-    let abstract_syntax_trees: Vec<Forest> = parse(&grammar_rules, &lexemes)?;
 
     println!("Lexemes:");
     for lexeme in &lexemes {
         println!("  {lexeme}");
     }
+
+    let abstract_syntax_trees: Vec<Forest> = parse(&grammar_rules, &lexemes)?;
 
     println!("AST:");
     for ast in abstract_syntax_trees {
