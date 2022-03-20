@@ -5,7 +5,7 @@
 use crate::grammar::rule::Rule;
 use crate::grammar::symbol::Symbol;
 use crate::lexer::lexeme::Lexeme;
-use crate::lexer::position::Position;
+
 use crate::parser::column::Column;
 use crate::parser::state::State;
 
@@ -97,7 +97,7 @@ fn build_forest_helper(
 
     let mut forests = Vec::new();
     match &state.production.terms[symbol_index] {
-        Symbol::Lexeme(kind) => {
+        Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
             let mut leaves = leaves;
             let mut leaves_extended = vec![Forest::Leaf(lexeme.clone())];
