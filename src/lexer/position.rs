@@ -55,9 +55,8 @@ impl std::hash::Hash for Position {
 
 impl Position {
     pub(crate) fn consume(&mut self, input: &str) {
+        self.index += input.len();
         for char in input.chars() {
-            self.index += input.len();
-
             if char == '\n' {
                 self.line += 1;
                 self.column = 1;

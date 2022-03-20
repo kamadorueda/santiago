@@ -1,9 +1,11 @@
-[dependencies]
-regex = { version = "1", optional = true }
+[dependencies.crate_regex]
+optional = true
+package = "regex"
+version = "1"
 
 [features]
-default = ["regular-expressions"]
-regular-expressions = ["regex"]
+default = ["crate_regex", "language_nix"]
+language_nix = []
 
 [package]
 authors = ["Kevin Amado <kamadorueda@gmail.com>"]

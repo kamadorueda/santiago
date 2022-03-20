@@ -31,9 +31,9 @@ fn main() -> Result<(), String> {
     //     ∅    := " " (ignore whitespace)
     //
     let lexing_rules: Vec<LexerRule> = LexerBuilder::new()
-        .string(&["initial"], "+", |lexer| lexer.consume_as("plus"))
-        .pattern(&["initial"], r"\d+", |lexer| lexer.consume_as("int"))
-        .string(&["initial"], " ", |lexer| lexer.ignore())
+        .string(&["INITIAL"], "+", |lexer| lexer.take("plus"))
+        .pattern(&["INITIAL"], r"\d+", |lexer| lexer.take("int"))
+        .string(&["INITIAL"], " ", |lexer| lexer.skip())
         .finish();
 
     // Let's start by tokenizing the input

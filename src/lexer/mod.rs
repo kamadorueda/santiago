@@ -20,8 +20,8 @@ pub struct Lexer<'a> {
 }
 
 pub enum NextLexeme {
-    Consumed((String, String)),
-    Ignored,
+    Lexeme((String, String)),
+    Skip,
     Finished,
 }
 
@@ -48,6 +48,7 @@ impl<'a> Lexer<'a> {
 
             let (len, rule_index) = matches_
                 .into_iter()
+                .rev()
                 .max_by(|(left, _), (right, _)| left.cmp(right))
                 .unwrap();
 
@@ -64,56 +65,72 @@ impl<'a> Lexer<'a> {
             [self.position.index..self.position.index + self.current_match_len]
     }
 
-    pub fn consume_as(&mut self, kind: &str) -> NextLexeme {
-        let kind = kind.to_string();
-        let raw = self.matched().to_string();
-
-        self.position.consume(&raw);
-
-        NextLexeme::Consumed((kind, raw))
+    pub fn take(&mut self, kind: &str) -> NextLexeme {
+        self.take_and_map(kind, |matched| matched.to_string())
     }
 
-    pub fn consume_but_as(&mut self, kind: &str, raw: &str) -> NextLexeme {
-        let kind = kind.to_string();
-        let raw = raw.to_string();
-
-        self.position.consume(&raw);
-
-        NextLexeme::Consumed((kind, raw))
-    }
-
-    pub fn consume_but_map(
+    pub fn take_and_map(
         &mut self,
         kind: &str,
         function: fn(&str) -> String,
     ) -> NextLexeme {
+        let matched = self.matched().to_string();
+        self.position.consume(&matched);
+
         let kind = kind.to_string();
-        let raw = self.matched();
-        let raw = function(raw);
+        let raw = function(&matched);
 
-        self.position.consume(&raw);
-
-        NextLexeme::Consumed((kind, raw))
+        NextLexeme::Lexeme((kind, raw))
     }
 
-    pub fn ignore(&mut self) -> NextLexeme {
-        let raw = self.matched().to_string();
+    pub fn skip(&mut self) -> NextLexeme {
+        let matched = self.matched().to_string();
+        self.position.consume(&matched);
 
-        self.position.consume(&raw);
+        NextLexeme::Skip
+    }
 
-        NextLexeme::Ignored
+    pub fn take_and_retry(&mut self, kind: &str) -> NextLexeme {
+        self.take_and_map_and_retry(kind, |matched| matched.to_string())
+    }
+
+    pub fn take_and_map_and_retry(
+        &mut self,
+        kind: &str,
+        function: fn(&str) -> String,
+    ) -> NextLexeme {
+        let matched = self.matched().to_string();
+
+        let kind = kind.to_string();
+        let raw = function(&matched);
+
+        NextLexeme::Lexeme((kind, raw))
+    }
+
+    pub fn skip_and_retry(&mut self) -> NextLexeme {
+        NextLexeme::Skip
     }
 
     pub fn current_state(&mut self) -> &str {
         self.states_stack.back().unwrap()
     }
 
+    pub fn pop_state(&mut self) {
+        self.states_stack.pop_back();
+    }
+
     pub fn push_state(&mut self, state: &'a str) {
         self.states_stack.push_back(state);
     }
 
-    pub fn pop_state(&mut self) {
-        self.states_stack.pop_back();
+    pub fn error(&mut self, msg: &str) -> NextLexeme {
+        panic!(
+            "While lexing input: {:?}\nWith states: {:?}\nAt position: {}\n{}",
+            self.matched().chars().collect::<Vec<char>>(),
+            self.states_stack,
+            self.position,
+            msg
+        );
     }
 }
 
@@ -125,7 +142,7 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         states_stack: LinkedList::new(),
     };
 
-    lexer.push_state("initial");
+    lexer.push_state("INITIAL");
 
     let mut lexemes = LinkedList::new();
 
@@ -133,10 +150,10 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         let position = lexer.position.clone();
 
         match lexer.next_lexeme(rules) {
-            NextLexeme::Consumed((kind, raw)) => {
+            NextLexeme::Lexeme((kind, raw)) => {
                 lexemes.push_back(Lexeme { kind, position, raw })
             }
-            NextLexeme::Ignored => {}
+            NextLexeme::Skip => {}
             NextLexeme::Finished => {
                 break;
             }
