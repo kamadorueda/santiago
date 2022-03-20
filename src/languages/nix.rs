@@ -65,51 +65,58 @@ macro_rules! URI {
 
 pub fn lexing_rules() -> Vec<LexerRule> {
     LexerBuilder::new()
-        .string(&["DEFAULT", "INITIAL"], "if", |lexer| lexer.take("IF"))
-        .string(&["DEFAULT", "INITIAL"], "then", |lexer| lexer.take("THEN"))
-        .string(&["DEFAULT", "INITIAL"], "else", |lexer| lexer.take("ELSE"))
-        .string(&["DEFAULT", "INITIAL"], "assert", |lexer| lexer.take("ASSERT"))
-        .string(&["DEFAULT", "INITIAL"], "with", |lexer| lexer.take("WITH"))
-        .string(&["DEFAULT", "INITIAL"], "let", |lexer| lexer.take("LET"))
-        .string(&["DEFAULT", "INITIAL"], "in", |lexer| lexer.take("IN"))
-        .string(&["DEFAULT", "INITIAL"], "rec", |lexer| lexer.take("REC"))
-        .string(&["DEFAULT", "INITIAL"], "inherit", |lexer| {
-            lexer.take("INHERIT")
+        .string(&["DEFAULT", "INITIAL"], "IF", "if", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "THEN", "then", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "ELSE", "else", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "ASSERT", "assert", |lexer| {
+            lexer.take()
         })
-        .string(&["DEFAULT", "INITIAL"], "or", |lexer| lexer.take("OR_KW"))
-        .string(&["DEFAULT", "INITIAL"], "...", |lexer| lexer.take("ELLIPSIS"))
-        .string(&["DEFAULT", "INITIAL"], "==", |lexer| lexer.take("EQ"))
-        .string(&["DEFAULT", "INITIAL"], "!=", |lexer| lexer.take("NEQ"))
-        .string(&["DEFAULT", "INITIAL"], "<=", |lexer| lexer.take("LEQ"))
-        .string(&["DEFAULT", "INITIAL"], ">=", |lexer| lexer.take("GEQ"))
-        .string(&["DEFAULT", "INITIAL"], "&&", |lexer| lexer.take("AND"))
-        .string(&["DEFAULT", "INITIAL"], "||", |lexer| lexer.take("OR"))
-        .string(&["DEFAULT", "INITIAL"], "->", |lexer| lexer.take("IMPL"))
-        .string(&["DEFAULT", "INITIAL"], "//", |lexer| lexer.take("UPDATE"))
-        .string(&["DEFAULT", "INITIAL"], "++", |lexer| lexer.take("CONCAT"))
-        .pattern(&["DEFAULT", "INITIAL"], ID!(), |lexer| lexer.take("ID"))
-        .pattern(&["DEFAULT", "INITIAL"], INT!(), |lexer| lexer.take("INT"))
-        .pattern(&["DEFAULT", "INITIAL"], FLOAT!(), |lexer| lexer.take("float"))
-        .string(&["DEFAULT", "INITIAL"], "${", |lexer| {
+        .string(&["DEFAULT", "INITIAL"], "WITH", "with", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "LET", "let", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "IN", "in", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "REC", "rec", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "INHERIT", "inherit", |lexer| {
+            lexer.take()
+        })
+        .string(&["DEFAULT", "INITIAL"], "OR_KW", "or", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "ELLIPSIS", "...", |lexer| {
+            lexer.take()
+        })
+        .string(&["DEFAULT", "INITIAL"], "EQ", "==", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "NEQ", "!=", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "LEQ", "<=", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "GEQ", ">=", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "AND", "&&", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "OR", "||", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "IMPL", "->", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "UPDATE", "//", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "CONCAT", "++", |lexer| lexer.take())
+        .pattern(&["DEFAULT", "INITIAL"], "ID", ID!(), |lexer| lexer.take())
+        .pattern(&["DEFAULT", "INITIAL"], "INT", INT!(), |lexer| lexer.take())
+        .pattern(&["DEFAULT", "INITIAL"], "FLOAT", FLOAT!(), |lexer| {
+            lexer.take()
+        })
+        .string(&["DEFAULT", "INITIAL"], "DOLLAR_CURLY", "${", |lexer| {
             lexer.push_state("DEFAULT");
-            lexer.take("DOLLAR_CURLY")
+            lexer.take()
         })
-        .string(&["DEFAULT", "INITIAL"], "}", |lexer| {
+        .string(&["DEFAULT", "INITIAL"], "}", "}", |lexer| {
             if lexer.current_state() != "INITIAL" {
                 lexer.pop_state();
             }
-            lexer.take("}")
+            lexer.take()
         })
-        .string(&["DEFAULT", "INITIAL"], "{", |lexer| {
+        .string(&["DEFAULT", "INITIAL"], "{", "{", |lexer| {
             lexer.push_state("DEFAULT");
-            lexer.take("{")
+            lexer.take()
         })
-        .string(&["DEFAULT", "INITIAL"], "\"", |lexer| {
+        .string(&["DEFAULT", "INITIAL"], "\"", "\"", |lexer| {
             lexer.push_state("STRING");
-            lexer.take("\"")
+            lexer.take()
         })
         .pattern(
             &["STRING"],
+            "STR",
             concat!(
                 r#"([^\$"\\]|\$[^\{"\\]|\\"#,
                 ANY!(),
@@ -117,10 +124,11 @@ pub fn lexing_rules() -> Vec<LexerRule> {
                 ANY!(),
                 r#")*\$/""#
             ),
-            |lexer| lexer.take_and_map("STR", unescape_string),
+            |lexer| lexer.take_and_map(unescape_string),
         )
         .pattern(
             &["STRING"],
+            "STR",
             concat!(
                 r#"([^\$"\\]|\$[^\{"\\]|\\"#,
                 ANY!(),
@@ -128,93 +136,111 @@ pub fn lexing_rules() -> Vec<LexerRule> {
                 ANY!(),
                 r")+"
             ),
-            |lexer| lexer.take_and_map("STR", unescape_string),
+            |lexer| lexer.take_and_map(unescape_string),
         )
-        .string(&["STRING"], "${", |lexer| {
+        .string(&["STRING"], "DOLLAR_CURLY", "${", |lexer| {
             lexer.push_state("DEFAULT");
-            lexer.take("DOLLAR_CURLY")
+            lexer.take()
         })
-        .string(&["STRING"], "\"", |lexer| {
+        .string(&["STRING"], "\"", "\"", |lexer| {
             lexer.pop_state();
-            lexer.take("\"")
+            lexer.take()
         })
-        .pattern(&["STRING"], r"\$|\\|\$\\", |lexer| lexer.take("STR"))
-        .pattern(&["DEFAULT", "INITIAL"], r"''( *\n)?", |lexer| {
-            lexer.push_state("IND_STRING");
-            lexer.take("IND_STRING_OPEN")
+        .pattern(&["STRING"], "STR", r"\$|\\|\$\\", |lexer| lexer.take())
+        .pattern(
+            &["DEFAULT", "INITIAL"],
+            "IND_STRING_OPEN",
+            r"''( *\n)?",
+            |lexer| {
+                lexer.push_state("IND_STRING");
+                lexer.take()
+            },
+        )
+        .pattern(
+            &["IND_STRING"],
+            "IND_STR",
+            r"([^\$']|\$[^\{']|'[^'\$])+",
+            |lexer| lexer.take(),
+        )
+        .string(&["IND_STRING"], "IND_STR", "''$", |lexer| {
+            lexer.take_and_map(|_| "$".to_string())
         })
-        .pattern(&["IND_STRING"], r"([^\$']|\$[^\{']|'[^'\$])+", |lexer| {
-            lexer.take("IND_STR")
+        .string(&["IND_STRING"], "IND_STR", "$", |lexer| lexer.take())
+        .string(&["IND_STRING"], "IND_STR", "'''", |lexer| {
+            lexer.take_and_map(|_| "''".to_string())
         })
-        .string(&["IND_STRING"], "''$", |lexer| {
-            lexer.take_and_map("IND_STR", |_| "$".to_string())
-        })
-        .string(&["IND_STRING"], "$", |lexer| lexer.take("IND_STR"))
-        .string(&["IND_STRING"], "'''", |lexer| {
-            lexer.take_and_map("IND_STR", |_| "''".to_string())
-        })
-        .pattern(&["IND_STRING"], concat!(r"''\\", ANY!()), |lexer| {
-            lexer.take_and_map("IND_STR", |matched| {
-                unescape_string(&matched[2..])
-            })
-        })
-        .string(&["IND_STRING"], "${", |lexer| {
+        .pattern(
+            &["IND_STRING"],
+            "IND_STR",
+            concat!(r"''\\", ANY!()),
+            |lexer| {
+                lexer.take_and_map(|matched| unescape_string(&matched[2..]))
+            },
+        )
+        .string(&["IND_STRING"], "DOLLAR_CURLY", "${", |lexer| {
             lexer.push_state("DEFAULT");
-            lexer.take("DOLLAR_CURLY")
+            lexer.take()
         })
-        .string(&["IND_STRING"], "''", |lexer| {
+        .string(&["IND_STRING"], "IND_STRING_CLOSE", "''", |lexer| {
             lexer.pop_state();
-            lexer.take("IND_STRING_CLOSE")
+            lexer.take()
         })
-        .string(&["IND_STRING"], "'", |lexer| lexer.take("IND_STR"))
-        .string(&["DEFAULT", "INITIAL"], concat!(PATH_SEG!(), "${"), |lexer| {
-            lexer.push_state("PATH_START");
-            lexer.skip_and_retry()
-        })
+        .string(&["IND_STRING"], "IND_STR", "'", |lexer| lexer.take())
         .string(
             &["DEFAULT", "INITIAL"],
+            "SKIP",
+            concat!(PATH_SEG!(), "${"),
+            |lexer| {
+                lexer.push_state("PATH_START");
+                lexer.skip_and_retry()
+            },
+        )
+        .string(
+            &["DEFAULT", "INITIAL"],
+            "SKIP",
             concat!(HPATH_START!(), "${"),
             |lexer| {
                 lexer.push_state("PATH_START");
                 lexer.skip_and_retry()
             },
         )
-        .pattern(&["PATH_START"], PATH_SEG!(), |lexer| {
+        .pattern(&["PATH_START"], "PATH", PATH_SEG!(), |lexer| {
             lexer.pop_state();
             lexer.push_state("INPATH_SLASH");
-            lexer.take("PATH")
+            lexer.take()
         })
-        .pattern(&["PATH_START"], HPATH_START!(), |lexer| {
+        .pattern(&["PATH_START"], "HPATH", HPATH_START!(), |lexer| {
             lexer.pop_state();
             lexer.push_state("INPATH_SLASH");
-            lexer.take("HPATH")
+            lexer.take()
         })
-        .pattern(&["DEFAULT", "INITIAL"], PATH!(), |lexer| {
+        .pattern(&["DEFAULT", "INITIAL"], "PATH", PATH!(), |lexer| {
             let matched = lexer.matched();
             if &matched[matched.len() - 1..] == "/" {
                 lexer.push_state("INPATH_SLASH");
             } else {
                 lexer.push_state("INPATH");
             }
-            lexer.take("PATH")
+            lexer.take()
         })
-        .pattern(&["DEFAULT", "INITIAL"], HPATH!(), |lexer| {
+        .pattern(&["DEFAULT", "INITIAL"], "HPATH", HPATH!(), |lexer| {
             let matched = lexer.matched();
             if &matched[matched.len() - 1..] == "/" {
                 lexer.push_state("INPATH_SLASH");
             } else {
                 lexer.push_state("INPATH");
             }
-            lexer.take("HPATH")
+            lexer.take()
         })
-        .string(&["INPATH", "INPATH_SLASH"], "${", |lexer| {
+        .string(&["INPATH", "INPATH_SLASH"], "DOLLAR_CURLY", "${", |lexer| {
             lexer.pop_state();
             lexer.push_state("INPATH");
             lexer.push_state("DEFAULT");
-            lexer.take("DOLLAR_CURLY")
+            lexer.take()
         })
         .pattern(
             &["INPATH", "INPATH_SLASH"],
+            "STR",
             concat!(PATH!(), "|", PATH_SEG!(), "|", PATH_CHAR!(), "+"),
             |lexer| {
                 let matched = lexer.matched();
@@ -225,24 +251,55 @@ pub fn lexing_rules() -> Vec<LexerRule> {
                     lexer.pop_state();
                     lexer.push_state("INPATH");
                 }
-                lexer.take("STR")
+                lexer.take()
             },
         )
-        .pattern(&["INPATH"], concat!(ANY!(), "|$"), |lexer| {
+        .pattern(&["INPATH"], "PATH_END", concat!(ANY!(), "|$"), |lexer| {
             lexer.pop_state();
-            lexer.take_and_retry("PATH_END")
+            lexer.take_and_retry()
         })
-        .pattern(&["INPATH_SLASH"], concat!(ANY!(), "|$"), |lexer| {
+        .pattern(&["INPATH_SLASH"], "ERROR", concat!(ANY!(), "|$"), |lexer| {
             lexer.error("Path has a trailing slash")
         })
-        .pattern(&["DEFAULT", "INITIAL"], SPATH!(), |lexer| lexer.take("SPATH"))
-        .pattern(&["DEFAULT", "INITIAL"], URI!(), |lexer| lexer.take("URI"))
-        .pattern(&["DEFAULT", "INITIAL"], r"[ \t\r\n]+", |lexer| lexer.skip())
-        .pattern(&["DEFAULT", "INITIAL"], r"\#[^\r\n]*", |lexer| lexer.skip())
-        .pattern(&["DEFAULT", "INITIAL"], r"/\*([^*]|\*+[^*/])*\*+/", |lexer| {
+        .string(&["DEFAULT", "INITIAL"], "SPATH", SPATH!(), |lexer| {
+            lexer.take()
+        })
+        .string(&["DEFAULT", "INITIAL"], "URI", URI!(), |lexer| lexer.take())
+        .pattern(&["DEFAULT", "INITIAL"], "WS", r"[ \t\r\n]+", |lexer| {
             lexer.skip()
         })
-        .pattern(&["DEFAULT", "INITIAL"], ANY!(), |lexer| lexer.take("OTHER"))
+        .pattern(&["DEFAULT", "INITIAL"], "COMMENT", r"\#[^\r\n]*", |lexer| {
+            lexer.skip()
+        })
+        .pattern(
+            &["DEFAULT", "INITIAL"],
+            "COMMENT",
+            r"/\*([^*]|\*+[^*/])*\*+/",
+            |lexer| lexer.skip(),
+        )
+        //
+        .string(&["DEFAULT", "INITIAL"], "*", "*", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ":", ":", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ".", ".", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "=", "=", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "-", "-", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "!", "!", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "(", "(", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ")", ")", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "+", "+", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ";", ";", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "/", "/", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "[", "[", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "]", "]", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "@", "@", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "<", "<", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ">", ">", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], "?", "?", |lexer| lexer.take())
+        .string(&["DEFAULT", "INITIAL"], ",", ",", |lexer| lexer.take())
+        //
+        .pattern(&["DEFAULT", "INITIAL"], "ANY", ANY!(), |lexer| {
+            lexer.error("Unexpected input")
+        })
         .finish()
 }
 
