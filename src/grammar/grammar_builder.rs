@@ -63,6 +63,31 @@ impl GrammarBuilder {
     }
 
     pub fn finish(&self) -> Vec<GrammarRule> {
+        for grammar_rule in &self.grammar {
+            for production in &grammar_rule.productions {
+                for symbol in &production.symbols {
+                    match &symbol {
+                        Symbol::Rule(name) => {
+                            if !self
+                                .grammar
+                                .iter()
+                                .any(|grammar_rule| grammar_rule.name == *name)
+                            {
+                                panic!(
+                                    "\n\nAt rule: {}\nIn production: \
+                                     {production}\nYour grammar references a \
+                                     rule with name: {name}\nBut this rule \
+                                     has not been defined in the grammar\n\n",
+                                    grammar_rule.name,
+                                )
+                            }
+                        }
+                        Symbol::Lexeme(_) => {}
+                    }
+                }
+            }
+        }
+
         self.grammar.clone()
     }
 }
