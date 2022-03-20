@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 pub mod grammar_builder;
+pub mod grammar_rule;
 pub(crate) mod production;
-pub mod rule;
 pub(crate) mod symbol;

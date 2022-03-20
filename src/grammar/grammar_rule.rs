@@ -6,12 +6,12 @@ use crate::grammar::production::Production;
 use std::hash::Hasher;
 
 #[derive(Clone)]
-pub struct Rule {
+pub struct GrammarRule {
     pub name:        String,
     pub productions: Vec<Production>,
 }
 
-impl std::fmt::Display for Rule {
+impl std::fmt::Display for GrammarRule {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -26,7 +26,7 @@ impl std::fmt::Display for Rule {
     }
 }
 
-impl std::hash::Hash for Rule {
+impl std::hash::Hash for GrammarRule {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
     }

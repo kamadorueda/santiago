@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::grammar::rule::Rule;
+use crate::grammar::grammar_rule::GrammarRule;
 use crate::grammar::symbol::Symbol;
 use crate::lexer::lexeme::Lexeme;
 
@@ -65,7 +65,7 @@ impl std::fmt::Display for Forest {
 }
 
 pub(crate) fn build_forest(
-    rules: &[Rule],
+    rules: &[GrammarRule],
     lexemes: &[Lexeme],
     columns: &[Column],
     state: &State,
@@ -82,7 +82,7 @@ pub(crate) fn build_forest(
 }
 
 fn build_forest_helper(
-    rules: &[Rule],
+    rules: &[GrammarRule],
     lexemes: &[Lexeme],
     columns: &[Column],
 

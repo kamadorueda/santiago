@@ -1,9 +1,10 @@
 use santiago::grammar::grammar_builder::GrammarBuilder;
-use santiago::grammar::rule::Rule;
+use santiago::grammar::grammar_rule::GrammarRule;
 use santiago::lexer::lex;
 use santiago::lexer::lexeme::Lexeme;
 use santiago::lexer::lexer_builder::LexerBuilder;
 use santiago::lexer::lexer_rule::LexerRule;
+use santiago::parser::forest::Forest;
 use santiago::parser::parse::parse;
 
 fn main() -> Result<(), String> {
@@ -14,7 +15,7 @@ fn main() -> Result<(), String> {
     //
     //   Plus = "plus"
     //
-    let grammar: Vec<Rule> = GrammarBuilder::new()
+    let grammar: Vec<GrammarRule> = GrammarBuilder::new()
         .map_to_rules("Sum", &["Sum", "Plus", "Sum"])
         .map_to_lexemes("Sum", &["int"])
         .map_to_lexemes("Plus", &["plus"])
@@ -41,7 +42,7 @@ fn main() -> Result<(), String> {
     let lexemes: Vec<Lexeme> = lex(&lexing_rules, input);
 
     // Now parse!
-    let abstract_syntax_trees = parse(&grammar, &lexemes)?;
+    let abstract_syntax_trees: Vec<Forest> = parse(&grammar, &lexemes)?;
 
     // And print the results:
     println!("input: {:?}", input);
@@ -56,7 +57,7 @@ fn main() -> Result<(), String> {
         println!("  {rule}");
     }
 
-    println!("Forest:");
+    println!("AST:");
     for ast in abstract_syntax_trees {
         println!("{ast}");
     }

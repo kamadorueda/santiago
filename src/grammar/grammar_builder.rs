@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use super::grammar_rule::GrammarRule;
 use super::production::Production;
-use super::rule::Rule;
 use super::symbol::Symbol;
 
 pub struct GrammarBuilder {
-    grammar: Vec<Rule>,
+    grammar: Vec<GrammarRule>,
 }
 
 impl Default for GrammarBuilder {
@@ -30,7 +30,8 @@ impl GrammarBuilder {
                 self.grammar[index].productions.push(production);
             }
             None => {
-                self.grammar.push(Rule { name, productions: vec![production] });
+                self.grammar
+                    .push(GrammarRule { name, productions: vec![production] });
             }
         }
     }
@@ -61,7 +62,7 @@ impl GrammarBuilder {
         self
     }
 
-    pub fn finish(&self) -> Vec<Rule> {
+    pub fn finish(&self) -> Vec<GrammarRule> {
         self.grammar.clone()
     }
 }

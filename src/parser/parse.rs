@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::grammar::grammar_rule::GrammarRule;
 use crate::grammar::production::Production;
-use crate::grammar::rule::Rule;
 use crate::grammar::symbol::Symbol;
 use crate::lexer::lexeme::Lexeme;
 use crate::parser::column::Column;
@@ -13,7 +13,7 @@ use crate::parser::state::State;
 use crate::START_RULE_NAME;
 use std::collections::HashSet;
 
-fn predict(column: &mut Column, rule: &Rule) {
+fn predict(column: &mut Column, rule: &GrammarRule) {
     for production in &rule.productions {
         column.add(State {
             name:         rule.name.clone(),
@@ -57,7 +57,7 @@ fn complete(columns: &mut Vec<Column>, column_index: usize, state: &State) {
 }
 
 pub fn parse(
-    rules: &[Rule],
+    rules: &[GrammarRule],
     lexemes: &[Lexeme],
 ) -> Result<Vec<Forest>, String> {
     let mut columns: Vec<Column> = (0..=lexemes.len())

@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::grammar::grammar_builder::GrammarBuilder;
+use crate::grammar::grammar_rule::GrammarRule;
 use crate::lexer::lexer_builder::LexerBuilder;
 use crate::lexer::lexer_rule::LexerRule;
 

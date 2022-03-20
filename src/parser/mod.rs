@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 pub(crate) mod column;
-pub(crate) mod forest;
+pub mod forest;
 pub mod parse;
 pub(crate) mod state;
