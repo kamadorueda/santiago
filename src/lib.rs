@@ -18,9 +18,19 @@
 //! ```rust
 #![doc = include_str!("../examples/calculator.rs")]
 //! ```
+
 pub mod grammar;
 pub mod languages;
 pub mod lexer;
 pub mod parser;
 
-const START_RULE_NAME: &str = "Γ";
+#[macro_export]
+macro_rules! def {
+    ($name:ident, $value:expr) => {
+        macro_rules! $name {
+            () => {
+                $value
+            };
+        }
+    };
+}

@@ -2,66 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::def;
 use crate::grammar::grammar_builder::GrammarBuilder;
 use crate::grammar::grammar_rule::GrammarRule;
 use crate::lexer::lexer_builder::LexerBuilder;
 use crate::lexer::lexer_rule::LexerRule;
 
-macro_rules! ANY {
-    () => {
-        r".|\n"
-    };
-}
-macro_rules! ID {
-    () => {
-        r"[a-zA-Z_][a-zA-Z0-9_'\-]*"
-    };
-}
-macro_rules! INT {
-    () => {
-        r"[0-9]+"
-    };
-}
-macro_rules! FLOAT {
-    () => {
-        r"(([1-9][0-9]*\.[0-9]*)|(0?\.[0-9]+))([Ee][+-]?[0-9]+)?"
-    };
-}
-macro_rules! PATH_CHAR {
-    () => {
-        r"[a-zA-Z0-9\._\-\+]"
-    };
-}
-macro_rules! PATH {
-    () => {
-        concat!(PATH_CHAR!(), r"*(/", PATH_CHAR!(), r"+)+/?")
-    };
-}
-macro_rules! PATH_SEG {
-    () => {
-        concat!(PATH_CHAR!(), r"*/")
-    };
-}
-macro_rules! HPATH {
-    () => {
-        concat!(r"\~(/", PATH_CHAR!(), r"+)+/?")
-    };
-}
-macro_rules! HPATH_START {
-    () => {
-        r"\~/"
-    };
-}
-macro_rules! SPATH {
-    () => {
-        concat!(r"<", PATH_CHAR!(), r"+(/", PATH_CHAR!(), r"+)*>")
-    };
-}
-macro_rules! URI {
-    () => {
-        r"[a-zA-Z][a-zA-Z0-9\+\-\.]*:[a-zA-Z0-9%/\?:@\&=\+\$,\-_\.!\~\*']+"
-    };
-}
+def!(ANY, r".|\n");
+def!(ID, r"[a-zA-Z_][a-zA-Z0-9_'\-]*");
+def!(INT, r"[0-9]+");
+def!(FLOAT, r"(([1-9][0-9]*\.[0-9]*)|(0?\.[0-9]+))([Ee][+-]?[0-9]+)?");
+def!(PATH_CHAR, r"[a-zA-Z0-9\._\-\+]");
+def!(PATH, concat!(PATH_CHAR!(), r"*(/", PATH_CHAR!(), r"+)+/?"));
+def!(PATH_SEG, concat!(PATH_CHAR!(), r"*/"));
+def!(HPATH, concat!(r"\~(/", PATH_CHAR!(), r"+)+/?"));
+def!(HPATH_START, r"\~/");
+def!(SPATH, concat!(r"<", PATH_CHAR!(), r"+(/", PATH_CHAR!(), r"+)*>"));
+def!(URI, r"[a-zA-Z][a-zA-Z0-9\+\-\.]*:[a-zA-Z0-9%/\?:@\&=\+\$,\-_\.!\~\*']+");
 
 pub fn lexing_rules() -> Vec<LexerRule> {
     LexerBuilder::new()

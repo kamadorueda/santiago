@@ -10,8 +10,9 @@ use crate::parser::column::Column;
 use crate::parser::forest::build_forest;
 use crate::parser::forest::Forest;
 use crate::parser::state::State;
-use crate::START_RULE_NAME;
 use std::collections::HashSet;
+
+const START_RULE_NAME: &str = "Γ";
 
 fn predict(column: &mut Column, rule: &GrammarRule) {
     for production in &rule.productions {
