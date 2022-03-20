@@ -66,19 +66,54 @@ impl<'a> Lexer<'a> {
 
     pub fn consume_as(&mut self, kind: &str) -> NextLexeme {
         let kind = kind.to_string();
-        let matched = self.matched().to_string();
+        let raw = self.matched().to_string();
 
-        self.position.consume(&matched);
+        self.position.consume(&raw);
 
-        NextLexeme::Consumed((kind, matched))
+        NextLexeme::Consumed((kind, raw))
+    }
+
+    pub fn consume_but_as(&mut self, kind: &str, raw: &str) -> NextLexeme {
+        let kind = kind.to_string();
+        let raw = raw.to_string();
+
+        self.position.consume(&raw);
+
+        NextLexeme::Consumed((kind, raw))
+    }
+
+    pub fn consume_but_map(
+        &mut self,
+        kind: &str,
+        function: fn(&str) -> String,
+    ) -> NextLexeme {
+        let kind = kind.to_string();
+        let raw = self.matched();
+        let raw = function(raw);
+
+        self.position.consume(&raw);
+
+        NextLexeme::Consumed((kind, raw))
     }
 
     pub fn ignore(&mut self) -> NextLexeme {
-        let matched = self.matched().to_string();
+        let raw = self.matched().to_string();
 
-        self.position.consume(&matched);
+        self.position.consume(&raw);
 
         NextLexeme::Ignored
+    }
+
+    pub fn current_state(&mut self) -> &str {
+        self.states_stack.back().unwrap()
+    }
+
+    pub fn push_state(&mut self, state: &'a str) {
+        self.states_stack.push_back(state);
+    }
+
+    pub fn pop_state(&mut self) {
+        self.states_stack.pop_back();
     }
 }
 
@@ -90,7 +125,7 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         states_stack: LinkedList::new(),
     };
 
-    lexer.states_stack.push_back("initial");
+    lexer.push_state("initial");
 
     let mut lexemes = LinkedList::new();
 
