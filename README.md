@@ -44,9 +44,8 @@ SPDX-License-Identifier: GPL-3.0-only
 
 - ✔️ **Native** 🦀
 
-  It's written in pure [Rust](https://www.rust-lang.org/)!
-
-  Zero dependencies, maximum portability.
+  It's written in pure [Rust](https://www.rust-lang.org/),
+  zero dependencies, maximum portability.
 
 - ✔️ **Powerful**
 
@@ -59,12 +58,12 @@ SPDX-License-Identifier: GPL-3.0-only
   Defining a grammar is closely the same to its
   [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
 
-  Creating a lexer is as simple as mapping some strings.
+  Creating a lexer is a matter of mapping some strings.
 
 - ✔️ **Fast**
 
   Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
-  Its time and space performance is close to the known theoretical minimum.
+  Its time and space performance is that of the theoretical minimum.
 
 - ✔️ **Standing on the shoulders of giants**
 
@@ -82,7 +81,11 @@ Just checkout the examples:
 You can run the examples by cloning this project and executing:
 
 ```sh
-/santiago $ cargo run --example $name
+~ $ git clone https://github.com/kamadorueda/santiago.git
+
+~ $ cd santiago
+
+~/santiago $ cargo run --example calculator
 ```
 
 ## Short term goals
