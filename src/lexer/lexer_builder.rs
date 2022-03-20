@@ -54,7 +54,7 @@ impl LexerBuilder {
         action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
         let regex =
-            crate_regex::Regex::new(&format!("^(:?{pattern})")).unwrap();
+            crate_regex::Regex::new(&format!("^(?:{pattern})")).unwrap();
 
         self.table.push(LexerRule {
             action:  Rc::new(action),
