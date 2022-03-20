@@ -4,7 +4,7 @@
 
 use crate::lexer::position::Position;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Hash)]
 pub struct Lexeme {
     pub kind:     String,
     pub raw:      String,
@@ -13,6 +13,6 @@ pub struct Lexeme {
 
 impl std::fmt::Display for Lexeme {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {} {:?}", self.position, self.kind, self.raw)
+        write!(f, "{} {:?} {}", self.kind, self.raw, self.position)
     }
 }

@@ -11,7 +11,7 @@ use crate::parser::state::State;
 
 #[derive(Clone, Debug, Hash)]
 pub enum Forest {
-    Leaf { kind: String, position: Position },
+    Leaf(Lexeme),
     Node { kind: String, leaves: Vec<Forest> },
     Nodes { options: Vec<Forest> },
 }
@@ -20,8 +20,8 @@ impl std::fmt::Display for Forest {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fn recurse(depth: usize, forest: &Forest) -> String {
             match forest {
-                Forest::Leaf { kind, position } => {
-                    format!("{}{kind} {position}\n", "  ".repeat(depth + 1),)
+                Forest::Leaf(lexeme) => {
+                    format!("{}{lexeme}\n", "  ".repeat(depth + 1),)
                 }
                 Forest::Node { kind, leaves } => {
                     let mut result = String::new();
@@ -97,12 +97,10 @@ fn build_forest_helper(
 
     let mut forests = Vec::new();
     match &state.production.terms[symbol_index] {
-        Symbol::Lexeme(raw) => {
+        Symbol::Lexeme(kind) => {
+            let lexeme = &lexemes[end_column - 1];
             let mut leaves = leaves;
-            let mut leaves_extended = vec![Forest::Leaf {
-                kind:     raw.clone(),
-                position: lexemes[end_column - 1].position.clone(),
-            }];
+            let mut leaves_extended = vec![Forest::Leaf(lexeme.clone())];
             leaves_extended.append(&mut leaves);
 
             for node in build_forest_helper(

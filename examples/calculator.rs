@@ -44,7 +44,7 @@ fn main() -> Result<(), String> {
     let abstract_syntax_trees = parse(&grammar, &lexemes)?;
 
     // And print the results:
-    println!("input: {:?}", input.chars());
+    println!("input: {:?}", input);
 
     println!("lexemes:");
     for lexeme in &lexemes {

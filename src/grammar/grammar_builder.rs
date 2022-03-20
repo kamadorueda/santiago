@@ -37,12 +37,12 @@ impl GrammarBuilder {
 
     pub fn map_to_lexemes(
         &mut self,
-        name: &str,
+        kind: &str,
         rules: &[&str],
     ) -> &mut GrammarBuilder {
         self.map_rule_to_terms(
-            name,
-            rules.iter().map(|name| Symbol::Lexeme(name.to_string())).collect(),
+            kind,
+            rules.iter().map(|kind| Symbol::Lexeme(kind.to_string())).collect(),
         );
 
         self
