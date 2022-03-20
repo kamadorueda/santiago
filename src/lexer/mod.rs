@@ -80,18 +80,14 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn take(&mut self) -> NextLexeme {
-        self.take_and_map(self.current_rule_name, |matched| matched.to_string())
+        self.take_and_map(|matched| matched.to_string())
     }
 
-    pub fn take_and_map(
-        &mut self,
-        kind: &str,
-        function: fn(&str) -> String,
-    ) -> NextLexeme {
+    pub fn take_and_map(&mut self, function: fn(&str) -> String) -> NextLexeme {
         let matched = self.matched().to_string();
         self.position.consume(&matched);
 
-        let kind = kind.to_string();
+        let kind = self.current_rule_name.to_string();
         let raw = function(&matched);
 
         NextLexeme::Lexeme((kind, raw))
@@ -104,18 +100,17 @@ impl<'a> Lexer<'a> {
         NextLexeme::Skip
     }
 
-    pub fn take_and_retry(&mut self, kind: &str) -> NextLexeme {
-        self.take_and_map_and_retry(kind, |matched| matched.to_string())
+    pub fn take_and_retry(&mut self) -> NextLexeme {
+        self.take_and_map_and_retry(|matched| matched.to_string())
     }
 
     pub fn take_and_map_and_retry(
         &mut self,
-        kind: &str,
         function: fn(&str) -> String,
     ) -> NextLexeme {
         let matched = self.matched().to_string();
 
-        let kind = kind.to_string();
+        let kind = self.current_rule_name.to_string();
         let raw = function(&matched);
 
         NextLexeme::Lexeme((kind, raw))
@@ -139,11 +134,13 @@ impl<'a> Lexer<'a> {
 
     pub fn error(&mut self, msg: &str) -> NextLexeme {
         panic!(
-            "While lexing input: {:?}\nWith states: {:?}\nAt position: {}\n{}",
+            "\n\n{}\nWhile lexing input: {:?}\nAt rule: {}\nAt position: \
+             {}\nWith states stack: {:?}\n\n",
+            msg,
             self.matched().chars().collect::<Vec<char>>(),
-            self.states_stack,
+            self.current_rule_name,
             self.position,
-            msg
+            self.states_stack,
         );
     }
 }
