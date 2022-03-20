@@ -21,9 +21,9 @@ impl GrammarBuilder {
         GrammarBuilder { grammar: Vec::new() }
     }
 
-    fn map_rule_to_terms(&mut self, name: &str, terms: Vec<Symbol>) {
+    fn map_rule_to_symbols(&mut self, name: &str, symbols: Vec<Symbol>) {
         let name = name.to_string();
-        let production = Production { terms };
+        let production = Production { symbols };
 
         match self.grammar.iter().position(|rule| rule.name == name) {
             Some(index) => {
@@ -41,7 +41,7 @@ impl GrammarBuilder {
         kind: &str,
         rules: &[&str],
     ) -> &mut GrammarBuilder {
-        self.map_rule_to_terms(
+        self.map_rule_to_symbols(
             kind,
             rules.iter().map(|kind| Symbol::Lexeme(kind.to_string())).collect(),
         );
@@ -54,7 +54,7 @@ impl GrammarBuilder {
         name: &str,
         rules: &[&str],
     ) -> &mut GrammarBuilder {
-        self.map_rule_to_terms(
+        self.map_rule_to_symbols(
             name,
             rules.iter().map(|name| Symbol::Rule(name.to_string())).collect(),
         );

@@ -19,15 +19,15 @@ pub(crate) struct State {
 
 impl std::fmt::Display for State {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut terms: Vec<String> =
-            self.production.terms.iter().map(Symbol::to_string).collect();
-        terms.insert(self.dot_index, "•".to_string());
+        let mut symbols: Vec<String> =
+            self.production.symbols.iter().map(Symbol::to_string).collect();
+        symbols.insert(self.dot_index, "•".to_string());
 
         write!(
             f,
             "{} := {} [{}-{}]",
             self.name,
-            terms.join(" "),
+            symbols.join(" "),
             self.start_column,
             self.end_column,
         )
@@ -36,14 +36,14 @@ impl std::fmt::Display for State {
 
 impl State {
     pub(crate) fn completed(&self) -> bool {
-        self.dot_index >= self.production.terms.len()
+        self.dot_index >= self.production.symbols.len()
     }
 
-    pub(crate) fn next_term(&self) -> Option<Symbol> {
+    pub(crate) fn next_symbol(&self) -> Option<Symbol> {
         if self.completed() {
             None
         } else {
-            Some(self.production.terms[self.dot_index].clone())
+            Some(self.production.symbols[self.dot_index].clone())
         }
     }
 

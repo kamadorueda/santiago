@@ -40,8 +40,8 @@ fn scan(column: &mut Column, state: &State, kind: &str) {
 fn complete(columns: &mut Vec<Column>, column_index: usize, state: &State) {
     if state.completed() {
         for st in &columns[state.start_column].states.clone() {
-            let term = st.next_term();
-            if let Some(Symbol::Rule(name)) = term {
+            let symbol = st.next_symbol();
+            if let Some(Symbol::Rule(name)) = symbol {
                 if name == state.name {
                     columns[column_index].add(State {
                         name:         st.name.clone(),
@@ -83,7 +83,7 @@ pub fn parse(
     columns[0].states.push(State {
         name:         START_RULE_NAME.to_string(),
         production:   Production {
-            terms: vec![Symbol::Rule(rules[0].name.clone())],
+            symbols: vec![Symbol::Rule(rules[0].name.clone())],
         },
         start_column: 0,
         end_column:   usize::MAX,
@@ -100,7 +100,7 @@ pub fn parse(
             if state.completed() {
                 complete(&mut columns, column_index, &state);
             } else {
-                match state.next_term().unwrap() {
+                match state.next_symbol().unwrap() {
                     Symbol::Rule(name) => {
                         let rule = rules
                             .iter()

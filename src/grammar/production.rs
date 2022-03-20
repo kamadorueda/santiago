@@ -8,7 +8,7 @@ use std;
 
 #[derive(Clone, Eq, Hash, PartialEq)]
 pub struct Production {
-    pub terms: Vec<Symbol>,
+    pub symbols: Vec<Symbol>,
 }
 
 impl std::fmt::Display for Production {
@@ -16,7 +16,7 @@ impl std::fmt::Display for Production {
         write!(
             f,
             "{}",
-            self.terms
+            self.symbols
                 .iter()
                 .map(Symbol::to_string)
                 .collect::<Vec<String>>()

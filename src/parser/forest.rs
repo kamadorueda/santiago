@@ -76,7 +76,7 @@ pub(crate) fn build_forest(
         columns,
         vec![],
         state,
-        state.production.terms.len().overflowing_sub(1).0,
+        state.production.symbols.len().overflowing_sub(1).0,
         state.end_column,
     )
 }
@@ -96,7 +96,7 @@ fn build_forest_helper(
     }
 
     let mut forests = Vec::new();
-    match &state.production.terms[symbol_index] {
+    match &state.production.symbols[symbol_index] {
         Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
             let mut leaves = leaves;
