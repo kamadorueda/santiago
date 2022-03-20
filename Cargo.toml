@@ -20,4 +20,4 @@ keywords = ["parser", "api", "framework", "text", "serialization"]
 license = "GPL-3.0-only"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
-version = "0.4.0"
+version = "0.5.0"

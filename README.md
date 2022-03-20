@@ -42,17 +42,11 @@ SPDX-License-Identifier: GPL-3.0-only
 
 ## Features
 
-- ✔️ **Crab friendly** 🦀
+- ✔️ **Native** 🦀
 
-  It's written in [Rust](https://www.rust-lang.org/),
-  with zero dependencies,
-  maximum portability.
+  It's written in pure [Rust](https://www.rust-lang.org/)!
 
-- ✔️ **Human friendly**
-
-  Built with a focus on ergonomics,
-  defining a grammar is closely the same to its
-  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+  Zero dependencies, maximum portability.
 
 - ✔️ **Powerful**
 
@@ -60,12 +54,19 @@ SPDX-License-Identifier: GPL-3.0-only
   including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar)
   and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars.
 
-- ✔️ **Cutting-edge**
+- ✔️ **Simple**
+
+  Defining a grammar is closely the same to its
+  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+
+  Creating a lexer is as simple as mapping some strings.
+
+- ✔️ **Fast**
 
   Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
   Its time and space performance is close to the known theoretical minimum.
 
-- ✔️ **Modern**
+- ✔️ **Standing on the shoulders of giants**
 
   Santiago is inspired and aims to be an alternative to
   [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
@@ -76,7 +77,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 Just checkout the examples:
 
-- [calculator](./examples/calculator.rs)
+- [Calculator](./examples/calculator.rs)
 
 You can run the examples by cloning this project and executing:
 
