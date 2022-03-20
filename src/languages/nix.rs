@@ -498,8 +498,8 @@ pub fn grammar_rules(lexing_rules: &[LexerRule]) -> Vec<GrammarRule> {
             ],
         ),
     ] {
-        for rule in rules.into_iter() {
-            builder.map_to_rules(kind, &rule);
+        for rule in rules.iter() {
+            builder.map_to_rules(kind, rule);
         }
     }
 

@@ -47,21 +47,16 @@ impl<'a> Lexer<'a> {
                 panic!("Unable to lex input with the provided rules: {input}");
             }
 
-            // Sort by length
-            let mut matches_: Vec<(usize, usize)> =
-                matches_.into_iter().collect();
-            matches_.sort_by(|left, right| right.0.cmp(&left.0));
-
             // Pick matches with the same maximum length
-            let max_length = matches_[0].0;
-            let matches_: Vec<(usize, usize)> = matches_
-                .into_iter()
-                .take_while(|match_| match_.0 == max_length)
-                .collect();
-
-            // Take the first rule declared
+            // And take the first rule declared
+            let max_len = matches_
+                .iter()
+                .max_by(|left, right| left.0.cmp(&right.0))
+                .unwrap()
+                .0;
             let (len, rule_index): (usize, usize) = matches_
                 .into_iter()
+                .filter(|match_| match_.0 == max_len)
                 .min_by(|left, right| left.1.cmp(&right.1))
                 .unwrap();
 
