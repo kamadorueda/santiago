@@ -1,7 +1,3 @@
-# SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
-#
-# SPDX-License-Identifier: GPL-3.0-only
-
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -40,6 +36,7 @@
             Cargo.lock \
             Cargo.toml \
             examples/*.rs \
+            flake.nix \
             flake.lock \
 
           git ls-files | xargs reuse addheader \

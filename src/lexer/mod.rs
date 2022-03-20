@@ -54,7 +54,7 @@ impl<'a> Lexer<'a> {
 
             // Pick matches with the same maximum length
             let max_length = matches_[0].0;
-            let mut matches_: Vec<(usize, usize)> = matches_
+            let matches_: Vec<(usize, usize)> = matches_
                 .into_iter()
                 .take_while(|match_| match_.0 == max_length)
                 .collect();

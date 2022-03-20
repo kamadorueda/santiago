@@ -40,8 +40,7 @@ fn scan(column: &mut Column, state: &State, kind: &str) {
 fn complete(columns: &mut Vec<Column>, column_index: usize, state: &State) {
     if state.completed() {
         for st in &columns[state.start_column].states.clone() {
-            let symbol = st.next_symbol();
-            if let Some(Symbol::Rule(name)) = symbol {
+            if let Some(Symbol::Rule(name)) = st.next_symbol() {
                 if name == state.name {
                     columns[column_index].add(State {
                         name:         st.name.clone(),
