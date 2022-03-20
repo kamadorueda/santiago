@@ -15,6 +15,7 @@ use std::collections::LinkedList;
 pub struct Lexer<'a> {
     input:             &'a str,
     current_match_len: usize,
+    current_rule_name: &'a str,
     position:          Position,
     states_stack:      LinkedList<&'a str>,
 }
@@ -26,7 +27,7 @@ pub enum NextLexeme {
 }
 
 impl<'a> Lexer<'a> {
-    fn next_lexeme(&mut self, rules: &[LexerRule]) -> NextLexeme {
+    fn next_lexeme(&mut self, rules: &'a [LexerRule]) -> NextLexeme {
         if self.position.index < self.input.len() {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
             let input = &self.input[self.position.index..];
@@ -53,6 +54,7 @@ impl<'a> Lexer<'a> {
                 .unwrap();
 
             self.current_match_len = len;
+            self.current_rule_name = &rules[rule_index].name;
 
             rules[rule_index].action.clone()(self)
         } else {
@@ -65,8 +67,8 @@ impl<'a> Lexer<'a> {
             [self.position.index..self.position.index + self.current_match_len]
     }
 
-    pub fn take(&mut self, kind: &str) -> NextLexeme {
-        self.take_and_map(kind, |matched| matched.to_string())
+    pub fn take(&mut self) -> NextLexeme {
+        self.take_and_map(self.current_rule_name, |matched| matched.to_string())
     }
 
     pub fn take_and_map(
@@ -138,6 +140,7 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer {
         input,
         current_match_len: 0,
+        current_rule_name: "",
         position: Position::new(),
         states_stack: LinkedList::new(),
     };

@@ -10,15 +10,15 @@ use santiago::parser::parse::parse;
 fn main() -> Result<(), String> {
     // Let's define an ambiguous grammar for adding integer numbers:
     //
-    //   Sum = Sum Plus Sum
-    //       | "int"
+    //   sum = sum plus sum
+    //       | INT
     //
-    //   Plus = "plus"
+    //   plus = +
     //
     let grammar: Vec<GrammarRule> = GrammarBuilder::new()
-        .map_to_rules("Sum", &["Sum", "Plus", "Sum"])
-        .map_to_lexemes("Sum", &["int"])
-        .map_to_lexemes("Plus", &["plus"])
+        .map_to_rules("sum", &["sum", "plus", "sum"])
+        .map_to_lexemes("sum", &["INT"])
+        .map_to_lexemes("plus", &["+"])
         .finish();
 
     // A lexer splits the input string into units
@@ -27,14 +27,14 @@ fn main() -> Result<(), String> {
     // For this calculator we are interested in the "+" operator
     // and the digits of the integer numbers:
     //
-    //   "plus" := "+" (a character)
-    //   "int"  := \d+ (regular expression for 1 or more digits)
-    //     ∅    := " " (ignore whitespace)
+    //   +    := "+" (a character)
+    //   INT  := \d+ (regular expression for 1 or more digits)
+    //   WS   := " " (ignore whitespace)
     //
     let lexing_rules: Vec<LexerRule> = LexerBuilder::new()
-        .string(&["INITIAL"], "+", |lexer| lexer.take("plus"))
-        .pattern(&["INITIAL"], r"\d+", |lexer| lexer.take("int"))
-        .string(&["INITIAL"], " ", |lexer| lexer.skip())
+        .string(&["INITIAL"], "+", "+", |lexer| lexer.take())
+        .pattern(&["INITIAL"], "INT", r"\d+", |lexer| lexer.take())
+        .string(&["INITIAL"], "WS", " ", |lexer| lexer.skip())
         .finish();
 
     // Let's start by tokenizing the input

@@ -11,5 +11,6 @@ use std::rc::Rc;
 pub struct LexerRule {
     pub(crate) action:  Rc<dyn Fn(&mut Lexer) -> NextLexeme>,
     pub(crate) matcher: Rc<dyn Fn(&str) -> Option<usize>>,
+    pub(crate) name:    String,
     pub(crate) states:  HashSet<String>,
 }

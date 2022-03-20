@@ -25,6 +25,7 @@ impl LexerBuilder {
     pub fn string(
         &mut self,
         states: &[&str],
+        name: &str,
         string: &'static str,
         action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
@@ -37,6 +38,7 @@ impl LexerBuilder {
                     None
                 }
             }),
+            name:    name.to_string(),
             states:  states.iter().map(|state| state.to_string()).collect(),
         });
 
@@ -47,6 +49,7 @@ impl LexerBuilder {
     pub fn pattern(
         &mut self,
         states: &[&str],
+        name: &str,
         pattern: &str,
         action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
@@ -58,6 +61,7 @@ impl LexerBuilder {
             matcher: Rc::new(move |input: &str| -> Option<usize> {
                 regex.find(input).map(|match_| match_.end())
             }),
+            name:    name.to_string(),
             states:  states.iter().map(|state| state.to_string()).collect(),
         });
 
