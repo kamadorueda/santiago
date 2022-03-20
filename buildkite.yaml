@@ -42,3 +42,5 @@ steps:
       - eval "$(direnv export bash)"
       - echo +++ Calculator
       - cargo run --example calculator
+      - echo +++ Nix
+      - cargo run --example nix < flake.nix
