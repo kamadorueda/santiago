@@ -81,19 +81,8 @@ SPDX-License-Identifier: GPL-3.0-only
 
 ## Getting started
 
-Just checkout the examples:
-
-- [Calculator](./examples/calculator.rs)
-
-You can run the examples by cloning this project and executing:
-
-```sh
-~ $ git clone https://github.com/kamadorueda/santiago.git
-
-~ $ cd santiago
-
-~/santiago $ cargo run --example calculator
-```
+Just read the [docs](https://docs.rs/santiago), we have plenty of examples over there,
+plus detailed explanation of each component.
 
 ## Short term goals
 
