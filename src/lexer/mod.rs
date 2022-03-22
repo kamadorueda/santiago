@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-//! Convert an input of characters into strings with an assigned meaning
+//! Convert an input of characters into strings with an assigned meaning.
 
 mod lexeme;
 mod lexer_builder;

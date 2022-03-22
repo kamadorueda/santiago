@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-//! Build a data structure representing the input
+//! Build a data structure representing the input.
 
 mod forest;
 mod parse;

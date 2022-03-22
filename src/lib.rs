@@ -103,6 +103,21 @@ pub mod languages;
 pub mod lexer;
 pub mod parser;
 
+/// Create reusable definitions.
+///
+/// # Example
+///
+/// Reuse regular expressions
+///
+/// ```rust
+/// use santiago::def;
+///
+/// def!(INT, r"\d+"); // 1 or more digits
+/// def!(SIGN, r"[+-]?"); // either "+" or "-", optional
+/// def!(SIGNED_INT, concat!(SIGN!(), INT!())); // A sign, then an integer
+///
+/// assert_eq!(SIGNED_INT!(), r"[+-]?\d+");
+/// ```
 #[macro_export]
 macro_rules! def {
     ($name:ident, $value:expr) => {
