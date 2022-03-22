@@ -16,6 +16,13 @@ SPDX-License-Identifier: GPL-3.0-only
     >
     </img>
   </a>
+  <a href="https://docs.rs/santiago">
+    <img
+      alt="Documentation"
+      src="https://img.shields.io/docsrs/santiago?color=brightgreen"
+    >
+    </img>
+  </a>
   <a href="https://crates.io/crates/santiago">
     <img
       alt="Version"

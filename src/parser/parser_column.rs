@@ -2,18 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::parser::state::State;
+use crate::parser::ParserState;
 use std::collections::HashSet;
 
-pub(crate) struct Column {
+pub(crate) struct ParserColumn {
     pub(crate) index:  usize,
     pub(crate) kind:   String,
-    pub(crate) states: Vec<State>,
+    pub(crate) states: Vec<ParserState>,
     pub(crate) unique: HashSet<u64>,
 }
 
-impl Column {
-    pub(crate) fn add(&mut self, state: State) {
+impl ParserColumn {
+    pub(crate) fn add(&mut self, state: ParserState) {
         let mut state = state;
         let digest = state.hash_me();
 

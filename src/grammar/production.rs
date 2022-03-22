@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::grammar::symbol::Symbol;
+use crate::grammar::Symbol;
 
 use std;
 

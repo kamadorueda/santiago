@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::lexer::position::Position;
+use crate::lexer::Position;
 
 #[derive(Clone, Debug, Hash)]
 pub struct Lexeme {

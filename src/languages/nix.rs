@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::def;
-use crate::grammar::grammar_builder::GrammarBuilder;
-use crate::grammar::grammar_rule::GrammarRule;
-use crate::lexer::lexer_builder::LexerBuilder;
-use crate::lexer::lexer_rule::LexerRule;
+use crate::grammar::GrammarBuilder;
+use crate::grammar::GrammarRule;
+use crate::lexer::LexerBuilder;
+use crate::lexer::LexerRule;
 
 def!(ANY, r".|\n");
 def!(ID, r"[a-zA-Z_][a-zA-Z0-9_'\-]*");

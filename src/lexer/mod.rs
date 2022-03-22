@@ -2,14 +2,17 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-pub mod lexeme;
-pub mod lexer_builder;
-pub mod lexer_rule;
-pub mod position;
+//! Convert an input of characters into strings with an assigned meaning
 
-use self::lexeme::Lexeme;
-use self::lexer_rule::LexerRule;
-use self::position::Position;
+mod lexeme;
+mod lexer_builder;
+mod lexer_rule;
+mod position;
+
+pub use lexeme::Lexeme;
+pub use lexer_builder::LexerBuilder;
+pub use lexer_rule::LexerRule;
+pub use position::Position;
 use std::collections::LinkedList;
 
 pub struct Lexer<'a> {

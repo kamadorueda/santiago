@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::grammar::grammar_rule::GrammarRule;
-use crate::grammar::symbol::Symbol;
-use crate::lexer::lexeme::Lexeme;
+use crate::grammar::GrammarRule;
+use crate::grammar::Symbol;
+use crate::lexer::Lexeme;
 
-use crate::parser::column::Column;
-use crate::parser::state::State;
+use crate::parser::ParserColumn;
+use crate::parser::ParserState;
 
 #[derive(Clone, Debug, Hash)]
 pub enum Forest {
@@ -67,8 +67,8 @@ impl std::fmt::Display for Forest {
 pub(crate) fn build_forest(
     rules: &[GrammarRule],
     lexemes: &[Lexeme],
-    columns: &[Column],
-    state: &State,
+    columns: &[ParserColumn],
+    state: &ParserState,
 ) -> Vec<Forest> {
     build_forest_helper(
         rules,
@@ -84,10 +84,10 @@ pub(crate) fn build_forest(
 fn build_forest_helper(
     rules: &[GrammarRule],
     lexemes: &[Lexeme],
-    columns: &[Column],
+    columns: &[ParserColumn],
 
     leaves: Vec<Forest>,
-    state: &State,
+    state: &ParserState,
     symbol_index: usize,
     end_column: usize,
 ) -> Vec<Forest> {

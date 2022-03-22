@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::grammar::production::Production;
+use crate::grammar::Production;
 use std::hash::Hasher;
 
 #[derive(Clone)]

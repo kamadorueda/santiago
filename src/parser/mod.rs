@@ -2,7 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-pub(crate) mod column;
-pub mod forest;
-pub mod parse;
-pub(crate) mod state;
+//! Build a data structure representing the input
+
+mod forest;
+mod parse;
+mod parser_column;
+mod parser_state;
+
+pub use forest::Forest;
+pub use parse::parse;
+pub(crate) use parser_column::ParserColumn;
+pub(crate) use parser_state::ParserState;

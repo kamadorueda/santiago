@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use super::grammar_rule::GrammarRule;
-use super::production::Production;
-use super::symbol::Symbol;
+use super::Production;
+use super::Symbol;
 
 pub struct GrammarBuilder {
     grammar: Vec<GrammarRule>,

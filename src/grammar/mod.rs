@@ -2,7 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-pub mod grammar_builder;
-pub mod grammar_rule;
-pub(crate) mod production;
-pub(crate) mod symbol;
+//! Create grammars that are validated for correctness automatically.
+
+mod grammar_builder;
+mod grammar_rule;
+mod production;
+mod symbol;
+
+pub use grammar_builder::GrammarBuilder;
+pub use grammar_rule::GrammarRule;
+pub(crate) use production::Production;
+pub(crate) use symbol::Symbol;
