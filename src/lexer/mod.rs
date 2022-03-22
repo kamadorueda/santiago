@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-//! Convert an input of characters into strings with an assigned meaning.
+//! Transform an input of characters
+//! into groups of characters with related meaning (e.g. `"123"` -> `"int"`).
 
 mod lexeme;
 mod lexer_builder;
@@ -31,9 +32,9 @@ pub enum NextLexeme {
 
 impl<'a> Lexer<'a> {
     fn next_lexeme(&mut self, rules: &'a [LexerRule]) -> NextLexeme {
-        if self.position.index < self.input.len() {
+        if self.position.byte_index < self.input.len() {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
-            let input = &self.input[self.position.index..];
+            let input = &self.input[self.position.byte_index..];
             let state = self.states_stack.back().unwrap();
 
             for (rule_index, rule) in rules.iter().enumerate() {
@@ -73,8 +74,8 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn matched(&self) -> &str {
-        &self.input
-            [self.position.index..self.position.index + self.current_match_len]
+        &self.input[self.position.byte_index
+            ..self.position.byte_index + self.current_match_len]
     }
 
     pub fn take(&mut self) -> NextLexeme {

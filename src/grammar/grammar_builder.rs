@@ -6,6 +6,9 @@ use super::grammar_rule::GrammarRule;
 use super::Production;
 use super::Symbol;
 
+/// Utility for creating a grammar.
+///
+/// Please read the [module documentation](crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
     grammar: Vec<GrammarRule>,
 }
@@ -74,10 +77,10 @@ impl GrammarBuilder {
                                 .any(|grammar_rule| grammar_rule.name == *name)
                             {
                                 panic!(
-                                    "\n\nAt rule: {}\nIn production: \
+                                    "\n\nError at rule: {}\nIn production: \
                                      {production}\nYour grammar references a \
                                      rule with name: {name}\nBut this rule \
-                                     has not been defined in the grammar\n\n",
+                                     has not been defined in the grammar.\n\n",
                                     grammar_rule.name,
                                 )
                             }

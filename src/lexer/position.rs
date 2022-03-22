@@ -4,11 +4,12 @@
 
 use std::hash::Hasher;
 
+/// Counter for column number, line number, and byte index.
 #[derive(Clone, Eq)]
 pub struct Position {
-    pub column: usize,
-    pub index:  usize,
-    pub line:   usize,
+    pub(crate) byte_index: usize,
+    pub(crate) column:     usize,
+    pub(crate) line:       usize,
 }
 
 impl std::fmt::Debug for Position {
@@ -19,7 +20,7 @@ impl std::fmt::Debug for Position {
 
 impl std::cmp::Ord for Position {
     fn cmp(&self, other: &Position) -> std::cmp::Ordering {
-        self.index.cmp(&other.index)
+        self.byte_index.cmp(&other.byte_index)
     }
 }
 
@@ -31,7 +32,7 @@ impl std::cmp::PartialOrd for Position {
 
 impl std::cmp::PartialEq for Position {
     fn eq(&self, other: &Position) -> bool {
-        self.index == other.index
+        self.byte_index == other.byte_index
     }
 }
 
@@ -49,13 +50,13 @@ impl std::fmt::Display for Position {
 
 impl std::hash::Hash for Position {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.index.hash(state);
+        self.byte_index.hash(state);
     }
 }
 
 impl Position {
     pub(crate) fn consume(&mut self, input: &str) {
-        self.index += input.len();
+        self.byte_index += input.len();
         for char in input.chars() {
             if char == '\n' {
                 self.line += 1;
@@ -67,6 +68,6 @@ impl Position {
     }
 
     pub fn new() -> Position {
-        Position { column: 1, index: 0, line: 1 }
+        Position { column: 1, byte_index: 0, line: 1 }
     }
 }

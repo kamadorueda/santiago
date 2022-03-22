@@ -5,10 +5,15 @@
 use crate::grammar::Production;
 use std::hash::Hasher;
 
+/// Internal representation of a grammar rule.
+///
+/// [GrammarRule] is exposed so you can use its type and its traits
+/// but normally you create a [GrammarRule]
+/// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
 pub struct GrammarRule {
-    pub name:        String,
-    pub productions: Vec<Production>,
+    pub(crate) name:        String,
+    pub(crate) productions: Vec<Production>,
 }
 
 impl std::fmt::Display for GrammarRule {

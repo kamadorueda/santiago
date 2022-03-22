@@ -7,6 +7,11 @@ use crate::lexer::NextLexeme;
 use std::collections::HashSet;
 use std::rc::Rc;
 
+/// Internal type for a lexer rule.
+///
+/// [LexerRule] is exposed so you can use its type and its traits,
+/// but normally you create [LexerRule]s
+/// by using a [LexerBuilder](crate::lexer::LexerBuilder).
 #[derive(Clone)]
 pub struct LexerRule {
     pub(crate) action:  Rc<dyn Fn(&mut Lexer) -> NextLexeme>,

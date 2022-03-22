@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+//! Lexer and Parser for the [Nix expression language](https://nixos.org/).
+
 use crate::def;
 use crate::grammar::GrammarBuilder;
 use crate::grammar::GrammarRule;
@@ -20,7 +22,7 @@ def!(HPATH_START, r"\~/");
 def!(SPATH, concat!(r"<", PATH_CHAR!(), r"+(/", PATH_CHAR!(), r"+)*>"));
 def!(URI, r"[a-zA-Z][a-zA-Z0-9\+\-\.]*:[a-zA-Z0-9%/\?:@\&=\+\$,\-_\.!\~\*']+");
 
-pub fn lexing_rules() -> Vec<LexerRule> {
+pub fn lexer_rules() -> Vec<LexerRule> {
     LexerBuilder::new()
         .string(&["DEFAULT", "INITIAL"], "IF", "if", |lexer| lexer.take())
         .string(&["DEFAULT", "INITIAL"], "THEN", "then", |lexer| lexer.take())
@@ -260,7 +262,7 @@ pub fn lexing_rules() -> Vec<LexerRule> {
         .finish()
 }
 
-pub fn grammar_rules(lexing_rules: &[LexerRule]) -> Vec<GrammarRule> {
+pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Vec<GrammarRule> {
     let mut builder = GrammarBuilder::new();
 
     for (kind, rules) in &[
@@ -460,7 +462,7 @@ pub fn grammar_rules(lexing_rules: &[LexerRule]) -> Vec<GrammarRule> {
         }
     }
 
-    for lexing_rule in lexing_rules {
+    for lexing_rule in lexer_rules {
         builder.map_to_lexemes(&lexing_rule.name, &[&lexing_rule.name]);
     }
 
