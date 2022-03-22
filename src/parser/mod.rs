@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 //! Build a data structure representing the input.
+//!
+//! Please read the [crate documentation](crate) for more information and examples.
 
 mod forest;
 mod parse;

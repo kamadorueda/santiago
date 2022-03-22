@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 //! Transform an input of characters
-//! into groups of characters with related meaning (e.g. `"123"` -> `"int"`).
-
+//! into groups of characters with related meaning.
+//!
+//! Please read the [crate documentation](crate) for more information and examples.
 mod lexeme;
 mod lexer_builder;
 mod lexer_rule;

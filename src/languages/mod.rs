@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 //! Built-in lexers and parsers for different languages.
+//!
+//! Please read the [crate documentation](crate) for more information and examples.
 
 #[cfg(feature = "language_nix")]
 pub mod nix;
