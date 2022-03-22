@@ -7,6 +7,9 @@ use crate::lexer::LexerRule;
 use crate::lexer::NextLexeme;
 use std::rc::Rc;
 
+/// Utility for creating [lexer rules](LexerRule).
+///
+/// Please read the [crate documentation](crate) for more information and examples.
 pub struct LexerBuilder {
     table: Vec<LexerRule>,
 }

@@ -78,11 +78,11 @@
 //! // At this point we can define a grammar for this language:
 //! let grammar = santiago::grammar::GrammarBuilder::new()
 //!     // Map the rule "sum" to the sequence of rules "sum", "plus", and "sum"
-//!     .map_to_rules("sum", &["sum", "plus", "sum"])
+//!     .rule_to_rules("sum", &["sum", "plus", "sum"])
 //!     // Map the rule "sum" to the lexeme "INT"
-//!     .map_to_lexemes("sum", &["INT"])
+//!     .rule_to_lexemes("sum", &["INT"])
 //!     // Map the rule "plus" to the lexeme "PLUS"
-//!     .map_to_lexemes("plus", &["PLUS"])
+//!     .rule_to_lexemes("plus", &["PLUS"])
 //!     .finish();
 //!
 //! // With this we can now parse the input
@@ -255,12 +255,12 @@
 //! ```rust
 //! santiago::grammar::GrammarBuilder::new()
 //!     // A `number` can be an `int` or a `float`
-//!     .map_to_rules("number", &["int"])
-//!     .map_to_rules("number", &["float"])
+//!     .rule_to_rules("number", &["int"])
+//!     .rule_to_rules("number", &["float"])
 //!     // An `int` comes from a lexeme of kind `INT`:
-//!     .map_to_lexemes("int", &["INT"])
+//!     .rule_to_lexemes("int", &["INT"])
 //!     // An `float` comes from a lexeme of kind `FLOAT`:
-//!     .map_to_lexemes("float", &["FLOAT"])
+//!     .rule_to_lexemes("float", &["FLOAT"])
 //!     .finish();
 //! ```
 //!
@@ -271,7 +271,9 @@
 //!
 //! ```should_panic
 //! // Map rule `A` to `B` and don't define rule B:
-//! santiago::grammar::GrammarBuilder::new().map_to_rules("A", &["B"]).finish();
+//! santiago::grammar::GrammarBuilder::new()
+//!     .rule_to_rules("A", &["B"])
+//!     .finish();
 //! ```
 pub mod grammar;
 pub mod languages;

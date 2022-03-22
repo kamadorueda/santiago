@@ -9,7 +9,7 @@ use std::rc::Rc;
 
 /// Internal type for a lexer rule.
 ///
-/// [LexerRule] is exposed so you can use its type and its traits,
+/// [LexerRule] is exposed so you can use its type and traits,
 /// but normally you create [LexerRule]s
 /// by using a [LexerBuilder](crate::lexer::LexerBuilder).
 #[derive(Clone)]

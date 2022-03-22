@@ -458,12 +458,12 @@ pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Vec<GrammarRule> {
         ),
     ] {
         for rule in rules.iter() {
-            builder.map_to_rules(kind, rule);
+            builder.rule_to_rules(kind, rule);
         }
     }
 
     for lexing_rule in lexer_rules {
-        builder.map_to_lexemes(&lexing_rule.name, &[&lexing_rule.name]);
+        builder.rule_to_lexemes(&lexing_rule.name, &[&lexing_rule.name]);
     }
 
     builder.finish()

@@ -17,6 +17,12 @@ pub use lexer_rule::LexerRule;
 pub use position::Position;
 use std::collections::LinkedList;
 
+/// Core implementation of the algorithm.
+///
+/// [Lexer] is exposed so you can use its type and traits,
+/// but normally you just use [lex()].
+///
+/// Please read the [crate documentation](crate) for more information and examples.
 pub struct Lexer<'a> {
     input:             &'a str,
     current_match_len: usize,
@@ -25,6 +31,7 @@ pub struct Lexer<'a> {
     states_stack:      LinkedList<&'a str>,
 }
 
+/// Return type of a rule action
 pub enum NextLexeme {
     Lexeme((String, String)),
     Skip,
@@ -145,6 +152,7 @@ impl<'a> Lexer<'a> {
     }
 }
 
+/// Perform lexical analysis of the given input according to the provided rules.
 pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer {
         input,

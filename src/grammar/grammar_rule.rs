@@ -7,7 +7,7 @@ use std::hash::Hasher;
 
 /// Internal representation of a grammar rule.
 ///
-/// [GrammarRule] is exposed so you can use its type and its traits
+/// [GrammarRule] is exposed so you can use its type and traits
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]

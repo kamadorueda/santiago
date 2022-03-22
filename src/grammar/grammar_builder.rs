@@ -6,7 +6,7 @@ use super::grammar_rule::GrammarRule;
 use super::Production;
 use super::Symbol;
 
-/// Utility for creating a grammar.
+/// Utility for creating [grammar rules](GrammarRule).
 ///
 /// Please read the [module documentation](crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
@@ -24,7 +24,7 @@ impl GrammarBuilder {
         GrammarBuilder { grammar: Vec::new() }
     }
 
-    fn map_rule_to_symbols(&mut self, name: &str, symbols: Vec<Symbol>) {
+    fn rule_to_symbols(&mut self, name: &str, symbols: Vec<Symbol>) {
         let name = name.to_string();
         let production = Production { symbols };
 
@@ -39,27 +39,33 @@ impl GrammarBuilder {
         }
     }
 
-    pub fn map_to_lexemes(
+    pub fn rule_to_lexemes(
         &mut self,
         kind: &str,
-        rules: &[&str],
+        lexeme_kinds: &[&str],
     ) -> &mut GrammarBuilder {
-        self.map_rule_to_symbols(
+        self.rule_to_symbols(
             kind,
-            rules.iter().map(|kind| Symbol::Lexeme(kind.to_string())).collect(),
+            lexeme_kinds
+                .iter()
+                .map(|kind| Symbol::Lexeme(kind.to_string()))
+                .collect(),
         );
 
         self
     }
 
-    pub fn map_to_rules(
+    pub fn rule_to_rules(
         &mut self,
         name: &str,
-        rules: &[&str],
+        rule_names: &[&str],
     ) -> &mut GrammarBuilder {
-        self.map_rule_to_symbols(
+        self.rule_to_symbols(
             name,
-            rules.iter().map(|name| Symbol::Rule(name.to_string())).collect(),
+            rule_names
+                .iter()
+                .map(|name| Symbol::Rule(name.to_string()))
+                .collect(),
         );
 
         self

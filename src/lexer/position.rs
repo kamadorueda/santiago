@@ -5,6 +5,11 @@
 use std::hash::Hasher;
 
 /// Counter for column number, line number, and byte index.
+///
+/// [Position] is exposed so you can use its type and traits,
+/// but normally you don't use it directly.
+///
+/// Please read the [crate documentation](crate) for more information and examples.
 #[derive(Clone, Eq)]
 pub struct Position {
     pub(crate) byte_index: usize,

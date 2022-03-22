@@ -4,11 +4,14 @@
 
 use crate::lexer::Position;
 
+/// Represents a group or related characters and its position.
+///
+/// Please read the [crate documentation](crate) for more information and examples.
 #[derive(Clone, Debug, Hash)]
 pub struct Lexeme {
-    pub kind:     String,
-    pub raw:      String,
-    pub position: Position,
+    pub(crate) kind:     String,
+    pub(crate) raw:      String,
+    pub(crate) position: Position,
 }
 
 impl std::fmt::Display for Lexeme {
