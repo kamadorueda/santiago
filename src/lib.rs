@@ -2,6 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+#![deny(rustdoc::bare_urls)]
+#![deny(rustdoc::broken_intra_doc_links)]
+#![deny(rustdoc::invalid_codeblock_attributes)]
+#![deny(rustdoc::invalid_html_tags)]
+#![deny(rustdoc::invalid_rust_codeblocks)]
+#![deny(rustdoc::missing_crate_level_docs)]
+// #![warn(missing_docs)]
+#![deny(rustdoc::private_intra_doc_links)]
+#![deny(rustdoc::private_doc_tests)]
 //! Santiago is a lexing and parsing toolkit for Rust.
 //! It provides a library for defining
 //! [context-free grammars](https://en.wikipedia.org/wiki/Context-free_grammar),
@@ -28,7 +37,7 @@
 //! santiago = "*"
 //! ```
 //!
-//! # Example: calculator
+//! # Example: Calculator
 //!
 //! General use of this library includes creating a set of lexer and grammar rules
 //! and then using them to lex and parse some input
@@ -131,6 +140,33 @@
 //!   or signal an [error](lexer::Lexer::error()).
 //!
 //! For convenience, the stack of states starts with "INITIAL".
+//!
+//! ## Example: Smallest lexer possible
+//!
+//! This lexer will copy char by char the input
+//!
+//! ```rust
+//! let input = "abc";
+//!
+//! let lexer_rules = santiago::lexer::LexerBuilder::new()
+//!     .pattern(&["INITIAL"], "CHAR", ".", |lexer| lexer.take())
+//!     .finish();
+//!
+//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
+//!
+//! assert_eq!(
+//!     vec![
+//!         // kind raw (line, column)
+//!         r#"CHAR "a" (1, 1)"#,
+//!         r#"CHAR "b" (1, 2)"#,
+//!         r#"CHAR "c" (1, 3)"#,
+//!     ],
+//!     lexemes
+//!         .iter()
+//!         .map(santiago::lexer::Lexeme::to_string)
+//!         .collect::<Vec<String>>()
+//! );
+//! ```
 //!
 //! ## Example: JavaScript string interpolations:
 //!
