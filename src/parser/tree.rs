@@ -12,13 +12,13 @@ use crate::parser::ParserState;
 /// Representation of an AST
 #[derive(Clone, Debug, Hash)]
 pub enum Tree {
-    /// Leaf nodes of the tree, containing a [Lexeme]
+    /// Leaf nodes of the tree, containing a [Lexeme].
     Leaf(Lexeme),
-    /// Group of many [Tree::Leaf]
+    /// Group of many [Tree::Leaf].
     Node {
-        /// Name of the [GrammarRule] that produced this node
+        /// Name of the [GrammarRule] that produced this node.
         kind:   String,
-        /// Children of this Node
+        /// Children of this Node.
         leaves: Vec<Tree>,
     },
 }

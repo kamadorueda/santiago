@@ -283,12 +283,12 @@ pub mod parser;
 ///
 /// # Example
 ///
-/// Reuse regular expressions
+/// Reuse regular expressions.
 ///
 /// ```rust
-/// santiago::def!(INT, r"\d+"); // 1 or more digits
-/// santiago::def!(SIGN, r"[+-]?"); // either "+" or "-", optional
-/// santiago::def!(SIGNED_INT, concat!(SIGN!(), INT!())); // A sign, then an integer
+/// santiago::def!(INT, r"\d+"); // 1 or more digits.
+/// santiago::def!(SIGN, r"[+-]?"); // either "+" or "-", optional.
+/// santiago::def!(SIGNED_INT, concat!(SIGN!(), INT!())); // A sign, then an integer.
 ///
 /// assert_eq!(SIGNED_INT!(), r"[+-]?\d+");
 /// ```
