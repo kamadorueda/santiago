@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+#![deny(missing_docs)]
 #![deny(rustdoc::bare_urls)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![deny(rustdoc::invalid_codeblock_attributes)]
 #![deny(rustdoc::invalid_html_tags)]
 #![deny(rustdoc::invalid_rust_codeblocks)]
 #![deny(rustdoc::missing_crate_level_docs)]
-#![warn(missing_docs)]
 #![deny(rustdoc::private_intra_doc_links)]
 #![deny(rustdoc::private_doc_tests)]
 //! Santiago is a lexing and parsing toolkit for Rust.

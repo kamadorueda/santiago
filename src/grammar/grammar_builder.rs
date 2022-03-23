@@ -74,6 +74,7 @@ impl GrammarBuilder {
         self
     }
 
+    /// Return the created [GrammarRule]s, performing a few validations first.
     pub fn finish(&self) -> Vec<GrammarRule> {
         for grammar_rule in &self.grammar {
             for production in &grammar_rule.productions {
