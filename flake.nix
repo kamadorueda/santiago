@@ -21,6 +21,15 @@
         ];
       };
 
+    apps."x86_64-linux".docs = with nixpkgs."x86_64-linux"; {
+      type = "app";
+      program =
+        (writeShellScript "license" ''
+          find . -type f -name '*.rs' | entr sh -c 'cargo test --doc && cargo doc'
+        '')
+        .outPath;
+    };
+
     apps."x86_64-linux".license = with nixpkgs."x86_64-linux"; {
       type = "app";
       program =

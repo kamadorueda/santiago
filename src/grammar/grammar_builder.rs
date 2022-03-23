@@ -20,6 +20,7 @@ impl Default for GrammarBuilder {
 }
 
 impl GrammarBuilder {
+    /// Creates a new [GrammarBuilder] with no rules.
     pub fn new() -> GrammarBuilder {
         GrammarBuilder { grammar: Vec::new() }
     }
@@ -39,6 +40,7 @@ impl GrammarBuilder {
         }
     }
 
+    /// Map a rule with name `name` to zero or more [crate::lexer::LexerRule].
     pub fn rule_to_lexemes(
         &mut self,
         kind: &str,
@@ -55,6 +57,7 @@ impl GrammarBuilder {
         self
     }
 
+    /// Map a rule with name `name` to zero or more [GrammarRule].
     pub fn rule_to_rules(
         &mut self,
         name: &str,

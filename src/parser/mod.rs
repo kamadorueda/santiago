@@ -6,12 +6,12 @@
 //!
 //! Please read the [crate documentation](crate) for more information and examples.
 
-mod forest;
 mod parse;
 mod parser_column;
 mod parser_state;
+mod tree;
 
-pub use forest::Forest;
 pub use parse::parse;
 pub(crate) use parser_column::ParserColumn;
 pub(crate) use parser_state::ParserState;
+pub use tree::Tree;

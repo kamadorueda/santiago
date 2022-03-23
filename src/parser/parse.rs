@@ -6,10 +6,10 @@ use crate::grammar::GrammarRule;
 use crate::grammar::Production;
 use crate::grammar::Symbol;
 use crate::lexer::Lexeme;
-use crate::parser::forest::build_forest;
-use crate::parser::Forest;
+use crate::parser::tree::build_forest;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
+use crate::parser::Tree;
 use std::collections::HashSet;
 
 const START_RULE_NAME: &str = "Γ";
@@ -60,10 +60,11 @@ fn complete(
     }
 }
 
+/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar rules](GrammarRule)
 pub fn parse(
     rules: &[GrammarRule],
     lexemes: &[Lexeme],
-) -> Result<Vec<Forest>, String> {
+) -> Result<Vec<Tree>, String> {
     let mut columns: Vec<ParserColumn> = (0..=lexemes.len())
         .map(|index| {
             if index == 0 {

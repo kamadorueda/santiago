@@ -9,49 +9,38 @@ use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 
+/// Representation of an AST
 #[derive(Clone, Debug, Hash)]
-pub enum Forest {
+pub enum Tree {
+    /// Leaf nodes of the tree, containing a [Lexeme]
     Leaf(Lexeme),
-    Node { kind: String, leaves: Vec<Forest> },
-    Nodes { options: Vec<Forest> },
+    /// Group of many [Tree::Leaf]
+    Node {
+        /// Name of the [GrammarRule] that produced this node
+        kind:   String,
+        /// Children of this Node
+        leaves: Vec<Tree>,
+    },
 }
 
-impl std::fmt::Display for Forest {
+impl std::fmt::Display for Tree {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fn recurse(depth: usize, forest: &Forest) -> String {
+        fn recurse(depth: usize, forest: &Tree) -> String {
             match forest {
-                Forest::Leaf(lexeme) => {
+                Tree::Leaf(lexeme) => {
                     format!("{}{lexeme}\n", "  ".repeat(depth + 1),)
                 }
-                Forest::Node { kind, leaves } => {
+                Tree::Node { kind, leaves } => {
                     let mut result = String::new();
                     result += &format!("{}{kind}\n", "  ".repeat(depth));
                     for leaf in leaves {
                         result += &recurse(
                             depth
                                 + match leaf {
-                                    Forest::Leaf { .. } => 0,
-                                    Forest::Node { .. } => 1,
-                                    Forest::Nodes { .. } => 1,
+                                    Tree::Leaf { .. } => 0,
+                                    Tree::Node { .. } => 1,
                                 },
                             leaf,
-                        );
-                    }
-
-                    result
-                }
-                Forest::Nodes { options } => {
-                    let mut result = String::new();
-                    result += &format!("{}nodes\n", "  ".repeat(depth));
-                    for option in options {
-                        result += &recurse(
-                            depth
-                                + match option {
-                                    Forest::Leaf { .. } => 0,
-                                    Forest::Node { .. } => 1,
-                                    Forest::Nodes { .. } => 1,
-                                },
-                            option,
                         );
                     }
 
@@ -69,7 +58,7 @@ pub(crate) fn build_forest(
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
     state: &ParserState,
-) -> Vec<Forest> {
+) -> Vec<Tree> {
     build_forest_helper(
         rules,
         lexemes,
@@ -86,13 +75,13 @@ fn build_forest_helper(
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
 
-    leaves: Vec<Forest>,
+    leaves: Vec<Tree>,
     state: &ParserState,
     symbol_index: usize,
     end_column: usize,
-) -> Vec<Forest> {
+) -> Vec<Tree> {
     if symbol_index == usize::MAX {
-        return vec![Forest::Node { kind: state.name.clone(), leaves }];
+        return vec![Tree::Node { kind: state.name.clone(), leaves }];
     }
 
     let mut forests = Vec::new();
@@ -100,7 +89,7 @@ fn build_forest_helper(
         Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
             let mut leaves = leaves;
-            let mut leaves_extended = vec![Forest::Leaf(lexeme.clone())];
+            let mut leaves_extended = vec![Tree::Leaf(lexeme.clone())];
             leaves_extended.append(&mut leaves);
 
             for node in build_forest_helper(

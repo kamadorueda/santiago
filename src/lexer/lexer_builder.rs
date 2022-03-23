@@ -21,10 +21,16 @@ impl Default for LexerBuilder {
 }
 
 impl LexerBuilder {
+    /// Creates a new [LexerBuilder] with no rules.
     pub fn new() -> LexerBuilder {
         LexerBuilder { table: Vec::new() }
     }
 
+    /// Add a rule that will be active
+    /// when the current [Lexer] state matches any of `states`,
+    /// with name `name`,
+    /// that matches exactly the content of `string`,
+    /// and performs the provided `action`.
     pub fn string(
         &mut self,
         states: &[&str],
@@ -48,6 +54,11 @@ impl LexerBuilder {
         self
     }
 
+    /// Add a rule that will be active
+    /// when the current [Lexer] state matches any of `states`,
+    /// with name `name`,
+    /// that matches the regular expression `pattern`,
+    /// and performs the provided `action`.
     #[cfg(feature = "crate_regex")]
     pub fn pattern(
         &mut self,
@@ -71,6 +82,7 @@ impl LexerBuilder {
         self
     }
 
+    /// Return the created [LexerRule]s.
     pub fn finish(&self) -> Vec<LexerRule> {
         self.table.clone()
     }

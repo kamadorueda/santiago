@@ -5,7 +5,7 @@ use santiago::lexer::lex;
 use santiago::lexer::Lexeme;
 use santiago::lexer::LexerRule;
 use santiago::parser::parse;
-use santiago::parser::Forest;
+use santiago::parser::Tree;
 
 fn main() -> Result<(), String> {
     let lexing_rules: Vec<LexerRule> = lexer_rules();
@@ -19,7 +19,7 @@ fn main() -> Result<(), String> {
         println!("  {lexeme}");
     }
 
-    let abstract_syntax_trees: Vec<Forest> = parse(&grammar_rules, &lexemes)?;
+    let abstract_syntax_trees: Vec<Tree> = parse(&grammar_rules, &lexemes)?;
 
     println!("AST:");
     for ast in abstract_syntax_trees {

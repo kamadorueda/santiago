@@ -41,12 +41,6 @@ impl std::cmp::PartialEq for Position {
     }
 }
 
-impl std::default::Default for Position {
-    fn default() -> Position {
-        Position::new()
-    }
-}
-
 impl std::fmt::Display for Position {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
@@ -70,9 +64,5 @@ impl Position {
                 self.column += 1;
             }
         }
-    }
-
-    pub fn new() -> Position {
-        Position { column: 1, byte_index: 0, line: 1 }
     }
 }

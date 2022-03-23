@@ -31,10 +31,13 @@ pub struct Lexer<'a> {
     states_stack:      LinkedList<&'a str>,
 }
 
-/// Return type of a rule action
+/// Return type of a [LexerRule] action.
 pub enum NextLexeme {
+    /// We returned part of a [Lexeme] in the form (kind, raw).
     Lexeme((String, String)),
+    /// Instructs the [Lexer] that the current [Lexeme] has been skipped.
     Skip,
+    /// Instructs the [Lexer] that we reached the end of the input.
     Finished,
 }
 
@@ -60,7 +63,7 @@ impl<'a> Lexer<'a> {
             }
 
             // Pick matches with the same maximum length
-            // And take the first rule declared
+            // and take the first rule declared.
             let max_len = matches_
                 .iter()
                 .max_by(|left, right| left.0.cmp(&right.0))
@@ -81,15 +84,20 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    /// Return the current match contents.
     pub fn matched(&self) -> &str {
         &self.input[self.position.byte_index
             ..self.position.byte_index + self.current_match_len]
     }
 
+    /// Instructs the [Lexer] that we want to include [Lexer::matched()]
+    /// in the final [Lexeme]s.
     pub fn take(&mut self) -> NextLexeme {
         self.take_and_map(|matched| matched.to_string())
     }
 
+    /// As [Lexer::take()]
+    /// but applying `function` over [Lexer::matched()] first.
     pub fn take_and_map(&mut self, function: fn(&str) -> String) -> NextLexeme {
         let matched = self.matched().to_string();
         self.position.consume(&matched);
@@ -100,6 +108,8 @@ impl<'a> Lexer<'a> {
         NextLexeme::Lexeme((kind, raw))
     }
 
+    /// Instructs the [Lexer] that we don't want to include [Lexer::matched()]
+    /// in the final [Lexeme]s.
     pub fn skip(&mut self) -> NextLexeme {
         let matched = self.matched().to_string();
         self.position.consume(&matched);
@@ -107,10 +117,19 @@ impl<'a> Lexer<'a> {
         NextLexeme::Skip
     }
 
+    /// Instructs the [Lexer] that we want to include [Lexer::matched()]
+    /// in the final [Lexeme]s
+    /// and that we want the current input position
+    /// to be set to the start of this [Lexeme],
+    /// so that it's matched again.
+    ///
+    /// This can be useful after a [Lexer::push_state()] for instance.
     pub fn take_and_retry(&mut self) -> NextLexeme {
         self.take_and_map_and_retry(|matched| matched.to_string())
     }
 
+    /// As [Lexer::take_and_retry()]
+    /// but applying `function` over [Lexer::matched()] first.
     pub fn take_and_map_and_retry(
         &mut self,
         function: fn(&str) -> String,
@@ -123,22 +142,33 @@ impl<'a> Lexer<'a> {
         NextLexeme::Lexeme((kind, raw))
     }
 
+    /// Instructs the [Lexer] that we don't want to include [Lexer::matched()]
+    /// in the final [Lexeme]s
+    /// and that we want the current input position
+    /// to be set to the start of this [Lexeme],
+    /// so that it's matched again.
+    ///
+    /// This can be useful after a [Lexer::push_state()] for instance.
     pub fn skip_and_retry(&mut self) -> NextLexeme {
         NextLexeme::Skip
     }
 
+    /// Returns the current state of the [Lexer].
     pub fn current_state(&mut self) -> &str {
         self.states_stack.back().unwrap()
     }
 
+    /// Goes back to the previous [Lexer] state.
     pub fn pop_state(&mut self) {
         self.states_stack.pop_back();
     }
 
+    /// Pushes a new state into the [Lexer] stack.
     pub fn push_state(&mut self, state: &'a str) {
         self.states_stack.push_back(state);
     }
 
+    /// Tells the [Lexer] that we found an error.
     pub fn error(&mut self, msg: &str) -> NextLexeme {
         panic!(
             "\n\n{}\nWhile lexing input: {:?}\nAt rule: {}\nAt position: \
@@ -158,7 +188,7 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         input,
         current_match_len: 0,
         current_rule_name: "",
-        position: Position::new(),
+        position: Position { column: 1, byte_index: 0, line: 1 },
         states_stack: LinkedList::new(),
     };
 

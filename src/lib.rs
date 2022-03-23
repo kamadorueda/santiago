@@ -8,7 +8,7 @@
 #![deny(rustdoc::invalid_html_tags)]
 #![deny(rustdoc::invalid_rust_codeblocks)]
 #![deny(rustdoc::missing_crate_level_docs)]
-// #![warn(missing_docs)]
+#![warn(missing_docs)]
 #![deny(rustdoc::private_intra_doc_links)]
 #![deny(rustdoc::private_doc_tests)]
 //! Santiago is a lexing and parsing toolkit for Rust.
@@ -103,9 +103,8 @@
 //!         r#"      PLUS "+" (1, 9)"#,
 //!         r#"    sum"#,
 //!         r#"      INT "33" (1, 11)"#,
-//!         r#""#
 //!     ],
-//!     ast.to_string().split('\n').collect::<Vec<&str>>(),
+//!     ast.to_string().lines().collect::<Vec<&str>>(),
 //! );
 //! ```
 //!

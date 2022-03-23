@@ -3,6 +3,73 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 //! Lexer and Parser for the [Nix expression language](https://nixos.org/).
+//!
+//! ```rust
+//! let input = "let var = 123; in var";
+//!
+//! let lexer_rules = santiago::languages::nix::lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
+//!
+//! assert_eq!(
+//!     vec![
+//!         // kind raw (line, column)
+//!         r#"LET "let" (1, 1)"#,
+//!         r#"ID "var" (1, 5)"#,
+//!         r#"= "=" (1, 9)"#,
+//!         r#"INT "123" (1, 11)"#,
+//!         r#"; ";" (1, 14)"#,
+//!         r#"IN "in" (1, 16)"#,
+//!         r#"ID "var" (1, 19)"#,
+//!     ],
+//!     lexemes
+//!         .iter()
+//!         .map(santiago::lexer::Lexeme::to_string)
+//!         .collect::<Vec<String>>()
+//! );
+//!
+//! let grammar_rules = santiago::languages::nix::grammar_rules(&lexer_rules);
+//!
+//! let ast = &santiago::parser::parse(&grammar_rules, &lexemes).unwrap()[0];
+//! assert_eq!(
+//!     vec![
+//!         r#"Γ"#,
+//!         r#"  expr"#,
+//!         r#"    expr_function"#,
+//!         r#"      LET"#,
+//!         r#"        LET "let" (1, 1)"#,
+//!         r#"      binds"#,
+//!         r#"        binds"#,
+//!         r#"        attrpath"#,
+//!         r#"          attr"#,
+//!         r#"            ID"#,
+//!         r#"              ID "var" (1, 5)"#,
+//!         r#"        ="#,
+//!         r#"          = "=" (1, 9)"#,
+//!         r#"        expr"#,
+//!         r#"          expr_function"#,
+//!         r#"            expr_if"#,
+//!         r#"              expr_op"#,
+//!         r#"                expr_app"#,
+//!         r#"                  expr_select"#,
+//!         r#"                    expr_simple"#,
+//!         r#"                      INT"#,
+//!         r#"                        INT "123" (1, 11)"#,
+//!         r#"        ;"#,
+//!         r#"          ; ";" (1, 14)"#,
+//!         r#"      IN"#,
+//!         r#"        IN "in" (1, 16)"#,
+//!         r#"      expr_function"#,
+//!         r#"        expr_if"#,
+//!         r#"          expr_op"#,
+//!         r#"            expr_app"#,
+//!         r#"              expr_select"#,
+//!         r#"                expr_simple"#,
+//!         r#"                  ID"#,
+//!         r#"                    ID "var" (1, 19)"#,
+//!     ],
+//!     ast.to_string().lines().collect::<Vec<&str>>(),
+//! );
+//! ```
 
 use crate::def;
 use crate::grammar::GrammarBuilder;
@@ -22,6 +89,7 @@ def!(HPATH_START, r"\~/");
 def!(SPATH, concat!(r"<", PATH_CHAR!(), r"+(/", PATH_CHAR!(), r"+)*>"));
 def!(URI, r"[a-zA-Z][a-zA-Z0-9\+\-\.]*:[a-zA-Z0-9%/\?:@\&=\+\$,\-_\.!\~\*']+");
 
+/// Build a set of lexer rules for The Nix Expression Language.
 pub fn lexer_rules() -> Vec<LexerRule> {
     LexerBuilder::new()
         .string(&["DEFAULT", "INITIAL"], "IF", "if", |lexer| lexer.take())
@@ -262,6 +330,7 @@ pub fn lexer_rules() -> Vec<LexerRule> {
         .finish()
 }
 
+/// Build a set of grammar rules for The Nix Expression Language.
 pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Vec<GrammarRule> {
     let mut builder = GrammarBuilder::new();
 
