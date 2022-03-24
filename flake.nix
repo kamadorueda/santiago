@@ -16,6 +16,7 @@
           cargo
           clippy
           jq
+          linuxPackages_latest.perf
           reuse
           rustc
         ];

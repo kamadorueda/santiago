@@ -68,12 +68,12 @@ impl LexerBuilder {
         action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
         let regex =
-            crate_regex::Regex::new(&format!("^(?:{pattern})")).unwrap();
+            crate_regex::Regex::new(&format!(r"\A(?:{pattern})")).unwrap();
 
         self.table.push(LexerRule {
             action:  Rc::new(action),
             matcher: Rc::new(move |input: &str| -> Option<usize> {
-                regex.find(input).map(|match_| match_.end())
+                regex.find_iter(input).map(|match_| match_.end()).next()
             }),
             name:    name.to_string(),
             states:  states.iter().map(|state| state.to_string()).collect(),

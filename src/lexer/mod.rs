@@ -86,8 +86,7 @@ impl<'a> Lexer<'a> {
 
     /// Return the current match contents.
     pub fn matched(&self) -> &str {
-        &self.input[self.position.byte_index
-            ..self.position.byte_index + self.current_match_len]
+        &self.input[self.position.byte_index..][..self.current_match_len]
     }
 
     /// Instructs the [Lexer] that we want to include [Lexer::matched()]

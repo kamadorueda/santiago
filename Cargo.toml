@@ -1,4 +1,6 @@
 [dependencies.crate_regex]
+default-features = false
+features = ["std", "perf-dfa", "perf-inline", "unicode"]
 optional = true
 package = "regex"
 version = "1"
@@ -23,3 +25,7 @@ license = "GPL-3.0-only"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
 version = "0.10.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
