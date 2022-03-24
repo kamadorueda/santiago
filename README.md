@@ -83,11 +83,3 @@ SPDX-License-Identifier: GPL-3.0-only
 
 Just read the [docs](https://docs.rs/santiago), we have plenty of examples over there,
 plus detailed explanation of each component.
-
-## Short term goals
-
-In order:
-
-1. Enforce resolving ambiguities in the input grammar.
-
-1. Release `1.0.0`.
