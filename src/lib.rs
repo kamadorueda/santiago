@@ -86,8 +86,67 @@
 //!     .finish();
 //!
 //! // With this we can now parse the input
-//! // and get the [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree):
-//! let ast = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! // and get the [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
+//! //
+//! // Note that since our grammar is ambiguous (for now),
+//! // Santiago will return all possible parses of the input:
+//! let abstract_syntax_trees = &santiago::parser::parse(&grammar, &lexemes).unwrap();
+//!
+//! assert_eq!(abstract_syntax_trees.len(), 2);
+//! assert_eq!(
+//!     vec![
+//!         // Option 1: (11 + 22) + 33
+//!         r#"Γ"#,
+//!         r#"  sum"#,
+//!         r#"    sum"#,
+//!         r#"      sum"#,
+//!         r#"        INT "11" (1, 1)"#,
+//!         r#"      plus"#,
+//!         r#"        PLUS "+" (1, 4)"#,
+//!         r#"      sum"#,
+//!         r#"        INT "22" (1, 6)"#,
+//!         r#"    plus"#,
+//!         r#"      PLUS "+" (1, 9)"#,
+//!         r#"    sum"#,
+//!         r#"      INT "33" (1, 11)"#,
+//!
+//!         // Option 2: 11 + (22 + 33)
+//!         r#"Γ"#,
+//!         r#"  sum"#,
+//!         r#"    sum"#,
+//!         r#"      INT "11" (1, 1)"#,
+//!         r#"    plus"#,
+//!         r#"      PLUS "+" (1, 4)"#,
+//!         r#"    sum"#,
+//!         r#"      sum"#,
+//!         r#"        INT "22" (1, 6)"#,
+//!         r#"      plus"#,
+//!         r#"        PLUS "+" (1, 9)"#,
+//!         r#"      sum"#,
+//!         r#"        INT "33" (1, 11)"#
+//!     ],
+//!     abstract_syntax_trees.iter()
+//!         .map(|ast| ast.to_string())
+//!         .collect::<String>()
+//!         .lines()
+//!         .collect::<Vec<&str>>(),
+//! );
+//!
+//! // Removing ambiguities from a grammar is not a problem.
+//! // Let's add a few disambiguation rules at the end of our grammar:
+//! let grammar = santiago::grammar::GrammarBuilder::new()
+//!     .rule_to_rules("sum", &["sum", "plus", "sum"])
+//!     .rule_to_lexemes("sum", &["INT"])
+//!     .rule_to_lexemes("plus", &["PLUS"])
+//!     // Specify that we want the "plus" rule to be left-associative.
+//!     // In other words: `a+b+c` should group as `(a+b)+c`.
+//!     .disambiguate(santiago::grammar::Associativity::Left, &["plus"])
+//!     .finish();
+//!
+//! // Now parse!
+//! let abstract_syntax_trees = &santiago::parser::parse(&grammar, &lexemes).unwrap();
+//!
+//! assert_eq!(abstract_syntax_trees.len(), 1);
 //! assert_eq!(
 //!     vec![
 //!         r#"Γ"#,
@@ -104,7 +163,11 @@
 //!         r#"    sum"#,
 //!         r#"      INT "33" (1, 11)"#,
 //!     ],
-//!     ast.to_string().lines().collect::<Vec<&str>>(),
+//!     abstract_syntax_trees.iter()
+//!         .map(|ast| ast.to_string())
+//!         .collect::<String>()
+//!         .lines()
+//!         .collect::<Vec<&str>>(),
 //! );
 //! ```
 //!
@@ -143,7 +206,6 @@
 //! ## Example: Smallest lexer possible
 //!
 //! This lexer will copy char by char the input
-//!
 //! ```rust
 //! let input = "abc";
 //!
@@ -168,7 +230,6 @@
 //! ```
 //!
 //! ## Example: JavaScript string interpolations:
-//!
 //! ```rust
 //! let input = "    `a${ variable }b`    ";
 //!
@@ -250,7 +311,6 @@
 //!
 //! For example, a language that recognizes "numbers",
 //! which can be of integer or float type:
-//!
 //! ```rust
 //! santiago::grammar::GrammarBuilder::new()
 //!     // A `number` can be an `int` or a `float`
@@ -267,7 +327,6 @@
 //! For instance, the following example references a rule
 //! that is not defined later in the grammar,
 //! which constitutes an error:
-//!
 //! ```should_panic
 //! // Map rule `A` to `B` and don't define rule B:
 //! santiago::grammar::GrammarBuilder::new()
