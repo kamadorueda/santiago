@@ -84,7 +84,8 @@ fn build_forest_helper(
         return vec![Tree::Node { kind: state.name.clone(), leaves }];
     }
 
-    let mut forests = Vec::new();
+    let mut forest = Vec::new();
+
     match &state.production.symbols[symbol_index] {
         Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
@@ -92,7 +93,7 @@ fn build_forest_helper(
             let mut leaves_extended = vec![Tree::Leaf(lexeme.clone())];
             leaves_extended.append(&mut leaves);
 
-            for node in build_forest_helper(
+            for tree in build_forest_helper(
                 grammar,
                 lexemes,
                 columns,
@@ -101,7 +102,7 @@ fn build_forest_helper(
                 symbol_index.overflowing_sub(1).0,
                 state.end_column - 1,
             ) {
-                forests.push(node);
+                forest.push(tree);
             }
         }
         Symbol::Rule(name) => {
@@ -113,65 +114,18 @@ fn build_forest_helper(
                 if state_partial.name != *name
                     || (symbol_index == 0
                         && state_partial.start_column != state.start_column)
+                    || !satisfies_disambiguation(grammar, state_partial, state)
                 {
                     continue;
                 }
 
-                if state_partial.production.symbols.len() == 3
-                    && state.production.symbols.len() == 3
+                for alternative in
+                    build_forest(grammar, lexemes, columns, state_partial)
                 {
-                    if let (Symbol::Rule(name_partial), Symbol::Rule(name)) = (
-                        &state_partial.production.symbols[1],
-                        &state.production.symbols[1],
-                    ) {
-                        if let (Some(rule_partial), Some(rule)) = (
-                            grammar.rules.get(name_partial),
-                            grammar.rules.get(name),
-                        ) {
-                            if let (
-                                Some(disambiguation_partial),
-                                Some(disambiguation),
-                            ) = (
-                                &rule_partial.disambiguation,
-                                &rule.disambiguation,
-                            ) {
-                                if disambiguation_partial.precedence
-                                    < disambiguation.precedence
-                                {
-                                    continue;
-                                }
-
-                                if disambiguation_partial.precedence
-                                    == disambiguation.precedence
-                                {
-                                    if state_partial.end_column
-                                        == state.end_column
-                                        && disambiguation_partial.associativity
-                                            == Associativity::Left
-                                    {
-                                        continue;
-                                    }
-
-                                    if state_partial.start_column
-                                        == state.start_column
-                                        && disambiguation.associativity
-                                            == Associativity::Right
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                let alternatives =
-                    build_forest(grammar, lexemes, columns, state_partial);
-
-                for alternative in alternatives {
                     let mut leaves_extended = vec![alternative];
                     leaves_extended.append(&mut leaves.clone());
 
-                    for node in build_forest_helper(
+                    for tree in build_forest_helper(
                         grammar,
                         lexemes,
                         columns,
@@ -180,12 +134,60 @@ fn build_forest_helper(
                         symbol_index.overflowing_sub(1).0,
                         state_partial.start_column,
                     ) {
-                        forests.push(node);
+                        forest.push(tree);
                     }
                 }
             }
         }
     }
 
-    forests
+    forest
+}
+
+fn satisfies_disambiguation(
+    grammar: &Grammar,
+    state_partial: &ParserState,
+    state: &ParserState,
+) -> bool {
+    if state_partial.production.symbols.len() == 3
+        && state.production.symbols.len() == 3
+    {
+        if let (Symbol::Rule(name_partial), Symbol::Rule(name)) =
+            (&state_partial.production.symbols[1], &state.production.symbols[1])
+        {
+            if let (Some(rule_partial), Some(rule)) =
+                (grammar.rules.get(name_partial), grammar.rules.get(name))
+            {
+                if let (Some(disambiguation_partial), Some(disambiguation)) =
+                    (&rule_partial.disambiguation, &rule.disambiguation)
+                {
+                    if disambiguation_partial.precedence
+                        < disambiguation.precedence
+                    {
+                        return false;
+                    }
+
+                    if disambiguation_partial.precedence
+                        == disambiguation.precedence
+                    {
+                        if state_partial.end_column == state.end_column
+                            && disambiguation_partial.associativity
+                                == Associativity::Left
+                        {
+                            return false;
+                        }
+
+                        if state_partial.start_column == state.start_column
+                            && disambiguation.associativity
+                                == Associativity::Right
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    true
 }
