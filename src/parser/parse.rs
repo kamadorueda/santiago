@@ -45,19 +45,17 @@ fn complete(
     column_index: usize,
     state: &ParserState,
 ) {
-    if state.completed() {
-        for st in &columns[state.start_column].states.clone() {
-            if let Some(Symbol::Rule(name)) = st.next_symbol() {
-                if name == state.name {
-                    let state = ParserState {
-                        name:         st.name.clone(),
-                        production:   st.production.clone(),
-                        start_column: st.start_column,
-                        end_column:   usize::MAX,
-                        dot_index:    st.dot_index + 1,
-                    };
-                    columns[column_index].add(state);
-                }
+    for st in &columns[state.start_column].states.clone() {
+        if let Some(Symbol::Rule(name)) = st.next_symbol() {
+            if name == state.name {
+                let state = ParserState {
+                    name:         st.name.clone(),
+                    production:   st.production.clone(),
+                    start_column: st.start_column,
+                    end_column:   usize::MAX,
+                    dot_index:    st.dot_index + 1,
+                };
+                columns[column_index].add(state);
             }
         }
     }
