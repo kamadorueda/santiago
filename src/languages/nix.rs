@@ -72,6 +72,7 @@
 //! ```
 
 use crate::def;
+use crate::grammar::Associativity;
 use crate::grammar::GrammarBuilder;
 use crate::grammar::GrammarRule;
 use crate::lexer::LexerBuilder;
@@ -534,6 +535,19 @@ pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Vec<GrammarRule> {
     for lexing_rule in lexer_rules {
         builder.rule_to_lexemes(&lexing_rule.name, &[&lexing_rule.name]);
     }
+
+    builder.disambiguate(Associativity::Right, &["IMPL"]);
+    builder.disambiguate(Associativity::Left, &["OR"]);
+    builder.disambiguate(Associativity::Left, &["AND"]);
+    builder.disambiguate(Associativity::None, &["EQ", "NEQ"]);
+    builder.disambiguate(Associativity::None, &["<", ">", "LEQ", "GEQ"]);
+    builder.disambiguate(Associativity::Right, &["UPDATE"]);
+    // builder.disambiguate(Associativity::Left, &["NOT"]);
+    builder.disambiguate(Associativity::Left, &["+", "-"]);
+    builder.disambiguate(Associativity::Left, &["*", "/"]);
+    builder.disambiguate(Associativity::Right, &["CONCAT"]);
+    builder.disambiguate(Associativity::None, &["?"]);
+    // builder.disambiguate(Associativity::None, &["NEGATE"]);
 
     builder.finish()
 }

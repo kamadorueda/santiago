@@ -165,7 +165,6 @@ fn build_forest_helper(
                             }
                         }
                     }
-                    println!("{state_partial} | {state}");
                 }
                 let alternatives =
                     build_forest(rules, lexemes, columns, state_partial);
