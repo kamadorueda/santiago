@@ -16,25 +16,27 @@ const START_RULE_NAME: &str = "Γ";
 
 fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     for production in &rule.productions {
-        column.add(ParserState {
+        let state = ParserState {
             name:         rule.name.clone(),
             production:   production.clone(),
             dot_index:    0,
             start_column: column.index,
             end_column:   usize::MAX,
-        });
+        };
+        column.add(state);
     }
 }
 
 fn scan(column: &mut ParserColumn, state: &ParserState, kind: &str) {
     if kind == column.kind {
-        column.add(ParserState {
+        let state = ParserState {
             name:         state.name.clone(),
             production:   state.production.clone(),
             start_column: state.start_column,
             end_column:   usize::MAX,
             dot_index:    state.dot_index + 1,
-        });
+        };
+        column.add(state);
     }
 }
 
@@ -47,13 +49,14 @@ fn complete(
         for st in &columns[state.start_column].states.clone() {
             if let Some(Symbol::Rule(name)) = st.next_symbol() {
                 if name == state.name {
-                    columns[column_index].add(ParserState {
+                    let state = ParserState {
                         name:         st.name.clone(),
                         production:   st.production.clone(),
                         start_column: st.start_column,
                         end_column:   usize::MAX,
                         dot_index:    st.dot_index + 1,
-                    });
+                    };
+                    columns[column_index].add(state);
                 }
             }
         }

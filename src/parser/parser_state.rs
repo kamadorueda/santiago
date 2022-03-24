@@ -29,7 +29,11 @@ impl std::fmt::Display for ParserState {
             self.name,
             symbols.join(" "),
             self.start_column,
-            self.end_column,
+            if self.end_column == usize::MAX {
+                "".to_string()
+            } else {
+                self.end_column.to_string()
+            },
         )
     }
 }
