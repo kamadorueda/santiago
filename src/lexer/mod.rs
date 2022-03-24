@@ -24,11 +24,12 @@ use std::collections::LinkedList;
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
 pub struct Lexer<'a> {
-    input:             &'a str,
-    current_match_len: usize,
-    current_rule_name: &'a str,
-    position:          Position,
-    states_stack:      LinkedList<&'a str>,
+    input:              &'a str,
+    current_byte_index: usize,
+    current_match_len:  usize,
+    current_rule_name:  &'a str,
+    position:           Position,
+    states_stack:       LinkedList<&'a str>,
 }
 
 /// Return type of a [LexerRule] action.
@@ -43,9 +44,9 @@ pub enum NextLexeme {
 
 impl<'a> Lexer<'a> {
     fn next_lexeme(&mut self, rules: &'a [LexerRule]) -> NextLexeme {
-        if self.position.byte_index < self.input.len() {
+        if self.current_byte_index < self.input.len() {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
-            let input = &self.input[self.position.byte_index..];
+            let input = &self.input[self.current_byte_index..];
             let state = self.states_stack.back().unwrap();
 
             for (rule_index, rule) in rules.iter().enumerate() {
@@ -86,7 +87,7 @@ impl<'a> Lexer<'a> {
 
     /// Return the current match contents.
     pub fn matched(&self) -> &str {
-        &self.input[self.position.byte_index..][..self.current_match_len]
+        &self.input[self.current_byte_index..][..self.current_match_len]
     }
 
     /// Instructs the [Lexer] that we want to include [Lexer::matched()]
@@ -100,6 +101,7 @@ impl<'a> Lexer<'a> {
     pub fn take_and_map(&mut self, function: fn(&str) -> String) -> NextLexeme {
         let matched = self.matched().to_string();
         self.position.consume(&matched);
+        self.current_byte_index += self.current_match_len;
 
         let kind = self.current_rule_name.to_string();
         let raw = function(&matched);
@@ -112,6 +114,7 @@ impl<'a> Lexer<'a> {
     pub fn skip(&mut self) -> NextLexeme {
         let matched = self.matched().to_string();
         self.position.consume(&matched);
+        self.current_byte_index += self.current_match_len;
 
         NextLexeme::Skip
     }
@@ -185,9 +188,10 @@ impl<'a> Lexer<'a> {
 pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
     let mut lexer = Lexer {
         input,
+        current_byte_index: 0,
         current_match_len: 0,
         current_rule_name: "",
-        position: Position { column: 1, byte_index: 0, line: 1 },
+        position: Position { column: 1, line: 1 },
         states_stack: LinkedList::new(),
     };
 
