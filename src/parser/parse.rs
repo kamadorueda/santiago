@@ -42,19 +42,32 @@ fn complete(
     column_index: usize,
     state: &ParserState,
 ) {
-    for st in &columns[state.start_column].states.clone() {
-        if let Some(Symbol::Rule(name)) = st.next_symbol() {
-            if name == state.name {
-                let state = ParserState {
-                    name:         st.name.clone(),
-                    production:   st.production.clone(),
-                    start_column: st.start_column,
-                    end_column:   usize::MAX,
-                    dot_index:    st.dot_index + 1,
-                };
-                columns[column_index].add(state);
+    let indexes: Vec<usize> = columns[state.start_column]
+        .states
+        .iter()
+        .enumerate()
+        .filter_map(|(index, st)| match st.next_symbol() {
+            Some(Symbol::Rule(name)) => {
+                if name == state.name {
+                    Some(index)
+                } else {
+                    None
+                }
             }
-        }
+            _ => None,
+        })
+        .collect();
+
+    for index in indexes {
+        let st = &columns[state.start_column].states[index];
+        let parser_state = ParserState {
+            name:         st.name.clone(),
+            production:   st.production.clone(),
+            start_column: st.start_column,
+            end_column:   usize::MAX,
+            dot_index:    st.dot_index + 1,
+        };
+        columns[column_index].add(parser_state);
     }
 }
 
@@ -123,8 +136,12 @@ pub fn parse(
     }
 
     for column in columns.iter_mut() {
-        column.states =
-            column.states.iter().filter(|c| c.completed()).cloned().collect();
+        column.states = column
+            .states
+            .iter()
+            .filter(|state| state.completed())
+            .cloned()
+            .collect();
     }
 
     // println!();
