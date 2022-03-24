@@ -26,29 +26,38 @@ fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     }
 }
 
-fn scan(column: &mut ParserColumn, state: &ParserState) {
-    let state = ParserState {
+fn scan(
+    columns: &mut Vec<ParserColumn>,
+    column_index: usize,
+    state_index: usize,
+) {
+    let state = &columns[column_index].states[state_index];
+    let new_state = ParserState {
         name:         state.name.clone(),
         production:   state.production.clone(),
         start_column: state.start_column,
         end_column:   usize::MAX,
         dot_index:    state.dot_index + 1,
     };
-    column.add(state);
+    columns[column_index + 1].add(new_state);
 }
 
 fn complete(
     columns: &mut Vec<ParserColumn>,
     column_index: usize,
-    state: &ParserState,
+    state_index: usize,
 ) {
-    let indexes: Vec<usize> = columns[state.start_column]
+    let state_name = &columns[column_index].states[state_index].name;
+    let state_start_column =
+        columns[column_index].states[state_index].start_column;
+
+    let indexes: Vec<usize> = columns[state_start_column]
         .states
         .iter()
         .enumerate()
         .filter_map(|(index, st)| match st.next_symbol() {
             Some(Symbol::Rule(name)) => {
-                if name == state.name {
+                if name == *state_name {
                     Some(index)
                 } else {
                     None
@@ -59,7 +68,7 @@ fn complete(
         .collect();
 
     for index in indexes {
-        let st = &columns[state.start_column].states[index];
+        let st = &columns[state_start_column].states[index];
         let parser_state = ParserState {
             name:         st.name.clone(),
             production:   st.production.clone(),
@@ -110,10 +119,10 @@ pub fn parse(
         let mut state_len = columns[column_index].states.len();
 
         while state_index < state_len {
-            let state = columns[column_index].states[state_index].clone();
+            let state = &columns[column_index].states[state_index];
 
-            if state.completed() {
-                complete(&mut columns, column_index, &state);
+            if columns[column_index].states[state_index].completed() {
+                complete(&mut columns, column_index, state_index);
             } else {
                 match state.next_symbol().unwrap() {
                     Symbol::Rule(name) => {
@@ -124,7 +133,7 @@ pub fn parse(
                         if column_index + 1 < columns.len()
                             && kind == columns[column_index + 1].kind
                         {
-                            scan(&mut columns[column_index + 1], &state);
+                            scan(&mut columns, column_index, state_index);
                         }
                     }
                 }
