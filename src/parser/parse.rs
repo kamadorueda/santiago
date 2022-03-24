@@ -97,7 +97,7 @@ pub fn parse(
         .collect();
 
     let name = START_RULE_NAME.to_string();
-    columns[0].states.push(ParserState {
+    columns[0].add(ParserState {
         name:         name.clone(),
         production:   grammar.rules.get(&name).unwrap().productions[0].clone(),
         start_column: 0,
