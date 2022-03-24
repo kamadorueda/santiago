@@ -73,8 +73,8 @@
 
 use crate::def;
 use crate::grammar::Associativity;
+use crate::grammar::Grammar;
 use crate::grammar::GrammarBuilder;
-use crate::grammar::GrammarRule;
 use crate::lexer::LexerBuilder;
 use crate::lexer::LexerRule;
 
@@ -332,7 +332,7 @@ pub fn lexer_rules() -> Vec<LexerRule> {
 }
 
 /// Build a set of grammar rules for The Nix Expression Language.
-pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Vec<GrammarRule> {
+pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Grammar {
     let mut builder = GrammarBuilder::new();
 
     for (kind, rules) in &[

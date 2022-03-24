@@ -4,16 +4,19 @@
 
 use crate::grammar::Associativity;
 use crate::grammar::Disambiguation;
+use crate::grammar::Grammar;
 use crate::grammar::GrammarRule;
 use crate::grammar::Production;
 use crate::grammar::Symbol;
+use crate::grammar::START_RULE_NAME;
+use std::collections::HashMap;
 
 /// Utility for creating [grammar rules](GrammarRule).
 ///
 /// Please read the [module documentation](crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
     current_precedence: usize,
-    grammar:            Vec<GrammarRule>,
+    grammar:            Grammar,
 }
 
 impl Default for GrammarBuilder {
@@ -25,23 +28,33 @@ impl Default for GrammarBuilder {
 impl GrammarBuilder {
     /// Creates a new [GrammarBuilder] with no rules.
     pub fn new() -> GrammarBuilder {
-        GrammarBuilder { current_precedence: 0, grammar: Vec::new() }
+        GrammarBuilder {
+            current_precedence: 0,
+            grammar:            Grammar { rules: HashMap::new() },
+        }
     }
 
     fn rule_to_symbols(&mut self, rule_name: &str, symbols: Vec<Symbol>) {
         let rule_name = rule_name.to_string();
         let production = Production { symbols };
 
-        match self.grammar.iter().position(|rule| rule.name == rule_name) {
-            Some(index) => {
-                self.grammar[index].productions.push(production);
+        if self.grammar.rules.is_empty() && rule_name != START_RULE_NAME {
+            self.rule_to_rules(START_RULE_NAME, &[&rule_name]);
+        }
+
+        match self.grammar.rules.get_mut(&rule_name) {
+            Some(rule) => {
+                rule.productions.push(production);
             }
             None => {
-                self.grammar.push(GrammarRule {
-                    name:           rule_name,
-                    disambiguation: None,
-                    productions:    vec![production],
-                });
+                self.grammar.rules.insert(
+                    rule_name.clone(),
+                    GrammarRule {
+                        name:           rule_name,
+                        disambiguation: None,
+                        productions:    vec![production],
+                    },
+                );
             }
         }
     }
@@ -91,17 +104,22 @@ impl GrammarBuilder {
         rule_names: &[&str],
     ) -> &mut GrammarBuilder {
         for rule_name in rule_names {
-            match self.grammar.iter().position(|rule| &rule.name == rule_name) {
-                Some(index) => {
-                    self.grammar[index].disambiguation = Some(Disambiguation {
+            let rule_name = rule_name.to_string();
+
+            match self.grammar.rules.get_mut(&rule_name) {
+                Some(rule) => {
+                    rule.disambiguation = Some(Disambiguation {
                         associativity: associativity.clone(),
                         precedence:    self.current_precedence,
                     })
                 }
-                None => panic!(
-                    "\n\nError while trying to disambiguate a rule with name: \
-                     {rule_name}\nWhich has not been previously defined.\n\n"
-                ),
+                None => {
+                    panic!(
+                        "\n\nError while trying to disambiguate a rule with \
+                         name: {rule_name}\nWhich has not been previously \
+                         defined.\n\n"
+                    );
+                }
             }
         }
 
@@ -110,24 +128,20 @@ impl GrammarBuilder {
         self
     }
 
-    /// Return the created [GrammarRule]s, performing a few validations first.
-    pub fn finish(&self) -> Vec<GrammarRule> {
-        for grammar_rule in &self.grammar {
-            for production in &grammar_rule.productions {
+    /// Return the created [Grammar], performing a few validations first.
+    pub fn finish(&self) -> Grammar {
+        for (rule_name, rule) in self.grammar.rules.iter() {
+            for production in &rule.productions {
                 for symbol in &production.symbols {
                     match &symbol {
                         Symbol::Rule(name) => {
-                            if !self
-                                .grammar
-                                .iter()
-                                .any(|grammar_rule| grammar_rule.name == *name)
-                            {
+                            if !self.grammar.rules.contains_key(name) {
                                 panic!(
-                                    "\n\nError at rule: {}\nIn production: \
-                                     {production}\nYour grammar references a \
-                                     rule with name: {name}\nBut this rule \
-                                     has not been defined in the grammar.\n\n",
-                                    grammar_rule.name,
+                                    "\n\nError at rule: {rule_name}\nIn \
+                                     production: {production}\nYour grammar \
+                                     references a rule with name: {name}\nBut \
+                                     this rule has not been defined in the \
+                                     grammar.\n\n",
                                 )
                             }
                         }

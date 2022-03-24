@@ -18,4 +18,17 @@ pub use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
 pub use grammar_rule::GrammarRule;
 pub(crate) use production::Production;
+use std::collections::HashMap;
 pub(crate) use symbol::Symbol;
+
+pub(crate) const START_RULE_NAME: &str = "Γ";
+
+/// Internal representation of a grammar.
+///
+/// [Grammar] is exposed so you can use its type and traits
+/// but normally you create a [Grammar]
+/// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
+#[derive(Clone)]
+pub struct Grammar {
+    pub(crate) rules: HashMap<String, GrammarRule>,
+}

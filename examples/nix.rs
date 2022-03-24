@@ -1,15 +1,13 @@
-use santiago::grammar::GrammarRule;
 use santiago::languages::nix::grammar_rules;
 use santiago::languages::nix::lexer_rules;
 use santiago::lexer::lex;
 use santiago::lexer::Lexeme;
-use santiago::lexer::LexerRule;
 use santiago::parser::parse;
 use santiago::parser::Tree;
 
 fn main() -> Result<(), String> {
-    let lexing_rules: Vec<LexerRule> = lexer_rules();
-    let grammar_rules: Vec<GrammarRule> = grammar_rules(&lexing_rules);
+    let lexing_rules = lexer_rules();
+    let grammar_rules = grammar_rules(&lexing_rules);
 
     let stdin = get_stdin();
     let lexemes: Vec<Lexeme> = lex(&lexing_rules, &stdin);

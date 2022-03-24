@@ -73,7 +73,7 @@ impl LexerBuilder {
         self.table.push(LexerRule {
             action:  Rc::new(action),
             matcher: Rc::new(move |input: &str| -> Option<usize> {
-                regex.find_iter(input).map(|match_| match_.end()).next()
+                regex.find_iter(input).take(1).map(|match_| match_.end()).next()
             }),
             name:    name.to_string(),
             states:  states.iter().map(|state| state.to_string()).collect(),

@@ -2,17 +2,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::grammar::Grammar;
 use crate::grammar::GrammarRule;
-use crate::grammar::Production;
 use crate::grammar::Symbol;
+use crate::grammar::START_RULE_NAME;
 use crate::lexer::Lexeme;
 use crate::parser::tree::build_forest;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use crate::parser::Tree;
 use std::collections::HashSet;
-
-const START_RULE_NAME: &str = "Γ";
 
 fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     for production in &rule.productions {
@@ -27,17 +26,15 @@ fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     }
 }
 
-fn scan(column: &mut ParserColumn, state: &ParserState, kind: &str) {
-    if kind == column.kind {
-        let state = ParserState {
-            name:         state.name.clone(),
-            production:   state.production.clone(),
-            start_column: state.start_column,
-            end_column:   usize::MAX,
-            dot_index:    state.dot_index + 1,
-        };
-        column.add(state);
-    }
+fn scan(column: &mut ParserColumn, state: &ParserState) {
+    let state = ParserState {
+        name:         state.name.clone(),
+        production:   state.production.clone(),
+        start_column: state.start_column,
+        end_column:   usize::MAX,
+        dot_index:    state.dot_index + 1,
+    };
+    column.add(state);
 }
 
 fn complete(
@@ -61,9 +58,9 @@ fn complete(
     }
 }
 
-/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar rules](GrammarRule)
+/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar]
 pub fn parse(
-    rules: &[GrammarRule],
+    grammar: &Grammar,
     lexemes: &[Lexeme],
 ) -> Result<Vec<Tree>, String> {
     let mut columns: Vec<ParserColumn> = (0..=lexemes.len())
@@ -86,11 +83,10 @@ pub fn parse(
         })
         .collect();
 
+    let name = START_RULE_NAME.to_string();
     columns[0].states.push(ParserState {
-        name:         START_RULE_NAME.to_string(),
-        production:   Production {
-            symbols: vec![Symbol::Rule(rules[0].name.clone())],
-        },
+        name:         name.clone(),
+        production:   grammar.rules.get(&name).unwrap().productions[0].clone(),
         start_column: 0,
         end_column:   usize::MAX,
         dot_index:    0,
@@ -108,15 +104,14 @@ pub fn parse(
             } else {
                 match state.next_symbol().unwrap() {
                     Symbol::Rule(name) => {
-                        let rule = rules
-                            .iter()
-                            .find(|rule| rule.name == name)
-                            .unwrap();
+                        let rule = grammar.rules.get(&name).unwrap();
                         predict(&mut columns[column_index], rule);
                     }
                     Symbol::Lexeme(kind) => {
-                        if column_index + 1 < columns.len() {
-                            scan(&mut columns[column_index + 1], &state, &kind);
+                        if column_index + 1 < columns.len()
+                            && kind == columns[column_index + 1].kind
+                        {
+                            scan(&mut columns[column_index + 1], &state);
                         }
                     }
                 }
@@ -143,7 +138,7 @@ pub fn parse(
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build_forest(rules, lexemes, &columns, state));
+            return Ok(build_forest(grammar, lexemes, &columns, state));
         }
     }
 
