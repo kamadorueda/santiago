@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 /// Ways in which repeated uses of rules with the same precedence nest.
 #[derive(Clone, Eq, PartialEq)]
 pub enum Associativity {
