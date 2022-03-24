@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::grammar::Disambiguation;
 use crate::grammar::Production;
 use std::hash::Hasher;
 
@@ -12,8 +13,9 @@ use std::hash::Hasher;
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
 pub struct GrammarRule {
-    pub(crate) name:        String,
-    pub(crate) productions: Vec<Production>,
+    pub(crate) name:           String,
+    pub(crate) disambiguation: Option<Disambiguation>,
+    pub(crate) productions:    Vec<Production>,
 }
 
 impl std::fmt::Display for GrammarRule {

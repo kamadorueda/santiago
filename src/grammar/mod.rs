@@ -6,11 +6,15 @@
 //!
 //! Please read the [crate documentation](crate) for more information and examples.
 
+mod associativity;
+mod disambiguation;
 mod grammar_builder;
 mod grammar_rule;
 mod production;
 mod symbol;
 
+pub use associativity::Associativity;
+pub use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
 pub use grammar_rule::GrammarRule;
 pub(crate) use production::Production;

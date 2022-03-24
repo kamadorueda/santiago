@@ -44,11 +44,7 @@ impl ParserState {
     }
 
     pub(crate) fn next_symbol(&self) -> Option<Symbol> {
-        if self.completed() {
-            None
-        } else {
-            Some(self.production.symbols[self.dot_index].clone())
-        }
+        self.production.symbols.get(self.dot_index).map(Symbol::clone)
     }
 
     pub(crate) fn hash_me(&self) -> u64 {

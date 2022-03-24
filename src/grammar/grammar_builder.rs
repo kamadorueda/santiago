@@ -2,15 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use super::grammar_rule::GrammarRule;
-use super::Production;
-use super::Symbol;
+use crate::grammar::Associativity;
+use crate::grammar::Disambiguation;
+use crate::grammar::GrammarRule;
+use crate::grammar::Production;
+use crate::grammar::Symbol;
 
 /// Utility for creating [grammar rules](GrammarRule).
 ///
 /// Please read the [module documentation](crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
-    grammar: Vec<GrammarRule>,
+    current_precedence: usize,
+    grammar:            Vec<GrammarRule>,
 }
 
 impl Default for GrammarBuilder {
@@ -22,20 +25,23 @@ impl Default for GrammarBuilder {
 impl GrammarBuilder {
     /// Creates a new [GrammarBuilder] with no rules.
     pub fn new() -> GrammarBuilder {
-        GrammarBuilder { grammar: Vec::new() }
+        GrammarBuilder { current_precedence: 0, grammar: Vec::new() }
     }
 
-    fn rule_to_symbols(&mut self, name: &str, symbols: Vec<Symbol>) {
-        let name = name.to_string();
+    fn rule_to_symbols(&mut self, rule_name: &str, symbols: Vec<Symbol>) {
+        let rule_name = rule_name.to_string();
         let production = Production { symbols };
 
-        match self.grammar.iter().position(|rule| rule.name == name) {
+        match self.grammar.iter().position(|rule| rule.name == rule_name) {
             Some(index) => {
                 self.grammar[index].productions.push(production);
             }
             None => {
-                self.grammar
-                    .push(GrammarRule { name, productions: vec![production] });
+                self.grammar.push(GrammarRule {
+                    name:           rule_name,
+                    disambiguation: None,
+                    productions:    vec![production],
+                });
             }
         }
     }
@@ -43,14 +49,14 @@ impl GrammarBuilder {
     /// Map a rule with name `name` to zero or more [crate::lexer::LexerRule].
     pub fn rule_to_lexemes(
         &mut self,
-        kind: &str,
+        lexeme_kind: &str,
         lexeme_kinds: &[&str],
     ) -> &mut GrammarBuilder {
         self.rule_to_symbols(
-            kind,
+            lexeme_kind,
             lexeme_kinds
                 .iter()
-                .map(|kind| Symbol::Lexeme(kind.to_string()))
+                .map(|lexeme_kind| Symbol::Lexeme(lexeme_kind.to_string()))
                 .collect(),
         );
 
@@ -60,16 +66,46 @@ impl GrammarBuilder {
     /// Map a rule with name `name` to zero or more [GrammarRule].
     pub fn rule_to_rules(
         &mut self,
-        name: &str,
+        rule_name: &str,
         rule_names: &[&str],
     ) -> &mut GrammarBuilder {
         self.rule_to_symbols(
-            name,
+            rule_name,
             rule_names
                 .iter()
-                .map(|name| Symbol::Rule(name.to_string()))
+                .map(|rule_name| Symbol::Rule(rule_name.to_string()))
                 .collect(),
         );
+
+        self
+    }
+
+    /// Create a [Disambiguation]
+    /// with the specified `associativity`,
+    /// granting the rules with names `rule_names` equal precedence.
+    ///
+    /// Increases the precedence counter for future invocations.
+    pub fn disambiguate(
+        &mut self,
+        associativity: Associativity,
+        rule_names: &[&str],
+    ) -> &mut GrammarBuilder {
+        for rule_name in rule_names {
+            match self.grammar.iter().position(|rule| &rule.name == rule_name) {
+                Some(index) => {
+                    self.grammar[index].disambiguation = Some(Disambiguation {
+                        associativity: associativity.clone(),
+                        precedence:    self.current_precedence,
+                    })
+                }
+                None => panic!(
+                    "\n\nError while trying to disambiguate a rule with name: \
+                     {rule_name}\nWhich has not been previously defined.\n\n"
+                ),
+            }
+        }
+
+        self.current_precedence += 1;
 
         self
     }
