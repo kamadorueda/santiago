@@ -19,7 +19,7 @@ fn main() -> Result<(), String> {
 
     let abstract_syntax_trees: Vec<Tree> = parse(&grammar_rules, &lexemes)?;
 
-    println!("AST:");
+    println!("AST: {}", abstract_syntax_trees.len());
     for ast in abstract_syntax_trees {
         println!("{ast}");
     }

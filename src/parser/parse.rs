@@ -7,7 +7,7 @@ use crate::grammar::GrammarRule;
 use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
 use crate::lexer::Lexeme;
-use crate::parser::tree::build_forest;
+use crate::parser::tree::BuildForest;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use crate::parser::Tree;
@@ -153,18 +153,24 @@ pub fn parse(
             .collect();
     }
 
-    // println!();
-    // println!("Columns:");
-    // for (column_index, column) in columns.iter().enumerate() {
-    //     println!("  {column_index}");
-    //     for state in &column.states {
-    //         println!("    {state}");
-    //     }
-    // }
+    println!();
+    println!("Columns:");
+    for (column_index, column) in columns.iter().enumerate() {
+        println!("  {column_index}");
+        for state in &column.states {
+            println!("    {state}");
+        }
+    }
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build_forest(grammar, lexemes, &columns, state));
+            let mut build_forest = BuildForest::new(state);
+
+            while let Some(alternatives) =
+                build_forest.next(grammar, lexemes, &columns)
+            {
+                return Ok(alternatives);
+            }
         }
     }
 
