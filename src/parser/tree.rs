@@ -81,6 +81,10 @@ fn build_forest_helper(
     end_column: usize,
 ) -> Vec<Tree> {
     if symbol_index == usize::MAX {
+        if leaves.len() == 1 && matches!(leaves[0], Tree::Node { .. }) {
+            return leaves;
+        }
+
         return vec![Tree::Node { kind: state.name.clone(), leaves }];
     }
 
@@ -106,19 +110,21 @@ fn build_forest_helper(
             }
         }
         Symbol::Rule(name) => {
-            for state_partial in &columns[end_column].states {
-                if state_partial == state {
-                    break;
-                }
-
-                if state_partial.name != *name
-                    || (symbol_index == 0
-                        && state_partial.start_column != state.start_column)
-                    || !satisfies_disambiguation(grammar, state_partial, state)
-                {
-                    continue;
-                }
-
+            for state_partial in columns[end_column]
+                .states
+                .iter()
+                .take_while(|state_partial| *state_partial != state)
+                .filter(|state_partial| {
+                    state_partial.name == *name
+                        && (symbol_index > 0
+                            || state_partial.start_column == state.start_column)
+                        && satisfies_disambiguation(
+                            grammar,
+                            state_partial,
+                            state,
+                        )
+                })
+            {
                 for alternative in
                     build_forest(grammar, lexemes, columns, state_partial)
                 {

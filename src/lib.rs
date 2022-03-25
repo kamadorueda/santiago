@@ -96,36 +96,35 @@
 //! assert_eq!(
 //!     vec![
 //!         // Option 1: (11 + 22) + 33
-//!         r#"Γ"#,
-//!         r#"  sum"#,
-//!         r#"    sum"#,
-//!         r#"      sum"#,
-//!         r#"        INT "11" (1, 1)"#,
-//!         r#"      plus"#,
-//!         r#"        PLUS "+" (1, 4)"#,
-//!         r#"      sum"#,
-//!         r#"        INT "22" (1, 6)"#,
-//!         r#"    plus"#,
-//!         r#"      PLUS "+" (1, 9)"#,
-//!         r#"    sum"#,
-//!         r#"      INT "33" (1, 11)"#,
-//!
-//!         // Option 2: 11 + (22 + 33)
-//!         r#"Γ"#,
+//!         r#"sum"#,
 //!         r#"  sum"#,
 //!         r#"    sum"#,
 //!         r#"      INT "11" (1, 1)"#,
 //!         r#"    plus"#,
 //!         r#"      PLUS "+" (1, 4)"#,
 //!         r#"    sum"#,
-//!         r#"      sum"#,
-//!         r#"        INT "22" (1, 6)"#,
-//!         r#"      plus"#,
-//!         r#"        PLUS "+" (1, 9)"#,
-//!         r#"      sum"#,
-//!         r#"        INT "33" (1, 11)"#
+//!         r#"      INT "22" (1, 6)"#,
+//!         r#"  plus"#,
+//!         r#"    PLUS "+" (1, 9)"#,
+//!         r#"  sum"#,
+//!         r#"    INT "33" (1, 11)"#,
+//!
+//!         // Option 2: 11 + (22 + 33)
+//!         r#"sum"#,
+//!         r#"  sum"#,
+//!         r#"    INT "11" (1, 1)"#,
+//!         r#"  plus"#,
+//!         r#"    PLUS "+" (1, 4)"#,
+//!         r#"  sum"#,
+//!         r#"    sum"#,
+//!         r#"      INT "22" (1, 6)"#,
+//!         r#"    plus"#,
+//!         r#"      PLUS "+" (1, 9)"#,
+//!         r#"    sum"#,
+//!         r#"      INT "33" (1, 11)"#
 //!     ],
-//!     abstract_syntax_trees.iter()
+//!     abstract_syntax_trees
+//!         .iter()
 //!         .map(|ast| ast.to_string())
 //!         .collect::<String>()
 //!         .lines()
@@ -144,26 +143,27 @@
 //!     .finish();
 //!
 //! // Now parse!
-//! let abstract_syntax_trees = &santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let abstract_syntax_trees =
+//!     &santiago::parser::parse(&grammar, &lexemes).unwrap();
 //!
 //! assert_eq!(abstract_syntax_trees.len(), 1);
 //! assert_eq!(
 //!     vec![
-//!         r#"Γ"#,
+//!         r#"sum"#,
 //!         r#"  sum"#,
 //!         r#"    sum"#,
-//!         r#"      sum"#,
-//!         r#"        INT "11" (1, 1)"#,
-//!         r#"      plus"#,
-//!         r#"        PLUS "+" (1, 4)"#,
-//!         r#"      sum"#,
-//!         r#"        INT "22" (1, 6)"#,
+//!         r#"      INT "11" (1, 1)"#,
 //!         r#"    plus"#,
-//!         r#"      PLUS "+" (1, 9)"#,
+//!         r#"      PLUS "+" (1, 4)"#,
 //!         r#"    sum"#,
-//!         r#"      INT "33" (1, 11)"#,
+//!         r#"      INT "22" (1, 6)"#,
+//!         r#"  plus"#,
+//!         r#"    PLUS "+" (1, 9)"#,
+//!         r#"  sum"#,
+//!         r#"    INT "33" (1, 11)"#,
 //!     ],
-//!     abstract_syntax_trees.iter()
+//!     abstract_syntax_trees
+//!         .iter()
 //!         .map(|ast| ast.to_string())
 //!         .collect::<String>()
 //!         .lines()
