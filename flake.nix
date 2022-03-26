@@ -24,12 +24,15 @@
         ];
       };
 
-    apps."x86_64-linux".docs = with nixpkgs."x86_64-linux"; {
+    apps."x86_64-linux".dev = with nixpkgs."x86_64-linux"; {
       type = "app";
       program =
         (writeShellScript "license" ''
-          find . -type f -name '*.rs' \
-            | entr sh -c 'UPDATE=1 cargo test --doc && cargo doc'
+          find . -type f -name '*.rs' | entr sh -euc '
+            UPDATE=1 cargo test
+            cargo doc
+            cargo tarpaulin -o html
+          '
         '')
         .outPath;
     };

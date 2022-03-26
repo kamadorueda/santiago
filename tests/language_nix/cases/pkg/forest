@@ -1,0 +1,314 @@
+---
+expr_function
+  {
+    { "{" (1, 1)
+  formals
+    ID
+      ID "lib" (2, 3)
+    ,
+      , "," (2, 6)
+    formals
+      ID
+        ID "rustPlatform" (3, 3)
+      ,
+        , "," (3, 15)
+      formals
+        ID
+          ID "fetchFromGitHub" (4, 3)
+        ,
+          , "," (4, 18)
+        formals
+          ID
+            ID "testVersion" (5, 3)
+          ,
+            , "," (5, 14)
+          formals
+            ID
+              ID "alejandra" (6, 3)
+            ,
+              , "," (6, 12)
+            formals
+  }
+    } "}" (7, 1)
+  :
+    : ":" (7, 2)
+  expr_app
+    expr_select
+      ID
+        ID "rustPlatform" (8, 1)
+      .
+        . "." (8, 13)
+      ID
+        ID "buildRustPackage" (8, 14)
+    expr_simple
+      REC
+        REC "rec" (8, 31)
+      {
+        { "{" (8, 35)
+      binds
+        binds
+          binds
+            binds
+              binds
+                binds
+                  binds
+                  ID
+                    ID "pname" (9, 3)
+                  =
+                    = "=" (9, 9)
+                  expr_simple
+                    "
+                      " "\"" (9, 11)
+                    STR
+                      STR "alejandra" (9, 12)
+                    "
+                      " "\"" (9, 21)
+                  ;
+                    ; ";" (9, 22)
+                ID
+                  ID "version" (10, 3)
+                =
+                  = "=" (10, 11)
+                expr_simple
+                  "
+                    " "\"" (10, 13)
+                  STR
+                    STR "1.1.0" (10, 14)
+                  "
+                    " "\"" (10, 19)
+                ;
+                  ; ";" (10, 20)
+              ID
+                ID "src" (12, 3)
+              =
+                = "=" (12, 7)
+              expr_app
+                ID
+                  ID "fetchFromGitHub" (12, 9)
+                expr_simple
+                  {
+                    { "{" (12, 25)
+                  binds
+                    binds
+                      binds
+                        binds
+                          binds
+                          ID
+                            ID "owner" (13, 5)
+                          =
+                            = "=" (13, 11)
+                          expr_simple
+                            "
+                              " "\"" (13, 13)
+                            STR
+                              STR "kamadorueda" (13, 14)
+                            "
+                              " "\"" (13, 25)
+                          ;
+                            ; ";" (13, 26)
+                        ID
+                          ID "repo" (14, 5)
+                        =
+                          = "=" (14, 10)
+                        expr_simple
+                          "
+                            " "\"" (14, 12)
+                          STR
+                            STR "alejandra" (14, 13)
+                          "
+                            " "\"" (14, 22)
+                        ;
+                          ; ";" (14, 23)
+                      ID
+                        ID "rev" (15, 5)
+                      =
+                        = "=" (15, 9)
+                      ID
+                        ID "version" (15, 11)
+                      ;
+                        ; ";" (15, 18)
+                    ID
+                      ID "sha256" (16, 5)
+                    =
+                      = "=" (16, 12)
+                    expr_simple
+                      "
+                        " "\"" (16, 14)
+                      STR
+                        STR "sha256-vkFKYnSmhPPXtc3AH7iRtqRRqxhj0o5WySqPT+klDWU=" (16, 15)
+                      "
+                        " "\"" (16, 66)
+                    ;
+                      ; ";" (16, 67)
+                  }
+                    } "}" (17, 3)
+              ;
+                ; ";" (17, 4)
+            ID
+              ID "cargoSha256" (19, 3)
+            =
+              = "=" (19, 15)
+            expr_simple
+              "
+                " "\"" (19, 17)
+              STR
+                STR "sha256-MsXaanznE4UtZMj54EDq86aJ2t4xT8O5ziTpa/KCwBw=" (19, 18)
+              "
+                " "\"" (19, 69)
+            ;
+              ; ";" (19, 70)
+          attrpath
+            ID
+              ID "passthru" (21, 3)
+            .
+              . "." (21, 11)
+            ID
+              ID "tests" (21, 12)
+          =
+            = "=" (21, 18)
+          expr_simple
+            {
+              { "{" (21, 20)
+            binds
+              binds
+              ID
+                ID "version" (22, 5)
+              =
+                = "=" (22, 13)
+              expr_app
+                ID
+                  ID "testVersion" (22, 15)
+                expr_simple
+                  {
+                    { "{" (22, 27)
+                  binds
+                    binds
+                    ID
+                      ID "package" (22, 28)
+                    =
+                      = "=" (22, 36)
+                    ID
+                      ID "alejandra" (22, 38)
+                    ;
+                      ; ";" (22, 47)
+                  }
+                    } "}" (22, 48)
+              ;
+                ; ";" (22, 49)
+            }
+              } "}" (23, 3)
+          ;
+            ; ";" (23, 4)
+        ID
+          ID "meta" (25, 3)
+        =
+          = "=" (25, 8)
+        expr_function
+          WITH
+            WITH "with" (25, 10)
+          ID
+            ID "lib" (25, 15)
+          ;
+            ; ";" (25, 18)
+          expr_simple
+            {
+              { "{" (25, 20)
+            binds
+              binds
+                binds
+                  binds
+                    binds
+                      binds
+                      ID
+                        ID "description" (26, 5)
+                      =
+                        = "=" (26, 17)
+                      expr_simple
+                        "
+                          " "\"" (26, 19)
+                        STR
+                          STR "The Uncompromising Nix Code Formatter" (26, 20)
+                        "
+                          " "\"" (26, 57)
+                      ;
+                        ; ";" (26, 58)
+                    ID
+                      ID "homepage" (27, 5)
+                    =
+                      = "=" (27, 14)
+                    expr_simple
+                      "
+                        " "\"" (27, 16)
+                      STR
+                        STR "https://github.com/kamadorueda/alejandra" (27, 17)
+                      "
+                        " "\"" (27, 57)
+                    ;
+                      ; ";" (27, 58)
+                  ID
+                    ID "changelog" (28, 5)
+                  =
+                    = "=" (28, 15)
+                  expr_simple
+                    "
+                      " "\"" (28, 17)
+                    string_parts_interpolated
+                      string_parts_interpolated
+                        STR
+                          STR "https://github.com/kamadorueda/alejandra/blob/" (28, 18)
+                        DOLLAR_CURLY
+                          DOLLAR_CURLY "${" (28, 64)
+                        ID
+                          ID "version" (28, 66)
+                        }
+                          } "}" (28, 73)
+                      STR
+                        STR "/CHANGELOG.md" (28, 74)
+                    "
+                      " "\"" (28, 87)
+                  ;
+                    ; ";" (28, 88)
+                ID
+                  ID "license" (29, 5)
+                =
+                  = "=" (29, 13)
+                expr_select
+                  ID
+                    ID "licenses" (29, 15)
+                  .
+                    . "." (29, 23)
+                  ID
+                    ID "unlicense" (29, 24)
+                ;
+                  ; ";" (29, 33)
+              ID
+                ID "maintainers" (30, 5)
+              =
+                = "=" (30, 17)
+              expr_function
+                WITH
+                  WITH "with" (30, 19)
+                ID
+                  ID "maintainers" (30, 24)
+                ;
+                  ; ";" (30, 35)
+                expr_simple
+                  [
+                    [ "[" (30, 37)
+                  expr_list
+                    expr_list
+                      expr_list
+                      ID
+                        ID "_0x4A6F" (30, 38)
+                    ID
+                      ID "kamadorueda" (30, 46)
+                  ]
+                    ] "]" (30, 57)
+              ;
+                ; ";" (30, 58)
+            }
+              } "}" (31, 3)
+        ;
+          ; ";" (31, 4)
+      }
+        } "}" (32, 1)

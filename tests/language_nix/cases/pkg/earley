@@ -1,0 +1,587 @@
+0
+
+1
+  { := "{" • [0-1]
+  formals := • [1-1]
+  binds := • [1-1]
+2
+  ID := "ID" • [1-2]
+  formal := ID • [1-2]
+  attr := ID • [1-2]
+  formals := formal • [1-2]
+  attrpath := attr • [1-2]
+3
+  , := "," • [2-3]
+  formals := • [3-3]
+  formals := formal , formals • [1-3]
+4
+  ID := "ID" • [3-4]
+  formal := ID • [3-4]
+  formals := formal • [3-4]
+  formals := formal , formals • [1-4]
+5
+  , := "," • [4-5]
+  formals := • [5-5]
+  formals := formal , formals • [3-5]
+  formals := formal , formals • [1-5]
+6
+  ID := "ID" • [5-6]
+  formal := ID • [5-6]
+  formals := formal • [5-6]
+  formals := formal , formals • [3-6]
+  formals := formal , formals • [1-6]
+7
+  , := "," • [6-7]
+  formals := • [7-7]
+  formals := formal , formals • [5-7]
+  formals := formal , formals • [3-7]
+  formals := formal , formals • [1-7]
+8
+  ID := "ID" • [7-8]
+  formal := ID • [7-8]
+  formals := formal • [7-8]
+  formals := formal , formals • [5-8]
+  formals := formal , formals • [3-8]
+  formals := formal , formals • [1-8]
+9
+  , := "," • [8-9]
+  formals := • [9-9]
+  formals := formal , formals • [7-9]
+  formals := formal , formals • [5-9]
+  formals := formal , formals • [3-9]
+  formals := formal , formals • [1-9]
+10
+  ID := "ID" • [9-10]
+  formal := ID • [9-10]
+  formals := formal • [9-10]
+  formals := formal , formals • [7-10]
+  formals := formal , formals • [5-10]
+  formals := formal , formals • [3-10]
+  formals := formal , formals • [1-10]
+11
+  , := "," • [10-11]
+  formals := • [11-11]
+  formals := formal , formals • [9-11]
+  formals := formal , formals • [7-11]
+  formals := formal , formals • [5-11]
+  formals := formal , formals • [3-11]
+  formals := formal , formals • [1-11]
+12
+  } := "}" • [11-12]
+13
+  : := ":" • [12-13]
+14
+  ID := "ID" • [13-14]
+  expr_simple := ID • [13-14]
+  expr_select := expr_simple • [13-14]
+  expr_app := expr_select • [13-14]
+  expr_op := expr_app • [13-14]
+  expr_if := expr_op • [13-14]
+  expr_function := expr_if • [13-14]
+  expr_function := { formals } : expr_function • [0-14]
+  expr := expr_function • [0-14]
+  Γ := expr • [0-14]
+15
+  . := "." • [14-15]
+16
+  ID := "ID" • [15-16]
+  attr := ID • [15-16]
+  attrpath := attr • [15-16]
+  expr_select := expr_simple . attrpath • [13-16]
+  expr_app := expr_select • [13-16]
+  expr_op := expr_app • [13-16]
+  expr_if := expr_op • [13-16]
+  expr_function := expr_if • [13-16]
+  expr_function := { formals } : expr_function • [0-16]
+  expr := expr_function • [0-16]
+  Γ := expr • [0-16]
+17
+  REC := "REC" • [16-17]
+18
+  { := "{" • [17-18]
+  binds := • [18-18]
+19
+  ID := "ID" • [18-19]
+  attr := ID • [18-19]
+  attrpath := attr • [18-19]
+20
+  = := "=" • [19-20]
+21
+  " := "\"" • [20-21]
+  string_parts := • [21-21]
+22
+  STR := "STR" • [21-22]
+  string_parts := STR • [21-22]
+23
+  " := "\"" • [22-23]
+  expr_simple := " string_parts " • [20-23]
+  expr_select := expr_simple • [20-23]
+  expr_app := expr_select • [20-23]
+  expr_op := expr_app • [20-23]
+  expr_if := expr_op • [20-23]
+  expr_function := expr_if • [20-23]
+  expr := expr_function • [20-23]
+24
+  ; := ";" • [23-24]
+  binds := binds attrpath = expr ; • [18-24]
+25
+  ID := "ID" • [24-25]
+  attr := ID • [24-25]
+  attrpath := attr • [24-25]
+26
+  = := "=" • [25-26]
+27
+  " := "\"" • [26-27]
+  string_parts := • [27-27]
+28
+  STR := "STR" • [27-28]
+  string_parts := STR • [27-28]
+29
+  " := "\"" • [28-29]
+  expr_simple := " string_parts " • [26-29]
+  expr_select := expr_simple • [26-29]
+  expr_app := expr_select • [26-29]
+  expr_op := expr_app • [26-29]
+  expr_if := expr_op • [26-29]
+  expr_function := expr_if • [26-29]
+  expr := expr_function • [26-29]
+30
+  ; := ";" • [29-30]
+  binds := binds attrpath = expr ; • [18-30]
+31
+  ID := "ID" • [30-31]
+  attr := ID • [30-31]
+  attrpath := attr • [30-31]
+32
+  = := "=" • [31-32]
+33
+  ID := "ID" • [32-33]
+  expr_simple := ID • [32-33]
+  expr_select := expr_simple • [32-33]
+  expr_app := expr_select • [32-33]
+  expr_op := expr_app • [32-33]
+  expr_if := expr_op • [32-33]
+  expr_function := expr_if • [32-33]
+  expr := expr_function • [32-33]
+34
+  { := "{" • [33-34]
+  binds := • [34-34]
+35
+  ID := "ID" • [34-35]
+  attr := ID • [34-35]
+  attrpath := attr • [34-35]
+36
+  = := "=" • [35-36]
+37
+  " := "\"" • [36-37]
+  string_parts := • [37-37]
+38
+  STR := "STR" • [37-38]
+  string_parts := STR • [37-38]
+39
+  " := "\"" • [38-39]
+  expr_simple := " string_parts " • [36-39]
+  expr_select := expr_simple • [36-39]
+  expr_app := expr_select • [36-39]
+  expr_op := expr_app • [36-39]
+  expr_if := expr_op • [36-39]
+  expr_function := expr_if • [36-39]
+  expr := expr_function • [36-39]
+40
+  ; := ";" • [39-40]
+  binds := binds attrpath = expr ; • [34-40]
+41
+  ID := "ID" • [40-41]
+  attr := ID • [40-41]
+  attrpath := attr • [40-41]
+42
+  = := "=" • [41-42]
+43
+  " := "\"" • [42-43]
+  string_parts := • [43-43]
+44
+  STR := "STR" • [43-44]
+  string_parts := STR • [43-44]
+45
+  " := "\"" • [44-45]
+  expr_simple := " string_parts " • [42-45]
+  expr_select := expr_simple • [42-45]
+  expr_app := expr_select • [42-45]
+  expr_op := expr_app • [42-45]
+  expr_if := expr_op • [42-45]
+  expr_function := expr_if • [42-45]
+  expr := expr_function • [42-45]
+46
+  ; := ";" • [45-46]
+  binds := binds attrpath = expr ; • [34-46]
+47
+  ID := "ID" • [46-47]
+  attr := ID • [46-47]
+  attrpath := attr • [46-47]
+48
+  = := "=" • [47-48]
+49
+  ID := "ID" • [48-49]
+  expr_simple := ID • [48-49]
+  expr_select := expr_simple • [48-49]
+  expr_app := expr_select • [48-49]
+  expr_op := expr_app • [48-49]
+  expr_if := expr_op • [48-49]
+  expr_function := expr_if • [48-49]
+  expr := expr_function • [48-49]
+50
+  ; := ";" • [49-50]
+  binds := binds attrpath = expr ; • [34-50]
+51
+  ID := "ID" • [50-51]
+  attr := ID • [50-51]
+  attrpath := attr • [50-51]
+52
+  = := "=" • [51-52]
+53
+  " := "\"" • [52-53]
+  string_parts := • [53-53]
+54
+  STR := "STR" • [53-54]
+  string_parts := STR • [53-54]
+55
+  " := "\"" • [54-55]
+  expr_simple := " string_parts " • [52-55]
+  expr_select := expr_simple • [52-55]
+  expr_app := expr_select • [52-55]
+  expr_op := expr_app • [52-55]
+  expr_if := expr_op • [52-55]
+  expr_function := expr_if • [52-55]
+  expr := expr_function • [52-55]
+56
+  ; := ";" • [55-56]
+  binds := binds attrpath = expr ; • [34-56]
+57
+  } := "}" • [56-57]
+  expr_simple := { binds } • [33-57]
+  expr_select := expr_simple • [33-57]
+  expr_app := expr_app expr_select • [32-57]
+  expr_op := expr_app • [32-57]
+  expr_if := expr_op • [32-57]
+  expr_function := expr_if • [32-57]
+  expr := expr_function • [32-57]
+58
+  ; := ";" • [57-58]
+  binds := binds attrpath = expr ; • [18-58]
+59
+  ID := "ID" • [58-59]
+  attr := ID • [58-59]
+  attrpath := attr • [58-59]
+60
+  = := "=" • [59-60]
+61
+  " := "\"" • [60-61]
+  string_parts := • [61-61]
+62
+  STR := "STR" • [61-62]
+  string_parts := STR • [61-62]
+63
+  " := "\"" • [62-63]
+  expr_simple := " string_parts " • [60-63]
+  expr_select := expr_simple • [60-63]
+  expr_app := expr_select • [60-63]
+  expr_op := expr_app • [60-63]
+  expr_if := expr_op • [60-63]
+  expr_function := expr_if • [60-63]
+  expr := expr_function • [60-63]
+64
+  ; := ";" • [63-64]
+  binds := binds attrpath = expr ; • [18-64]
+65
+  ID := "ID" • [64-65]
+  attr := ID • [64-65]
+  attrpath := attr • [64-65]
+66
+  . := "." • [65-66]
+67
+  ID := "ID" • [66-67]
+  attr := ID • [66-67]
+  attrpath := attrpath . attr • [64-67]
+68
+  = := "=" • [67-68]
+69
+  { := "{" • [68-69]
+  formals := • [69-69]
+  binds := • [69-69]
+70
+  ID := "ID" • [69-70]
+  formal := ID • [69-70]
+  attr := ID • [69-70]
+  formals := formal • [69-70]
+  attrpath := attr • [69-70]
+71
+  = := "=" • [70-71]
+72
+  ID := "ID" • [71-72]
+  expr_simple := ID • [71-72]
+  expr_select := expr_simple • [71-72]
+  expr_app := expr_select • [71-72]
+  expr_op := expr_app • [71-72]
+  expr_if := expr_op • [71-72]
+  expr_function := expr_if • [71-72]
+  expr := expr_function • [71-72]
+73
+  { := "{" • [72-73]
+  binds := • [73-73]
+74
+  ID := "ID" • [73-74]
+  attr := ID • [73-74]
+  attrpath := attr • [73-74]
+75
+  = := "=" • [74-75]
+76
+  ID := "ID" • [75-76]
+  expr_simple := ID • [75-76]
+  expr_select := expr_simple • [75-76]
+  expr_app := expr_select • [75-76]
+  expr_op := expr_app • [75-76]
+  expr_if := expr_op • [75-76]
+  expr_function := expr_if • [75-76]
+  expr := expr_function • [75-76]
+77
+  ; := ";" • [76-77]
+  binds := binds attrpath = expr ; • [73-77]
+78
+  } := "}" • [77-78]
+  expr_simple := { binds } • [72-78]
+  expr_select := expr_simple • [72-78]
+  expr_app := expr_app expr_select • [71-78]
+  expr_op := expr_app • [71-78]
+  expr_if := expr_op • [71-78]
+  expr_function := expr_if • [71-78]
+  expr := expr_function • [71-78]
+79
+  ; := ";" • [78-79]
+  binds := binds attrpath = expr ; • [69-79]
+80
+  } := "}" • [79-80]
+  expr_simple := { binds } • [68-80]
+  expr_select := expr_simple • [68-80]
+  expr_app := expr_select • [68-80]
+  expr_op := expr_app • [68-80]
+  expr_if := expr_op • [68-80]
+  expr_function := expr_if • [68-80]
+  expr := expr_function • [68-80]
+81
+  ; := ";" • [80-81]
+  binds := binds attrpath = expr ; • [18-81]
+82
+  ID := "ID" • [81-82]
+  attr := ID • [81-82]
+  attrpath := attr • [81-82]
+83
+  = := "=" • [82-83]
+84
+  WITH := "WITH" • [83-84]
+85
+  ID := "ID" • [84-85]
+  expr_simple := ID • [84-85]
+  expr_select := expr_simple • [84-85]
+  expr_app := expr_select • [84-85]
+  expr_op := expr_app • [84-85]
+  expr_if := expr_op • [84-85]
+  expr_function := expr_if • [84-85]
+  expr := expr_function • [84-85]
+86
+  ; := ";" • [85-86]
+87
+  { := "{" • [86-87]
+  formals := • [87-87]
+  binds := • [87-87]
+88
+  ID := "ID" • [87-88]
+  formal := ID • [87-88]
+  attr := ID • [87-88]
+  formals := formal • [87-88]
+  attrpath := attr • [87-88]
+89
+  = := "=" • [88-89]
+90
+  " := "\"" • [89-90]
+  string_parts := • [90-90]
+91
+  STR := "STR" • [90-91]
+  string_parts := STR • [90-91]
+92
+  " := "\"" • [91-92]
+  expr_simple := " string_parts " • [89-92]
+  expr_select := expr_simple • [89-92]
+  expr_app := expr_select • [89-92]
+  expr_op := expr_app • [89-92]
+  expr_if := expr_op • [89-92]
+  expr_function := expr_if • [89-92]
+  expr := expr_function • [89-92]
+93
+  ; := ";" • [92-93]
+  binds := binds attrpath = expr ; • [87-93]
+94
+  ID := "ID" • [93-94]
+  attr := ID • [93-94]
+  attrpath := attr • [93-94]
+95
+  = := "=" • [94-95]
+96
+  " := "\"" • [95-96]
+  string_parts := • [96-96]
+97
+  STR := "STR" • [96-97]
+  string_parts := STR • [96-97]
+98
+  " := "\"" • [97-98]
+  expr_simple := " string_parts " • [95-98]
+  expr_select := expr_simple • [95-98]
+  expr_app := expr_select • [95-98]
+  expr_op := expr_app • [95-98]
+  expr_if := expr_op • [95-98]
+  expr_function := expr_if • [95-98]
+  expr := expr_function • [95-98]
+99
+  ; := ";" • [98-99]
+  binds := binds attrpath = expr ; • [87-99]
+100
+  ID := "ID" • [99-100]
+  attr := ID • [99-100]
+  attrpath := attr • [99-100]
+101
+  = := "=" • [100-101]
+102
+  " := "\"" • [101-102]
+  string_parts := • [102-102]
+103
+  STR := "STR" • [102-103]
+  string_parts := STR • [102-103]
+104
+  DOLLAR_CURLY := "DOLLAR_CURLY" • [103-104]
+105
+  ID := "ID" • [104-105]
+  expr_simple := ID • [104-105]
+  expr_select := expr_simple • [104-105]
+  expr_app := expr_select • [104-105]
+  expr_op := expr_app • [104-105]
+  expr_if := expr_op • [104-105]
+  expr_function := expr_if • [104-105]
+  expr := expr_function • [104-105]
+106
+  } := "}" • [105-106]
+  string_parts_interpolated := STR DOLLAR_CURLY expr } • [102-106]
+  string_parts := string_parts_interpolated • [102-106]
+107
+  STR := "STR" • [106-107]
+  string_parts_interpolated := string_parts_interpolated STR • [102-107]
+  string_parts := string_parts_interpolated • [102-107]
+108
+  " := "\"" • [107-108]
+  expr_simple := " string_parts " • [101-108]
+  expr_select := expr_simple • [101-108]
+  expr_app := expr_select • [101-108]
+  expr_op := expr_app • [101-108]
+  expr_if := expr_op • [101-108]
+  expr_function := expr_if • [101-108]
+  expr := expr_function • [101-108]
+109
+  ; := ";" • [108-109]
+  binds := binds attrpath = expr ; • [87-109]
+110
+  ID := "ID" • [109-110]
+  attr := ID • [109-110]
+  attrpath := attr • [109-110]
+111
+  = := "=" • [110-111]
+112
+  ID := "ID" • [111-112]
+  expr_simple := ID • [111-112]
+  expr_select := expr_simple • [111-112]
+  expr_app := expr_select • [111-112]
+  expr_op := expr_app • [111-112]
+  expr_if := expr_op • [111-112]
+  expr_function := expr_if • [111-112]
+  expr := expr_function • [111-112]
+113
+  . := "." • [112-113]
+114
+  ID := "ID" • [113-114]
+  attr := ID • [113-114]
+  attrpath := attr • [113-114]
+  expr_select := expr_simple . attrpath • [111-114]
+  expr_app := expr_select • [111-114]
+  expr_op := expr_app • [111-114]
+  expr_if := expr_op • [111-114]
+  expr_function := expr_if • [111-114]
+  expr := expr_function • [111-114]
+115
+  ; := ";" • [114-115]
+  binds := binds attrpath = expr ; • [87-115]
+116
+  ID := "ID" • [115-116]
+  attr := ID • [115-116]
+  attrpath := attr • [115-116]
+117
+  = := "=" • [116-117]
+118
+  WITH := "WITH" • [117-118]
+119
+  ID := "ID" • [118-119]
+  expr_simple := ID • [118-119]
+  expr_select := expr_simple • [118-119]
+  expr_app := expr_select • [118-119]
+  expr_op := expr_app • [118-119]
+  expr_if := expr_op • [118-119]
+  expr_function := expr_if • [118-119]
+  expr := expr_function • [118-119]
+120
+  ; := ";" • [119-120]
+121
+  [ := "[" • [120-121]
+  expr_list := • [121-121]
+122
+  ID := "ID" • [121-122]
+  expr_simple := ID • [121-122]
+  expr_select := expr_simple • [121-122]
+  expr_list := expr_list expr_select • [121-122]
+123
+  ID := "ID" • [122-123]
+  expr_simple := ID • [122-123]
+  expr_select := expr_simple • [122-123]
+  expr_list := expr_list expr_select • [121-123]
+124
+  ] := "]" • [123-124]
+  expr_simple := [ expr_list ] • [120-124]
+  expr_select := expr_simple • [120-124]
+  expr_app := expr_select • [120-124]
+  expr_op := expr_app • [120-124]
+  expr_if := expr_op • [120-124]
+  expr_function := expr_if • [120-124]
+  expr_function := WITH expr ; expr_function • [117-124]
+  expr := expr_function • [117-124]
+125
+  ; := ";" • [124-125]
+  binds := binds attrpath = expr ; • [87-125]
+126
+  } := "}" • [125-126]
+  expr_simple := { binds } • [86-126]
+  expr_select := expr_simple • [86-126]
+  expr_app := expr_select • [86-126]
+  expr_op := expr_app • [86-126]
+  expr_if := expr_op • [86-126]
+  expr_function := expr_if • [86-126]
+  expr_function := WITH expr ; expr_function • [83-126]
+  expr := expr_function • [83-126]
+127
+  ; := ";" • [126-127]
+  binds := binds attrpath = expr ; • [18-127]
+128
+  } := "}" • [127-128]
+  expr_simple := REC { binds } • [16-128]
+  expr_select := expr_simple • [16-128]
+  expr_app := expr_app expr_select • [13-128]
+  expr_op := expr_app • [13-128]
+  expr_if := expr_op • [13-128]
+  expr_function := expr_if • [13-128]
+  expr_function := { formals } : expr_function • [0-128]
+  expr := expr_function • [0-128]
+  Γ := expr • [0-128]

@@ -19,6 +19,14 @@ fn integer_addition() {
     );
 }
 
+#[test]
+fn language_nix() {
+    let lexer = santiago::languages::nix::lexer_rules();
+    let grammar = santiago::languages::nix::grammar_rules(&lexer);
+
+    run("language_nix", &lexer, &grammar);
+}
+
 fn run(
     name: &str,
     lexer_rules: &[santiago::lexer::LexerRule],
@@ -52,7 +60,7 @@ fn run(
         let earley = santiago::parser::earley(grammar, &lexemes);
         let earley_str: String = earley
             .iter()
-            .map(santiago::parser::ParserColumn::to_string)
+            .map(|column| format!("{column}"))
             .collect::<Vec<String>>()
             .join("\n");
 
