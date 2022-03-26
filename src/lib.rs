@@ -37,141 +37,122 @@
 //! santiago = "*"
 //! ```
 //!
-//! # Example: Calculator
+//! ## Examples
 //!
-//! General use of this library includes creating a set of lexer and grammar rules
-//! and then using them to lex and parse some input
-//! in order to build an
-//! [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
+//! # Calculator
 //!
-//! For example, to lex and parse the addition of integer numbers:
+//! For this example
+//! we are interested in lexing and parsing the addition of integer numbers
+//! like:
+//! - `11 + 22 + 33`
 //!
+//! And turning them into an
+//! [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
+//! like:
+//!
+//! ```text
+#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/forest")]
+//! ```
+//! 
+//! So let's start with creating a lexer to:
+//! - Group the digits into integers called `"INT"`
+//! - Capture the plus sign (`+`) and name it `"PLUS"`
+//! - Ignore all whitespace
+//!
+//! In code this would be:
 //! ```rust
+#![doc = include_str!("../tests/ambiguous_integer_addition/lexer.rs")]
+//! ```
+//! 
+//! Once we have our rules defined, we can start lexing:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/ambiguous_integer_addition/lexer.rs");
+//! # }
+//! # use m::*;
 //! let input = "11 + 22 + 33";
 //!
-//! let lexer_rules = santiago::lexer::LexerBuilder::new()
-//!     // One more sequential digits from 0 to 9 will be mapped to an "INT"
-//!     .pattern(&["INITIAL"], "INT", r"[0-9]+", |lexer| lexer.take())
-//!     // A literal "+" will be mapped to "PLUS"
-//!     .string(&["INITIAL"], "PLUS", "+", |lexer| lexer.take())
-//!     // Whitespace " " will be skipped
-//!     .string(&["INITIAL"], "WS", " ", |lexer| lexer.skip())
-//!     .finish();
-//!
-//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
-//!
-//! assert_eq!(
-//!     vec![
-//!         // kind raw (line, column)
-//!         r#"INT "11" (1, 1)"#,
-//!         r#"PLUS "+" (1, 4)"#,
-//!         r#"INT "22" (1, 6)"#,
-//!         r#"PLUS "+" (1, 9)"#,
-//!         r#"INT "33" (1, 11)"#
-//!     ],
-//!     lexemes
-//!         .iter()
-//!         .map(santiago::lexer::Lexeme::to_string)
-//!         .collect::<Vec<String>>()
-//! );
-//!
-//! // At this point we can define a grammar for this language:
-//! let grammar = santiago::grammar::GrammarBuilder::new()
-//!     // Map the rule "sum" to the sequence of rules "sum", "plus", and "sum"
-//!     .rule_to_rules("sum", &["sum", "plus", "sum"])
-//!     // Map the rule "sum" to the lexeme "INT"
-//!     .rule_to_lexemes("sum", &["INT"])
-//!     // Map the rule "plus" to the lexeme "PLUS"
-//!     .rule_to_lexemes("plus", &["PLUS"])
-//!     .finish();
-//!
-//! // With this we can now parse the input
-//! // and get the [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
-//! //
-//! // Note that since our grammar is ambiguous (for now),
-//! // Santiago will return all possible parses of the input:
-//! let abstract_syntax_trees = &santiago::parser::parse(&grammar, &lexemes).unwrap();
-//!
-//! assert_eq!(abstract_syntax_trees.len(), 2);
-//! assert_eq!(
-//!     vec![
-//!         // Option 1: (11 + 22) + 33
-//!         r#"sum"#,
-//!         r#"  sum"#,
-//!         r#"    sum"#,
-//!         r#"      INT "11" (1, 1)"#,
-//!         r#"    plus"#,
-//!         r#"      PLUS "+" (1, 4)"#,
-//!         r#"    sum"#,
-//!         r#"      INT "22" (1, 6)"#,
-//!         r#"  plus"#,
-//!         r#"    PLUS "+" (1, 9)"#,
-//!         r#"  sum"#,
-//!         r#"    INT "33" (1, 11)"#,
-//!
-//!         // Option 2: 11 + (22 + 33)
-//!         r#"sum"#,
-//!         r#"  sum"#,
-//!         r#"    INT "11" (1, 1)"#,
-//!         r#"  plus"#,
-//!         r#"    PLUS "+" (1, 4)"#,
-//!         r#"  sum"#,
-//!         r#"    sum"#,
-//!         r#"      INT "22" (1, 6)"#,
-//!         r#"    plus"#,
-//!         r#"      PLUS "+" (1, 9)"#,
-//!         r#"    sum"#,
-//!         r#"      INT "33" (1, 11)"#
-//!     ],
-//!     abstract_syntax_trees
-//!         .iter()
-//!         .map(|ast| ast.to_string())
-//!         .collect::<String>()
-//!         .lines()
-//!         .collect::<Vec<&str>>(),
-//! );
-//!
-//! // Removing ambiguities from a grammar is not a problem.
-//! // Let's add a few disambiguation rules at the end of our grammar:
-//! let grammar = santiago::grammar::GrammarBuilder::new()
-//!     .rule_to_rules("sum", &["sum", "plus", "sum"])
-//!     .rule_to_lexemes("sum", &["INT"])
-//!     .rule_to_lexemes("plus", &["PLUS"])
-//!     // Specify that we want the "plus" rule to be left-associative.
-//!     // In other words: `a+b+c` should group as `(a+b)+c`.
-//!     .disambiguate(santiago::grammar::Associativity::Left, &["plus"])
-//!     .finish();
-//!
-//! // Now parse!
-//! let abstract_syntax_trees =
-//!     &santiago::parser::parse(&grammar, &lexemes).unwrap();
-//!
-//! assert_eq!(abstract_syntax_trees.len(), 1);
-//! assert_eq!(
-//!     vec![
-//!         r#"sum"#,
-//!         r#"  sum"#,
-//!         r#"    sum"#,
-//!         r#"      INT "11" (1, 1)"#,
-//!         r#"    plus"#,
-//!         r#"      PLUS "+" (1, 4)"#,
-//!         r#"    sum"#,
-//!         r#"      INT "22" (1, 6)"#,
-//!         r#"  plus"#,
-//!         r#"    PLUS "+" (1, 9)"#,
-//!         r#"  sum"#,
-//!         r#"    INT "33" (1, 11)"#,
-//!     ],
-//!     abstract_syntax_trees
-//!         .iter()
-//!         .map(|ast| ast.to_string())
-//!         .collect::<String>()
-//!         .lines()
-//!         .collect::<Vec<&str>>(),
-//! );
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
 //! ```
+//! 
+//! A [Lexeme](lexer::Lexeme) gives us information like:
+//! - Kind
+//! - Contents
+//! - Position (line and column number)
+//! ```text
+#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/lexemes")]
+//! ```
+//! 
+//! At this point all we are missing is creating a parser.
 //!
-//! # Lexical Analysis
+//! Let's create a grammar to recognize the addition of integer numbers:
+//! ```bnf
+//! <sum> ::= <sum> <plus> <sum> | "INT"
+//! <plus> := "PLUS"
+//! ```
+//! 
+//! In code this would be:
+//! ```rust
+#![doc = include_str!("../tests/ambiguous_integer_addition/grammar.rs")]
+//! ```
+//! 
+//! Now we can generate all possible Abstract Syntax Trees!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/ambiguous_integer_addition/grammar.rs");
+//! #   include!("../tests/ambiguous_integer_addition/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "11 + 22 + 33";
+//!
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! 
+//! And voilà!
+//! ```text
+#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/forest")]
+//! ```
+//! 
+//! Notice that we intentionally created an
+//! [ambiguous grammar](https://en.wikipedia.org/wiki/Ambiguous_grammar)
+//! and this is why we have 2 possible Abstract Syntax Trees.
+//!
+//! However, we can do better and remove the ambiguities
+//! by adding associativity constraints to the "plus" rule.
+//!
+//! In code, we only need to add one line at the end of our previous grammar:
+//! ```rust
+#![doc = include_str!("../tests/integer_addition/grammar.rs")]
+//! ```
+//! 
+//! And parse again!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/integer_addition/grammar.rs");
+//! #   include!("../tests/integer_addition/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "11 + 22 + 33";
+//!
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! 
+//! And voilà!
+//! ```text
+#![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
+//! ```
+//! # Technical details
+//!
+//! ## Lexical Analysis
 //!
 //! A Lexer splits an input of characters
 //! into small groups of characters with related meaning.
@@ -201,7 +182,7 @@
 //!   the current match,
 //!   or signal an [error](lexer::Lexer::error()).
 //!
-//! For convenience, the stack of states starts with "INITIAL".
+//! For convenience, the stack of states is initially populated with `"INITIAL"`.
 //!
 //! ## Example: Smallest lexer possible
 //!
@@ -228,7 +209,7 @@
 //!         .collect::<Vec<String>>()
 //! );
 //! ```
-//!
+//! 
 //! ## Example: JavaScript string interpolations:
 //! ```rust
 //! let input = "    `a${ variable }b`    ";
@@ -306,8 +287,8 @@
 //! is a simple way of describing a language,
 //! like `JSON`, `TOML`, `YAML`, `Python`, `Go`, or `Rust`.
 //!
-//! Regular use of this module uses a [grammar::GrammarBuilder]
-//! to construct a [`Vec<grammar::GrammarRule>`].
+//! Regular use of this module uses a [GrammarBuilder](grammar::GrammarBuilder)
+//! to construct a list of [GrammarRule](grammar::GrammarRule).
 //!
 //! For example, a language that recognizes "numbers",
 //! which can be of integer or float type:
@@ -322,7 +303,7 @@
 //!     .rule_to_lexemes("float", &["FLOAT"])
 //!     .finish();
 //! ```
-//!
+//! 
 //! This module checks for grammar correctness.
 //! For instance, the following example references a rule
 //! that is not defined later in the grammar,
