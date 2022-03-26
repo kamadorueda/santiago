@@ -1,0 +1,18 @@
+0
+
+1
+  sum := "INT" • [0-1]
+  Γ := sum • [0-1]
+2
+  plus := "PLUS" • [1-2]
+3
+  sum := "INT" • [2-3]
+  sum := sum plus sum • [0-3]
+  Γ := sum • [0-3]
+4
+  plus := "PLUS" • [3-4]
+5
+  sum := "INT" • [4-5]
+  sum := sum plus sum • [2-5]
+  sum := sum plus sum • [0-5]
+  Γ := sum • [0-5]

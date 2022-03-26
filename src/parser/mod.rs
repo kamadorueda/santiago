@@ -11,7 +11,8 @@ mod parser_column;
 mod parser_state;
 mod tree;
 
+pub use parse::earley;
 pub use parse::parse;
-pub(crate) use parser_column::ParserColumn;
+pub use parser_column::ParserColumn;
 pub(crate) use parser_state::ParserState;
 pub use tree::Tree;

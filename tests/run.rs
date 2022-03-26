@@ -37,15 +37,22 @@ fn run(
     for case in cases {
         let path_input = format!("{cases_dir}/{case}/input");
         let path_lexemes = format!("{cases_dir}/{case}/lexemes");
+        let path_earley = format!("{cases_dir}/{case}/earley");
         let path_forest = format!("{cases_dir}/{case}/forest");
 
-        dbg!(&path_input);
         let input = std::fs::read_to_string(&path_input).unwrap();
 
         let lexemes = santiago::lexer::lex(lexer_rules, &input);
         let lexemes_str: String = lexemes
             .iter()
             .map(santiago::lexer::Lexeme::to_string)
+            .collect::<Vec<String>>()
+            .join("\n");
+
+        let earley = santiago::parser::earley(grammar, &lexemes);
+        let earley_str: String = earley
+            .iter()
+            .map(santiago::parser::ParserColumn::to_string)
             .collect::<Vec<String>>()
             .join("\n");
 
@@ -63,6 +70,10 @@ fn run(
                 .unwrap()
                 .write_all(lexemes_str.as_bytes())
                 .unwrap();
+            std::fs::File::create(&path_earley)
+                .unwrap()
+                .write_all(earley_str.as_bytes())
+                .unwrap();
             std::fs::File::create(&path_forest)
                 .unwrap()
                 .write_all(forest_str.as_bytes())
@@ -73,6 +84,7 @@ fn run(
             lexemes_str,
             std::fs::read_to_string(&path_lexemes).unwrap()
         );
+        assert_eq!(earley_str, std::fs::read_to_string(&path_earley).unwrap());
         assert_eq!(forest_str, std::fs::read_to_string(&path_forest).unwrap());
     }
 }

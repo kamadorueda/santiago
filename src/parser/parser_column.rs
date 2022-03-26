@@ -5,7 +5,12 @@
 use crate::parser::ParserState;
 use std::collections::HashSet;
 
-pub(crate) struct ParserColumn {
+/// Internal representation of a column in of the Earley algorithm.
+///
+/// [ParserColumn] is exposed so you can use its type and traits
+/// but normally you create a [ParserColumn]
+/// by using [earley](crate::parser::earley).
+pub struct ParserColumn {
     pub(crate) index:  usize,
     pub(crate) kind:   String,
     pub(crate) states: Vec<ParserState>,
@@ -22,5 +27,20 @@ impl ParserColumn {
             state.end_column = self.index;
             self.states.push(state);
         }
+    }
+}
+
+impl std::fmt::Display for ParserColumn {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}\n{}",
+            self.index,
+            self.states
+                .iter()
+                .map(|state| format!("  {state}"))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
     }
 }

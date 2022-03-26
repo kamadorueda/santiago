@@ -85,6 +85,20 @@ pub fn parse(
     grammar: &Grammar,
     lexemes: &[Lexeme],
 ) -> Result<Vec<Tree>, String> {
+    let columns: Vec<ParserColumn> = earley(grammar, lexemes);
+
+    for state in &columns.last().unwrap().states {
+        if state.name == START_RULE_NAME && state.completed() {
+            return Ok(build(grammar, lexemes, &columns, state));
+        }
+    }
+
+    Err(String::new())
+}
+
+/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar]
+/// and the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
+pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
     let mut columns: Vec<ParserColumn> = (0..=lexemes.len())
         .map(|index| {
             if index == 0 {
@@ -162,11 +176,5 @@ pub fn parse(
     //     }
     // }
 
-    for state in &columns.last().unwrap().states {
-        if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build(grammar, lexemes, &columns, state));
-        }
-    }
-
-    Err(String::new())
+    columns
 }
