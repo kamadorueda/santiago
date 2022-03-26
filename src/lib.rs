@@ -51,7 +51,7 @@
 //! like:
 //!
 //! ```text
-#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/forest")]
+#![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
 //! 
 //! So let's start with creating a lexer to:
@@ -77,7 +77,7 @@
 //! ```
 //! 
 //! A [Lexeme](lexer::Lexeme) gives us information like:
-//! - Kind
+//! - Token kind
 //! - Contents
 //! - Position (line and column number)
 //! ```text
@@ -146,7 +146,10 @@
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
-//! And voilà!
+//! With this constraint our grammar becomes
+//! [deterministic](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar).
+//!
+//! And we will always have a single unambiguous Abstract Syntax Tree:
 //! ```text
 #![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
@@ -155,7 +158,8 @@
 //! ## Lexical Analysis
 //!
 //! A Lexer splits an input of characters
-//! into small groups of characters with related meaning.
+//! into small groups of characters with related meaning,
+//! while discarding irrelevant characters like whitespace.
 //!
 //! For example: `1 + 2` is transformed into: `[INT, PLUS, INT]`.
 //!

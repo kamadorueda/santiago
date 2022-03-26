@@ -1,5 +1,8 @@
-pub fn grammar() -> santiago::grammar::Grammar {
-    santiago::grammar::GrammarBuilder::new()
+use santiago::grammar::Grammar;
+use santiago::grammar::GrammarBuilder;
+
+pub fn grammar() -> Grammar {
+    GrammarBuilder::new()
         // Map the rule "sum" to the sequence of rules "sum", "plus", and "sum"
         .rule_to_rules("sum", &["sum", "plus", "sum"])
         // Map the rule "sum" to the lexeme "INT"

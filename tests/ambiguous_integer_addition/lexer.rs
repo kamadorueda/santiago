@@ -1,5 +1,8 @@
-pub fn lexer() -> Vec<santiago::lexer::LexerRule> {
-    santiago::lexer::LexerBuilder::new()
+use santiago::lexer::LexerBuilder;
+use santiago::lexer::LexerRule;
+
+pub fn lexer() -> Vec<LexerRule> {
+    LexerBuilder::new()
         // One more sequential digits from 0 to 9 will be mapped to an "INT"
         .pattern(&["INITIAL"], "INT", r"[0-9]+", |lexer| lexer.take())
         // A literal "+" will be mapped to "PLUS"
