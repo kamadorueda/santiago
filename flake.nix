@@ -14,7 +14,9 @@
         name = "santiago";
         packages = [
           cargo
+          cargo-tarpaulin
           clippy
+          entr
           jq
           linuxPackages_latest.perf
           reuse

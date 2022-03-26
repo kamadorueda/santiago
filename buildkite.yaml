@@ -11,6 +11,14 @@ steps:
       - echo +++ Check
       - cargo check
 
+  - label: coverage
+    command:
+      - echo --- Prepare environment
+      - direnv allow
+      - eval "$(direnv export bash)"
+      - echo +++ Coverage
+      - cargo tarpaulin
+
   - label: legal
     command:
       - echo --- Prepare environment
