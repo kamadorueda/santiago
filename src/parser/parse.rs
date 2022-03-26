@@ -7,7 +7,7 @@ use crate::grammar::GrammarRule;
 use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
 use crate::lexer::Lexeme;
-use crate::parser::tree::build;
+use crate::parser::tree::build_forest;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use crate::parser::Tree;
@@ -164,7 +164,7 @@ pub fn parse(
 
     for state in &columns.last().unwrap().states {
         if state.name == START_RULE_NAME && state.completed() {
-            return Ok(build(grammar, lexemes, &columns, state));
+            return Ok(build_forest(grammar, lexemes, &columns, state));
         }
     }
 

@@ -8,7 +8,6 @@ use crate::grammar::Symbol;
 use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
-use std::collections::HashMap;
 
 /// Representation of an AST
 #[derive(Clone, Debug, Hash)]
@@ -54,54 +53,24 @@ impl std::fmt::Display for Tree {
     }
 }
 
-pub(crate) fn build(
+pub(crate) fn build_forest(
     grammar: &Grammar,
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
     state: &ParserState,
 ) -> Vec<Tree> {
-    let mut cache: HashMap<u64, Vec<Tree>> = HashMap::new();
-
-    for column in columns.iter() {
-        for state_partial in &column.states {
-            build_forest(&mut cache, grammar, lexemes, columns, state_partial);
-        }
-    }
-
-    cache.remove(&state.hash_me()).unwrap()
-}
-
-fn build_forest(
-    cache: &mut HashMap<u64, Vec<Tree>>,
-    grammar: &Grammar,
-    lexemes: &[Lexeme],
-    columns: &[ParserColumn],
-    state: &ParserState,
-) -> Vec<Tree> {
-    let key = state.hash_me();
-    match cache.get(&key) {
-        Some(forest) => forest.clone(),
-        None => {
-            let forest = build_forest_helper(
-                cache,
-                grammar,
-                lexemes,
-                columns,
-                vec![],
-                state,
-                state.production.symbols.len().overflowing_sub(1).0,
-                state.end_column,
-            );
-
-            cache.insert(key, forest.clone());
-
-            forest
-        }
-    }
+    build_forest_helper(
+        grammar,
+        lexemes,
+        columns,
+        vec![],
+        state,
+        state.production.symbols.len().overflowing_sub(1).0,
+        state.end_column,
+    )
 }
 
 fn build_forest_helper(
-    cache: &mut HashMap<u64, Vec<Tree>>,
     grammar: &Grammar,
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
@@ -129,7 +98,6 @@ fn build_forest_helper(
             leaves_extended.append(&mut leaves);
 
             for tree in build_forest_helper(
-                cache,
                 grammar,
                 lexemes,
                 columns,
@@ -157,18 +125,13 @@ fn build_forest_helper(
                         )
                 })
             {
-                for alternative in build_forest(
-                    cache,
-                    grammar,
-                    lexemes,
-                    columns,
-                    state_partial,
-                ) {
+                for alternative in
+                    build_forest(grammar, lexemes, columns, state_partial)
+                {
                     let mut leaves_extended = vec![alternative];
                     leaves_extended.append(&mut leaves.clone());
 
                     for tree in build_forest_helper(
-                        cache,
                         grammar,
                         lexemes,
                         columns,
