@@ -28,7 +28,7 @@
       type = "app";
       program =
         (writeShellScript "license" ''
-          find . -type f -name '*.rs' | entr sh -euc '
+          git ls-files | entr sh -euc '
             UPDATE=1 cargo test
             cargo doc
             cargo tarpaulin -o html
@@ -51,7 +51,9 @@
             .envrc \
             Cargo.lock \
             Cargo.toml \
-            examples/*.rs \
+            tests/*/cases/*/* \
+            tests/*/grammar.rs \
+            tests/*/lexer.rs \
             flake.nix \
             flake.lock \
 

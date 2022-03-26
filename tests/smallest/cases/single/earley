@@ -1,0 +1,7 @@
+0
+  chars := • [0-0]
+  Γ := chars • [0-0]
+1
+  char := "CHAR" • [0-1]
+  chars := chars char • [0-1]
+  Γ := chars • [0-1]

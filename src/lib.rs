@@ -190,134 +190,135 @@
 //!
 //! ## Example: Smallest lexer possible
 //!
-//! This lexer will copy char by char the input
+//! This lexer will copy char by char the input:
 //! ```rust
-//! let input = "abc";
+#![doc = include_str!("../tests/smallest/lexer.rs")]
+//! ```
+//! 
+//! For example:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/smallest/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "abcd";
 //!
-//! let lexer_rules = santiago::lexer::LexerBuilder::new()
-//!     .pattern(&["INITIAL"], "CHAR", ".", |lexer| lexer.take())
-//!     .finish();
-//!
-//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
-//!
-//! assert_eq!(
-//!     vec![
-//!         // kind raw (line, column)
-//!         r#"CHAR "a" (1, 1)"#,
-//!         r#"CHAR "b" (1, 2)"#,
-//!         r#"CHAR "c" (1, 3)"#,
-//!     ],
-//!     lexemes
-//!         .iter()
-//!         .map(santiago::lexer::Lexeme::to_string)
-//!         .collect::<Vec<String>>()
-//! );
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! ```
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/smallest/cases/multiple/lexemes")]
 //! ```
 //! 
 //! ## Example: JavaScript string interpolations:
+//! This lexer can handle strings interpolations in the form:
+//! - ``` `Hello ${ name }, your age is: ${ age }.` ```
+//!
+//! Similar to those you find in many programming languages.
 //! ```rust
-//! let input = "    `a${ variable }b`    ";
-//!
-//! let lexer_rules = santiago::lexer::LexerBuilder::new()
-//!     // If the current state is "INITIAL",
-//!     // associate a "`" with the beginning of the string,
-//!     // and make the current state be "INSIDE_STRING".
-//!     .string(&["INITIAL"], "STRING_START", "`", |lexer| {
-//!         lexer.push_state("INSIDE_STRING");
-//!         lexer.take()
-//!     })
-//!     // If the current state is "INSIDE_STRING"
-//!     // associate "${" with nothing,
-//!     // make the current state be "INSIDE_STRING_INTERPOLATION"
-//!     // and skip the current match.
-//!     .string(&["INSIDE_STRING"], "", "${", |lexer| {
-//!         lexer.push_state("INSIDE_STRING_INTERPOLATION");
-//!         lexer.skip()
-//!     })
-//!     // If the current state is "INSIDE_STRING_INTERPOLATION"
-//!     // associate one or more latin letters to a variable.
-//!     .pattern(&["INSIDE_STRING_INTERPOLATION"], "VAR", "[a-z]+", |lexer| {
-//!         lexer.take()
-//!     })
-//!     // If the current state is "INSIDE_STRING_INTERPOLATION"
-//!     // associate a "}" with nothing,
-//!     // and skip the current match.
-//!     .string(&["INSIDE_STRING_INTERPOLATION"], "STR", "}", |lexer| {
-//!         lexer.pop_state();
-//!         lexer.skip()
-//!     })
-//!     // If the current state is "INSIDE_STRING",
-//!     // associate a "`" with the end of the string
-//!     // and go back to the previous state.
-//!     .string(&["INSIDE_STRING"], "STRING_END", "`", |lexer| {
-//!         lexer.pop_state();
-//!         lexer.take()
-//!     })
-//!     // If the current state is "INSIDE_STRING"
-//!     // associate anything with a "STR".
-//!     //
-//!     // Note how the "`" in the previous rule takes precedence over this one.
-//!     .pattern(&["INSIDE_STRING"], "STR", ".", |lexer| lexer.take())
-//!     // If the current state is "INITIAL" or "INSIDE_STRING_INTERPOLATION"
-//!     // associate a " " with whitespace, and skip it.
-//!     .string(
-//!         &["INITIAL", "INSIDE_STRING_INTERPOLATION"],
-//!         "WS",
-//!         " ",
-//!         |lexer| lexer.skip(),
-//!     )
-//!     .finish();
-//!
-//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
-//!
-//! assert_eq!(
-//!     vec![
-//!         // kind raw (line, column)
-//!         r#"STRING_START "`" (1, 5)"#,
-//!         r#"STR "a" (1, 6)"#,
-//!         r#"VAR "variable" (1, 10)"#,
-//!         r#"STR "b" (1, 20)"#,
-//!         r#"STRING_END "`" (1, 21)"#,
-//!     ],
-//!     lexemes
-//!         .iter()
-//!         .map(santiago::lexer::Lexeme::to_string)
-//!         .collect::<Vec<String>>()
-//! );
+#![doc = include_str!("../tests/javascript_string_interpolation/lexer.rs")]
 //! ```
+//! 
+//! For example:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/javascript_string_interpolation/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "`a${ b }c${ d }e`";
+//!
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! ```
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/lexemes")]
+//! ```
+//! 
 //! # Grammars
 //!
 //! A [Grammar](https://en.wikipedia.org/wiki/Formal_grammar)
 //! is a simple way of describing a language,
 //! like `JSON`, `TOML`, `YAML`, `Python`, `Go`, or `Rust`.
 //!
-//! Regular use of this module uses a [GrammarBuilder](grammar::GrammarBuilder)
-//! to construct a list of [GrammarRule](grammar::GrammarRule).
+//! Grammars are commonly described in [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+//! Mapping this syntax to Santiago is very straight forward.
 //!
-//! For example, a language that recognizes "numbers",
-//! which can be of integer or float type:
+//! ## Example: Smallest grammar possible
+//!
+//! Note: This example is a continuation of the same example in the lexer section.
+//!
+//! Let's build a grammar for a sequence of characters:
 //! ```rust
-//! santiago::grammar::GrammarBuilder::new()
-//!     // A `number` can be an `int` or a `float`
-//!     .rule_to_rules("number", &["int"])
-//!     .rule_to_rules("number", &["float"])
-//!     // An `int` comes from a lexeme of kind `INT`:
-//!     .rule_to_lexemes("int", &["INT"])
-//!     // An `float` comes from a lexeme of kind `FLOAT`:
-//!     .rule_to_lexemes("float", &["FLOAT"])
-//!     .finish();
+#![doc = include_str!("../tests/smallest/grammar.rs")]
+//! ```
+//! And parse!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/smallest/grammar.rs");
+//! #   include!("../tests/smallest/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "abcd";
+//!
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/smallest/cases/multiple/forest")]
 //! ```
 //! 
-//! This module checks for grammar correctness.
-//! For instance, the following example references a rule
-//! that is not defined later in the grammar,
-//! which constitutes an error:
-//! ```should_panic
-//! // Map rule `A` to `B` and don't define rule B:
-//! santiago::grammar::GrammarBuilder::new()
-//!     .rule_to_rules("A", &["B"])
-//!     .finish();
+//! ## Example: JavaScript string interpolations:
+//! Note: This example is a continuation of the same example in the lexer section.
+//!
+//! Let's build a grammar for strings interpolations in the form:
+//! - ``` `Hello ${ name }, your age is: ${ age }.` ```
+//! ```rust
+#![doc = include_str!("../tests/javascript_string_interpolation/grammar.rs")]
 //! ```
+//! 
+//! And parse!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/javascript_string_interpolation/grammar.rs");
+//! #   include!("../tests/javascript_string_interpolation/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "`a${ b }c${ d }e`";
+//!
+//! let lexer_rules = lexer();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/forest")]
+//! ```
+//! 
+//! # Next steps
+//!
+//! This tutorial ends here,
+//! you should now have everything to lex and parse the world!
+//!
+//! You can checkout more examples in the tests folder:
+//! - <https://github.com/kamadorueda/santiago/tree/main/tests>
+//!
+//! And real life lexers and grammars in the built-in languages section:
+//! - <https://github.com/kamadorueda/santiago/tree/main/src/languages>
+//!
+//! We hope you find Santiago useful!
+//!
+//! And don't forget to give us a star ⭐
+//! - <https://github.com/kamadorueda/santiago>
+//!
+//! Cheers ❤️
 pub mod grammar;
 pub mod languages;
 pub mod lexer;

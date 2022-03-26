@@ -1,0 +1,16 @@
+---
+string
+  string_start
+    STRING_START "`" (1, 1)
+  str_content
+    str_content
+      str_content
+        str_content
+        str
+          STR "a" (1, 2)
+      str
+        STR "b" (1, 3)
+    str
+      STR "c" (1, 4)
+  string_end
+    STRING_END "`" (1, 5)

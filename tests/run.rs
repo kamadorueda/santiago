@@ -1,5 +1,11 @@
+// SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 pub mod ambiguous_integer_addition;
 pub mod integer_addition;
+pub mod javascript_string_interpolation;
+pub mod smallest;
 
 #[test]
 fn ambiguous_integer_addition() {
@@ -7,6 +13,15 @@ fn ambiguous_integer_addition() {
         "ambiguous_integer_addition",
         &ambiguous_integer_addition::lexer::lexer(),
         &ambiguous_integer_addition::grammar::grammar(),
+    );
+}
+
+#[test]
+fn javascript_string_interpolation() {
+    run(
+        "javascript_string_interpolation",
+        &javascript_string_interpolation::lexer::lexer(),
+        &javascript_string_interpolation::grammar::grammar(),
     );
 }
 
@@ -27,6 +42,11 @@ fn language_nix() {
     run("language_nix", &lexer, &grammar);
 }
 
+#[test]
+fn smallest() {
+    run("smallest", &smallest::lexer::lexer(), &smallest::grammar::grammar());
+}
+
 fn run(
     name: &str,
     lexer_rules: &[santiago::lexer::LexerRule],
@@ -43,12 +63,16 @@ fn run(
         .collect();
 
     for case in cases {
+        println!("{cases_dir}/{case}");
         let path_input = format!("{cases_dir}/{case}/input");
         let path_lexemes = format!("{cases_dir}/{case}/lexemes");
         let path_earley = format!("{cases_dir}/{case}/earley");
         let path_forest = format!("{cases_dir}/{case}/forest");
 
-        let input = std::fs::read_to_string(&path_input).unwrap();
+        let input = std::fs::read_to_string(&path_input)
+            .unwrap()
+            .trim_end_matches('\n')
+            .to_string();
 
         let lexemes = santiago::lexer::lex(lexer_rules, &input);
         let lexemes_str: String = lexemes
@@ -57,12 +81,26 @@ fn run(
             .collect::<Vec<String>>()
             .join("\n");
 
+        if should_update {
+            std::fs::File::create(&path_lexemes)
+                .unwrap()
+                .write_all(lexemes_str.as_bytes())
+                .unwrap();
+        }
+
         let earley = santiago::parser::earley(grammar, &lexemes);
         let earley_str: String = earley
             .iter()
             .map(|column| format!("{column}"))
             .collect::<Vec<String>>()
             .join("\n");
+
+        if should_update {
+            std::fs::File::create(&path_earley)
+                .unwrap()
+                .write_all(earley_str.as_bytes())
+                .unwrap();
+        }
 
         let forest = santiago::parser::parse(grammar, &lexemes).unwrap();
         let forest_str: String = forest
@@ -74,14 +112,6 @@ fn run(
             .join("\n");
 
         if should_update {
-            std::fs::File::create(&path_lexemes)
-                .unwrap()
-                .write_all(lexemes_str.as_bytes())
-                .unwrap();
-            std::fs::File::create(&path_earley)
-                .unwrap()
-                .write_all(earley_str.as_bytes())
-                .unwrap();
             std::fs::File::create(&path_forest)
                 .unwrap()
                 .write_all(forest_str.as_bytes())

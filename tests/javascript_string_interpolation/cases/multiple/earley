@@ -1,0 +1,24 @@
+0
+
+1
+  string_start := "STRING_START" • [0-1]
+  str_content := • [1-1]
+2
+  str := "STR" • [1-2]
+  str_content := str_content str • [1-2]
+3
+  var := "VAR" • [2-3]
+  str_content := str_content var • [1-3]
+4
+  str := "STR" • [3-4]
+  str_content := str_content str • [1-4]
+5
+  var := "VAR" • [4-5]
+  str_content := str_content var • [1-5]
+6
+  str := "STR" • [5-6]
+  str_content := str_content str • [1-6]
+7
+  string_end := "STRING_END" • [6-7]
+  string := string_start str_content string_end • [0-7]
+  Γ := string • [0-7]
