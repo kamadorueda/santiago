@@ -29,3 +29,7 @@ version = "0.15.0"
 [profile.release]
 codegen-units = 1
 lto = true
+
+[[bin]]
+name = "nix"
+required-features = ["crate_regex", "language_nix"]
