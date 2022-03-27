@@ -4,7 +4,6 @@
 
 use crate::lexer::Lexer;
 use crate::lexer::NextLexeme;
-use std::collections::HashSet;
 use std::rc::Rc;
 
 /// Internal type for a lexer rule.
@@ -17,5 +16,4 @@ pub struct LexerRule {
     pub(crate) action:  Rc<dyn Fn(&mut Lexer) -> NextLexeme>,
     pub(crate) matcher: Rc<dyn Fn(&str) -> Option<usize>>,
     pub(crate) name:    String,
-    pub(crate) states:  HashSet<String>,
 }

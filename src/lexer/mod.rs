@@ -9,11 +9,13 @@
 mod lexeme;
 mod lexer_builder;
 mod lexer_rule;
+mod lexer_rules;
 mod position;
 
 pub use lexeme::Lexeme;
 pub use lexer_builder::LexerBuilder;
 pub use lexer_rule::LexerRule;
+pub use lexer_rules::LexerRules;
 pub use position::Position;
 use std::collections::LinkedList;
 
@@ -65,26 +67,27 @@ pub struct LexerError {
 }
 
 impl<'a> Lexer<'a> {
-    fn next_lexeme(&mut self, rules: &'a [LexerRule]) -> NextLexeme {
+    fn next_lexeme(&mut self, rules: &'a LexerRules) -> NextLexeme {
         if self.current_byte_index < self.input.len() {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
             let input = &self.input[self.current_byte_index..];
             let state = self.states_stack.back().unwrap();
+            let active_rules = match rules.rules.get(*state) {
+                Some(rules) => rules.as_slice(),
+                None => &[],
+            };
 
-            for (rule_index, rule) in rules.iter().enumerate() {
-                if rule.states.contains(*state) {
-                    let matcher = &rule.matcher;
+            for (rule_index, rule) in active_rules.iter().enumerate() {
+                let matcher = &rule.matcher;
 
-                    if let Some(len) = matcher(input) {
-                        matches_.push_back((len, rule_index));
-                    }
+                if let Some(len) = matcher(input) {
+                    matches_.push_back((len, rule_index));
                 }
             }
 
             if matches_.is_empty() {
-                let active_rule_names: Vec<String> = rules
+                let active_rule_names: Vec<String> = active_rules
                     .iter()
-                    .filter(|rule| rule.states.contains(*state))
                     .map(|rule| format!("{:?}", rule.name))
                     .collect();
 
@@ -92,7 +95,8 @@ impl<'a> Lexer<'a> {
                     byte_index:   self.current_byte_index,
                     match_len:    None,
                     message:      format!(
-                        "Expecting one of: {}",
+                        "Expecting one of the following {} lexemes: {}",
+                        active_rules.len(),
                         active_rule_names.join(", ")
                     ),
                     position:     self.position.clone(),
@@ -118,9 +122,9 @@ impl<'a> Lexer<'a> {
                 .unwrap();
 
             self.current_match_len = len;
-            self.current_rule_name = &rules[rule_index].name;
+            self.current_rule_name = &active_rules[rule_index].name;
 
-            rules[rule_index].action.clone()(self)
+            active_rules[rule_index].action.clone()(self)
         } else {
             NextLexeme::Finished
         }
@@ -228,10 +232,7 @@ impl<'a> Lexer<'a> {
 }
 
 /// Perform lexical analysis of the given input according to the provided rules.
-pub fn lex(
-    rules: &[LexerRule],
-    input: &str,
-) -> Result<Vec<Lexeme>, LexerError> {
+pub fn lex(rules: &LexerRules, input: &str) -> Result<Vec<Lexeme>, LexerError> {
     let mut lexer = Lexer {
         input,
         current_byte_index: 0,

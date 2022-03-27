@@ -72,7 +72,7 @@
 //! # use m::*;
 //! let input = "11 + 22 + 33";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! 
@@ -106,7 +106,7 @@
 //! # use m::*;
 //! let input = "11 + 22 + 33";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
@@ -139,7 +139,7 @@
 //! # use m::*;
 //! let input = "11 + 22 + 33";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
@@ -202,7 +202,7 @@
 //! # use m::*;
 //! let input = "abcd";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! Which outputs:
@@ -227,7 +227,7 @@
 //! # use m::*;
 //! let input = "`a${ b }c${ d }e`";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! Which outputs:
@@ -261,7 +261,7 @@
 //! # use m::*;
 //! let input = "abcd";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
@@ -290,7 +290,7 @@
 //! # use m::*;
 //! let input = "`a${ b }c${ d }e`";
 //!
-//! let lexer_rules = lexer();
+//! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();

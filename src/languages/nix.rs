@@ -27,9 +27,9 @@
 //!         .collect::<Vec<String>>()
 //! );
 //!
-//! let grammar_rules = santiago::languages::nix::grammar_rules(&lexer_rules);
+//! let grammar = santiago::languages::nix::grammar();
 //!
-//! let ast = &santiago::parser::parse(&grammar_rules, &lexemes).unwrap()[0];
+//! let ast = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
 //! assert_eq!(
 //!     vec![
 //!         r#"expr_function"#,
@@ -59,7 +59,7 @@ use crate::grammar::Associativity;
 use crate::grammar::Grammar;
 use crate::grammar::GrammarBuilder;
 use crate::lexer::LexerBuilder;
-use crate::lexer::LexerRule;
+use crate::lexer::LexerRules;
 
 def!(ANY, r".|\n");
 def!(ID, r"[a-zA-Z_][a-zA-Z0-9_'\-]*");
@@ -74,7 +74,7 @@ def!(SPATH, concat!(r"<", PATH_CHAR!(), r"+(/", PATH_CHAR!(), r"+)*>"));
 def!(URI, r"[a-zA-Z][a-zA-Z0-9\+\-\.]*:[a-zA-Z0-9%/\?:@\&=\+\$,\-_\.!\~\*']+");
 
 /// Build a set of lexer rules for The Nix Expression Language.
-pub fn lexer_rules() -> Vec<LexerRule> {
+pub fn lexer_rules() -> LexerRules {
     LexerBuilder::new()
         .string(&["DEFAULT", "INITIAL"], "IF", "if", |lexer| lexer.take())
         .string(&["DEFAULT", "INITIAL"], "THEN", "then", |lexer| lexer.take())
@@ -315,7 +315,7 @@ pub fn lexer_rules() -> Vec<LexerRule> {
 }
 
 /// Build a set of grammar rules for The Nix Expression Language.
-pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Grammar {
+pub fn grammar() -> Grammar {
     let mut builder = GrammarBuilder::new();
 
     for (kind, rules) in &[
@@ -515,8 +515,68 @@ pub fn grammar_rules(lexer_rules: &[LexerRule]) -> Grammar {
         }
     }
 
-    for lexing_rule in lexer_rules {
-        builder.rule_to_lexemes(&lexing_rule.name, &[&lexing_rule.name]);
+    for lexeme_kind in &[
+        "!",
+        "\"",
+        "(",
+        ")",
+        "*",
+        "+",
+        ",",
+        "-",
+        ".",
+        "/",
+        ":",
+        ";",
+        "<",
+        "=",
+        ">",
+        "?",
+        "@",
+        "[",
+        "]",
+        "{",
+        "}",
+        "AND",
+        "ANY",
+        "ASSERT",
+        "COMMENT",
+        "CONCAT",
+        "DOLLAR_CURLY",
+        "ELLIPSIS",
+        "ELSE",
+        "EQ",
+        "ERROR",
+        "FLOAT",
+        "GEQ",
+        "HPATH",
+        "ID",
+        "IF",
+        "IMPL",
+        "IN",
+        "IND_STR",
+        "IND_STRING_CLOSE",
+        "IND_STRING_OPEN",
+        "INHERIT",
+        "INT",
+        "LEQ",
+        "LET",
+        "NEQ",
+        "OR",
+        "OR_KW",
+        "PATH",
+        "PATH_END",
+        "REC",
+        "SKIP",
+        "SPATH",
+        "STR",
+        "THEN",
+        "UPDATE",
+        "URI",
+        "WITH",
+        "WS",
+    ] {
+        builder.rule_to_lexemes(lexeme_kind, &[lexeme_kind]);
     }
 
     builder.disambiguate(Associativity::Right, &["IMPL"]);

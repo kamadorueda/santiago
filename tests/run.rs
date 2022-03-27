@@ -11,7 +11,7 @@ pub mod smallest;
 fn ambiguous_integer_addition() {
     run(
         "ambiguous_integer_addition",
-        &ambiguous_integer_addition::lexer::lexer(),
+        &ambiguous_integer_addition::lexer::lexer_rules(),
         &ambiguous_integer_addition::grammar::grammar(),
     );
 }
@@ -20,7 +20,7 @@ fn ambiguous_integer_addition() {
 fn javascript_string_interpolation() {
     run(
         "javascript_string_interpolation",
-        &javascript_string_interpolation::lexer::lexer(),
+        &javascript_string_interpolation::lexer::lexer_rules(),
         &javascript_string_interpolation::grammar::grammar(),
     );
 }
@@ -29,27 +29,31 @@ fn javascript_string_interpolation() {
 fn integer_addition() {
     run(
         "integer_addition",
-        &integer_addition::lexer::lexer(),
+        &integer_addition::lexer::lexer_rules(),
         &integer_addition::grammar::grammar(),
     );
 }
 
 #[test]
 fn language_nix() {
-    let lexer = santiago::languages::nix::lexer_rules();
-    let grammar = santiago::languages::nix::grammar_rules(&lexer);
+    let lexer_rules = santiago::languages::nix::lexer_rules();
+    let grammar = santiago::languages::nix::grammar();
 
-    run("language_nix", &lexer, &grammar);
+    run("language_nix", &lexer_rules, &grammar);
 }
 
 #[test]
 fn smallest() {
-    run("smallest", &smallest::lexer::lexer(), &smallest::grammar::grammar());
+    run(
+        "smallest",
+        &smallest::lexer::lexer_rules(),
+        &smallest::grammar::grammar(),
+    );
 }
 
 fn run(
     name: &str,
-    lexer_rules: &[santiago::lexer::LexerRule],
+    lexer_rules: &santiago::lexer::LexerRules,
     grammar: &santiago::grammar::Grammar,
 ) {
     use std::io::Write;

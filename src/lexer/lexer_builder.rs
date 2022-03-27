@@ -4,14 +4,16 @@
 
 use crate::lexer::Lexer;
 use crate::lexer::LexerRule;
+use crate::lexer::LexerRules;
 use crate::lexer::NextLexeme;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 /// Utility for creating [lexer rules](LexerRule).
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
 pub struct LexerBuilder {
-    table: Vec<LexerRule>,
+    rules: LexerRules,
 }
 
 impl Default for LexerBuilder {
@@ -23,7 +25,24 @@ impl Default for LexerBuilder {
 impl LexerBuilder {
     /// Creates a new [LexerBuilder] with no rules.
     pub fn new() -> LexerBuilder {
-        LexerBuilder { table: Vec::new() }
+        LexerBuilder { rules: LexerRules { rules: HashMap::new() } }
+    }
+
+    fn insert(&mut self, states: &[&str], rule: LexerRule) {
+        for state in states {
+            let state = state.to_string();
+
+            match self.rules.rules.get_mut(&state) {
+                Some(rules) => {
+                    rules.push(rule.clone());
+                }
+                None => {
+                    self.rules
+                        .rules
+                        .insert(state.to_string(), vec![rule.clone()]);
+                }
+            }
+        }
     }
 
     /// Add a rule that will be active
@@ -38,18 +57,20 @@ impl LexerBuilder {
         string: &'static str,
         action: fn(&mut Lexer) -> NextLexeme,
     ) -> &mut LexerBuilder {
-        self.table.push(LexerRule {
-            action:  Rc::new(action),
-            matcher: Rc::new(move |input: &str| -> Option<usize> {
-                if input.starts_with(&string) {
-                    Some(string.len())
-                } else {
-                    None
-                }
-            }),
-            name:    name.to_string(),
-            states:  states.iter().map(|state| state.to_string()).collect(),
-        });
+        self.insert(
+            states,
+            LexerRule {
+                action:  Rc::new(action),
+                matcher: Rc::new(move |input: &str| -> Option<usize> {
+                    if input.starts_with(&string) {
+                        Some(string.len())
+                    } else {
+                        None
+                    }
+                }),
+                name:    name.to_string(),
+            },
+        );
 
         self
     }
@@ -70,20 +91,26 @@ impl LexerBuilder {
         let regex =
             crate_regex::Regex::new(&format!(r"\A(?:{pattern})")).unwrap();
 
-        self.table.push(LexerRule {
-            action:  Rc::new(action),
-            matcher: Rc::new(move |input: &str| -> Option<usize> {
-                regex.find_iter(input).take(1).map(|match_| match_.end()).next()
-            }),
-            name:    name.to_string(),
-            states:  states.iter().map(|state| state.to_string()).collect(),
-        });
+        self.insert(
+            states,
+            LexerRule {
+                action:  Rc::new(action),
+                matcher: Rc::new(move |input: &str| -> Option<usize> {
+                    regex
+                        .find_iter(input)
+                        .take(1)
+                        .map(|match_| match_.end())
+                        .next()
+                }),
+                name:    name.to_string(),
+            },
+        );
 
         self
     }
 
-    /// Return the created [LexerRule]s.
-    pub fn finish(&self) -> Vec<LexerRule> {
-        self.table.clone()
+    /// Return the created [LexerRules].
+    pub fn finish(&self) -> LexerRules {
+        self.rules.clone()
     }
 }
