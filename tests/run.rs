@@ -74,7 +74,7 @@ fn run(
             .trim_end_matches('\n')
             .to_string();
 
-        let lexemes = santiago::lexer::lex(lexer_rules, &input);
+        let lexemes = santiago::lexer::lex(lexer_rules, &input).unwrap();
         let lexemes_str: String = lexemes
             .iter()
             .map(santiago::lexer::Lexeme::to_string)

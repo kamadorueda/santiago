@@ -8,7 +8,7 @@
 //! let input = "let var = 123; in var";
 //!
 //! let lexer_rules = santiago::languages::nix::lexer_rules();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, input).unwrap();
 //!
 //! assert_eq!(
 //!     vec![

@@ -34,12 +34,34 @@ pub struct Lexer<'a> {
 
 /// Return type of a [LexerRule] action.
 pub enum NextLexeme {
-    /// We returned part of a [Lexeme] in the form (kind, raw).
-    Lexeme((String, String)),
+    /// We encountered an error.
+    Error(LexerError),
+    /// We returned part of a [Lexeme].
+    Lexeme {
+        /// Kind of the [Lexeme].
+        kind: String,
+        /// Raw contents of the [Lexeme].
+        raw:  String,
+    },
     /// Instructs the [Lexer] that the current [Lexeme] has been skipped.
     Skip,
     /// Instructs the [Lexer] that we reached the end of the input.
     Finished,
+}
+
+/// Internal representation of an error encountered by the [Lexer].
+#[derive(Debug)]
+pub struct LexerError {
+    /// Byte index relative to the [Lexer] input where the error was encountered.
+    pub byte_index:   usize,
+    /// Length of the current match, or none if the [Lexer] did not match something.
+    pub match_len:    Option<usize>,
+    /// Human readable representation of the error.
+    pub message:      String,
+    /// [Position] where the error was found.
+    pub position:     Position,
+    /// Current stack of states in the [Lexer].
+    pub states_stack: Vec<String>,
 }
 
 impl<'a> Lexer<'a> {
@@ -60,7 +82,26 @@ impl<'a> Lexer<'a> {
             }
 
             if matches_.is_empty() {
-                panic!("Unable to lex input with the provided rules: {input}");
+                let active_rule_names: Vec<String> = rules
+                    .iter()
+                    .filter(|rule| rule.states.contains(*state))
+                    .map(|rule| format!("{:?}", rule.name))
+                    .collect();
+
+                return NextLexeme::Error(LexerError {
+                    byte_index:   self.current_byte_index,
+                    match_len:    None,
+                    message:      format!(
+                        "Expecting one of: {}",
+                        active_rule_names.join(", ")
+                    ),
+                    position:     self.position.clone(),
+                    states_stack: self
+                        .states_stack
+                        .iter()
+                        .map(|state| state.to_string())
+                        .collect(),
+                });
             }
 
             // Pick matches with the same maximum length
@@ -106,7 +147,7 @@ impl<'a> Lexer<'a> {
         let kind = self.current_rule_name.to_string();
         let raw = function(&matched);
 
-        NextLexeme::Lexeme((kind, raw))
+        NextLexeme::Lexeme { kind, raw }
     }
 
     /// Instructs the [Lexer] that we don't want to include [Lexer::matched()]
@@ -141,7 +182,7 @@ impl<'a> Lexer<'a> {
         let kind = self.current_rule_name.to_string();
         let raw = function(&matched);
 
-        NextLexeme::Lexeme((kind, raw))
+        NextLexeme::Lexeme { kind, raw }
     }
 
     /// Instructs the [Lexer] that we don't want to include [Lexer::matched()]
@@ -171,21 +212,26 @@ impl<'a> Lexer<'a> {
     }
 
     /// Tells the [Lexer] that we found an error.
-    pub fn error(&mut self, msg: &str) -> NextLexeme {
-        panic!(
-            "\n\n{}\nWhile lexing input: {:?}\nAt rule: {}\nAt position: \
-             {}\nWith states stack: {:?}\n\n",
-            msg,
-            self.matched().chars().collect::<Vec<char>>(),
-            self.current_rule_name,
-            self.position,
-            self.states_stack,
-        );
+    pub fn error(&mut self, message: &str) -> NextLexeme {
+        NextLexeme::Error(LexerError {
+            message:      message.to_string(),
+            byte_index:   self.current_byte_index,
+            match_len:    Some(self.current_match_len),
+            position:     self.position.clone(),
+            states_stack: self
+                .states_stack
+                .iter()
+                .map(|state| state.to_string())
+                .collect(),
+        })
     }
 }
 
 /// Perform lexical analysis of the given input according to the provided rules.
-pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
+pub fn lex(
+    rules: &[LexerRule],
+    input: &str,
+) -> Result<Vec<Lexeme>, LexerError> {
     let mut lexer = Lexer {
         input,
         current_byte_index: 0,
@@ -203,7 +249,10 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         let position = lexer.position.clone();
 
         match lexer.next_lexeme(rules) {
-            NextLexeme::Lexeme((kind, raw)) => {
+            NextLexeme::Error(error) => {
+                return Err(error);
+            }
+            NextLexeme::Lexeme { kind, raw } => {
                 lexemes.push_back(Lexeme { kind, position, raw })
             }
             NextLexeme::Skip => {}
@@ -213,5 +262,5 @@ pub fn lex(rules: &[LexerRule], input: &str) -> Vec<Lexeme> {
         }
     }
 
-    lexemes.into_iter().collect()
+    Ok(lexemes.into_iter().collect())
 }

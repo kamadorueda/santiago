@@ -73,7 +73,7 @@
 //! let input = "11 + 22 + 33";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! 
 //! A [Lexeme](lexer::Lexeme) gives us information like:
@@ -89,7 +89,7 @@
 //! Let's create a grammar to recognize the addition of integer numbers:
 //! ```bnf
 //! <sum> ::= <sum> <plus> <sum> | "INT"
-//! <plus> := "PLUS"
+//! <plus> ::= "PLUS"
 //! ```
 //! 
 //! In code this would be:
@@ -107,7 +107,7 @@
 //! let input = "11 + 22 + 33";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
@@ -140,16 +140,15 @@
 //! let input = "11 + 22 + 33";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! With this constraint our grammar becomes
-//! [deterministic](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar).
-//!
-//! And we will always have a single unambiguous Abstract Syntax Tree:
+//! [deterministic](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar)
+//! and we will always have a single unambiguous Abstract Syntax Tree:
 //! ```text
 #![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
@@ -204,7 +203,7 @@
 //! let input = "abcd";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! Which outputs:
 //! ```text
@@ -229,7 +228,7 @@
 //! let input = "`a${ b }c${ d }e`";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
 //! Which outputs:
 //! ```text
@@ -263,7 +262,7 @@
 //! let input = "abcd";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
@@ -292,7 +291,7 @@
 //! let input = "`a${ b }c${ d }e`";
 //!
 //! let lexer_rules = lexer();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input);
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
