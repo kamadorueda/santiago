@@ -100,6 +100,7 @@ fn build_forest(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn build_forest_helper(
     cache: &mut HashMap<u64, Vec<Tree>>,
     grammar: &Grammar,

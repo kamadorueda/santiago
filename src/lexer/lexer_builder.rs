@@ -16,14 +16,9 @@ pub struct LexerBuilder {
     rules: LexerRules,
 }
 
-impl Default for LexerBuilder {
-    fn default() -> LexerBuilder {
-        LexerBuilder::new()
-    }
-}
-
 impl LexerBuilder {
     /// Creates a new [LexerBuilder] with no rules.
+    #[allow(clippy::new_without_default)]
     pub fn new() -> LexerBuilder {
         LexerBuilder { rules: LexerRules { rules: HashMap::new() } }
     }

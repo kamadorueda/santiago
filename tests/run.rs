@@ -85,6 +85,7 @@ fn run(
             .collect::<Vec<String>>()
             .join("\n");
 
+        #[cfg(not(tarpaulin))]
         if should_update {
             std::fs::File::create(&path_lexemes)
                 .unwrap()
@@ -99,6 +100,7 @@ fn run(
             .collect::<Vec<String>>()
             .join("\n");
 
+        #[cfg(not(tarpaulin))]
         if should_update {
             std::fs::File::create(&path_earley)
                 .unwrap()
@@ -115,6 +117,7 @@ fn run(
             .collect::<Vec<&str>>()
             .join("\n");
 
+        #[cfg(not(tarpaulin))]
         if should_update {
             std::fs::File::create(&path_forest)
                 .unwrap()
