@@ -12,7 +12,7 @@ use std::hash::Hasher;
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
-pub struct GrammarRule {
+pub(crate) struct GrammarRule {
     pub(crate) name:           String,
     pub(crate) disambiguation: Option<Disambiguation>,
     pub(crate) productions:    Vec<Production>,

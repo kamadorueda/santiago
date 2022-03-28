@@ -14,9 +14,9 @@ mod production;
 mod symbol;
 
 pub use associativity::Associativity;
-pub use disambiguation::Disambiguation;
+pub(crate) use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
-pub use grammar_rule::GrammarRule;
+pub(crate) use grammar_rule::GrammarRule;
 pub(crate) use production::Production;
 use std::collections::HashMap;
 pub(crate) use symbol::Symbol;

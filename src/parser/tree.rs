@@ -17,7 +17,7 @@ pub enum Tree {
     Leaf(Lexeme),
     /// Group of many [Tree::Leaf].
     Node {
-        /// Name of the [GrammarRule](crate::grammar::GrammarRule) that produced this node.
+        /// Name of the grammar rule that produced this node.
         kind:   String,
         /// Children of this Node.
         leaves: Vec<Tree>,

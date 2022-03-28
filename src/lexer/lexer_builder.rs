@@ -9,7 +9,7 @@ use crate::lexer::NextLexeme;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// Utility for creating [lexer rules](LexerRule).
+/// Utility for creating [LexerRules].
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
 pub struct LexerBuilder {

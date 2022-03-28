@@ -7,8 +7,8 @@ use crate::grammar::Symbol;
 use std;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct Production {
-    pub symbols: Vec<Symbol>,
+pub(crate) struct Production {
+    pub(crate) symbols: Vec<Symbol>,
 }
 
 impl std::fmt::Display for Production {

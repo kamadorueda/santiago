@@ -12,7 +12,7 @@ use std::rc::Rc;
 /// but normally you create [LexerRule]s
 /// by using a [LexerBuilder](crate::lexer::LexerBuilder).
 #[derive(Clone)]
-pub struct LexerRule {
+pub(crate) struct LexerRule {
     pub(crate) action:  Rc<dyn Fn(&mut Lexer) -> NextLexeme>,
     pub(crate) matcher: Rc<dyn Fn(&str) -> Option<usize>>,
     pub(crate) name:    String,

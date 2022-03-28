@@ -14,7 +14,7 @@ mod position;
 
 pub use lexeme::Lexeme;
 pub use lexer_builder::LexerBuilder;
-pub use lexer_rule::LexerRule;
+pub(crate) use lexer_rule::LexerRule;
 pub use lexer_rules::LexerRules;
 pub use position::Position;
 use std::collections::LinkedList;
@@ -34,7 +34,7 @@ pub struct Lexer<'a> {
     states_stack:       LinkedList<&'a str>,
 }
 
-/// Return type of a [LexerRule] action.
+/// Return type of a lexer rule action.
 pub enum NextLexeme {
     /// We encountered an error.
     Error(LexerError),

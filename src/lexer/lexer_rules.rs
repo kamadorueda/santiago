@@ -5,7 +5,7 @@
 use crate::lexer::LexerRule;
 use std::collections::HashMap;
 
-/// Group of [LexerRule]s optimized for performance.
+/// Group of lexer rules optimized for performance.
 ///
 /// [LexerRules] is exposed so you can use its type and traits,
 /// but normally you create [LexerRules]

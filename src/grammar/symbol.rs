@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub enum Symbol {
+pub(crate) enum Symbol {
     Lexeme(String),
     Rule(String),
 }

@@ -11,7 +11,7 @@ use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
 use std::collections::HashMap;
 
-/// Utility for creating [grammar rules](GrammarRule).
+/// Utility for creating a [Grammar].
 ///
 /// Please read the [module documentation](crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
@@ -59,7 +59,7 @@ impl GrammarBuilder {
         }
     }
 
-    /// Map a rule with name `name` to zero or more [crate::lexer::LexerRule].
+    /// Map a rule with name `name` to zero or more lexemes.
     pub fn rule_to_lexemes(
         &mut self,
         lexeme_kind: &str,
@@ -76,7 +76,7 @@ impl GrammarBuilder {
         self
     }
 
-    /// Map a rule with name `name` to zero or more [GrammarRule].
+    /// Map a rule with name `name` to zero or more rules.
     pub fn rule_to_rules(
         &mut self,
         rule_name: &str,
@@ -93,7 +93,7 @@ impl GrammarBuilder {
         self
     }
 
-    /// Create a [Disambiguation]
+    /// Create a disambiguation
     /// with the specified `associativity`,
     /// granting the rules with names `rule_names` equal precedence.
     ///
