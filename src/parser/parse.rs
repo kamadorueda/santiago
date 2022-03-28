@@ -96,7 +96,7 @@ pub fn parse(
     Err(String::new())
 }
 
-/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar]
+/// Parse the provided [Lexemes](Lexeme) with the given [Grammar]
 /// and the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
 pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
     let mut columns: Vec<ParserColumn> = (0..=lexemes.len())
