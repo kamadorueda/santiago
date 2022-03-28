@@ -15,14 +15,14 @@ use std::collections::HashSet;
 
 fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     for production in &rule.productions {
-        let state = ParserState {
+        let new_state = ParserState {
             name:         rule.name.clone(),
             production:   production.clone(),
             dot_index:    0,
             start_column: column.index,
             end_column:   usize::MAX,
         };
-        column.add(state);
+        column.add(new_state);
     }
 }
 
@@ -69,14 +69,14 @@ fn complete(
 
     for index in indexes {
         let st = &columns[state_start_column].states[index];
-        let parser_state = ParserState {
+        let new_state = ParserState {
             name:         st.name.clone(),
             production:   st.production.clone(),
             start_column: st.start_column,
             end_column:   usize::MAX,
             dot_index:    st.dot_index + 1,
         };
-        columns[column_index].add(parser_state);
+        columns[column_index].add(new_state);
     }
 }
 
@@ -131,6 +131,7 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
     for column_index in 0..columns.len() {
         let mut state_index = 0;
         let mut state_len = columns[column_index].states.len();
+        let mut predicted_names = HashSet::new();
 
         while state_index < state_len {
             let state = &columns[column_index].states[state_index];
@@ -140,8 +141,11 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
             } else {
                 match state.next_symbol().unwrap() {
                     Symbol::Rule(name) => {
-                        let rule = grammar.rules.get(&name).unwrap();
-                        predict(&mut columns[column_index], rule);
+                        if !predicted_names.contains(&name) {
+                            let rule = grammar.rules.get(&name).unwrap();
+                            predict(&mut columns[column_index], rule);
+                            predicted_names.insert(name);
+                        }
                     }
                     Symbol::Lexeme(kind) => {
                         if column_index + 1 < columns.len()
