@@ -85,7 +85,7 @@ fn complete(
 pub fn parse(
     grammar: &Grammar,
     lexemes: &[Lexeme],
-) -> Result<Vec<Tree>, String> {
+) -> Result<Vec<Rc<Tree>>, String> {
     let columns: Vec<ParserColumn> = earley(grammar, lexemes);
 
     for state in &columns.last().unwrap().states {

@@ -9,6 +9,7 @@ use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 /// Representation of an AST
 #[derive(Clone, Debug, Hash)]
@@ -20,29 +21,34 @@ pub enum Tree {
         /// Name of the grammar rule that produced this node.
         kind:   String,
         /// Children of this Node.
-        leaves: Vec<Tree>,
+        leaves: Vec<Rc<Tree>>,
     },
 }
 
 impl std::fmt::Display for Tree {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fn recurse(depth: usize, forest: &Tree) -> String {
-            match forest {
+        fn recurse(
+            f: &mut std::fmt::Formatter<'_>,
+            depth: usize,
+            tree: &Tree,
+        ) -> std::fmt::Result {
+            match tree {
                 Tree::Leaf(lexeme) => {
-                    format!("{}{lexeme}\n", "  ".repeat(depth + 1),)
+                    write!(f, "{}{lexeme}\n", "  ".repeat(depth + 1))
                 }
                 Tree::Node { kind, leaves } => {
-                    let mut result = String::new();
-                    result += &format!("{}{kind}\n", "  ".repeat(depth));
+                    let result = write!(f, "{}{kind}\n", "  ".repeat(depth));
+
                     for leaf in leaves {
-                        result += &recurse(
+                        recurse(
+                            f,
                             depth
-                                + match leaf {
+                                + match **leaf {
                                     Tree::Leaf { .. } => 0,
                                     Tree::Node { .. } => 1,
                                 },
                             leaf,
-                        );
+                        )?;
                     }
 
                     result
@@ -50,7 +56,7 @@ impl std::fmt::Display for Tree {
             }
         }
 
-        write!(f, "{}", &recurse(0, self))
+        recurse(f, 0, self)
     }
 }
 
@@ -59,8 +65,8 @@ pub(crate) fn build(
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
     state: &ParserState,
-) -> Vec<Tree> {
-    let mut cache: HashMap<u64, Vec<Tree>> = HashMap::new();
+) -> Vec<Rc<Tree>> {
+    let mut cache: HashMap<u64, Rc<Vec<Rc<Tree>>>> = HashMap::new();
 
     for column in columns.iter() {
         for state_partial in &column.states {
@@ -68,21 +74,21 @@ pub(crate) fn build(
         }
     }
 
-    cache.remove(&state.hash_me()).unwrap()
+    (*cache.remove(&state.hash_me()).unwrap()).clone()
 }
 
 fn build_forest(
-    cache: &mut HashMap<u64, Vec<Tree>>,
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree>>>>,
     grammar: &Grammar,
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
     state: &ParserState,
-) -> Vec<Tree> {
+) -> Rc<Vec<Rc<Tree>>> {
     let key = state.hash_me();
     match cache.get(&key) {
         Some(forest) => forest.clone(),
         None => {
-            let forest = build_forest_helper(
+            let forest = Rc::new(build_forest_helper(
                 cache,
                 grammar,
                 lexemes,
@@ -91,7 +97,7 @@ fn build_forest(
                 state,
                 state.production.symbols.len().overflowing_sub(1).0,
                 state.end_column,
-            );
+            ));
 
             cache.insert(key, forest.clone());
 
@@ -102,34 +108,36 @@ fn build_forest(
 
 #[allow(clippy::too_many_arguments)]
 fn build_forest_helper(
-    cache: &mut HashMap<u64, Vec<Tree>>,
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree>>>>,
     grammar: &Grammar,
     lexemes: &[Lexeme],
     columns: &[ParserColumn],
 
-    leaves: Vec<Tree>,
+    leaves: Vec<Rc<Tree>>,
     state: &ParserState,
     symbol_index: usize,
     end_column: usize,
-) -> Vec<Tree> {
+) -> Vec<Rc<Tree>> {
     if symbol_index == usize::MAX {
-        if leaves.len() == 1 && matches!(leaves[0], Tree::Node { .. }) {
+        if leaves.len() == 1 && matches!(*leaves[0], Tree::Node { .. }) {
             return leaves;
         }
 
-        return vec![Tree::Node { kind: (*state.name).clone(), leaves }];
+        return vec![Rc::new(Tree::Node {
+            kind: (*state.name).clone(),
+            leaves,
+        })];
     }
 
-    let mut forest = Vec::new();
 
     match &state.production.symbols[symbol_index] {
         Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
-            let mut leaves = leaves;
-            let mut leaves_extended = vec![Tree::Leaf(lexeme.clone())];
+            let mut leaves = leaves.clone();
+            let mut leaves_extended = vec![Rc::new(Tree::Leaf(lexeme.clone()))];
             leaves_extended.append(&mut leaves);
 
-            for tree in build_forest_helper(
+            build_forest_helper(
                 cache,
                 grammar,
                 lexemes,
@@ -138,11 +146,11 @@ fn build_forest_helper(
                 state,
                 symbol_index.overflowing_sub(1).0,
                 state.end_column - 1,
-            ) {
-                forest.push(tree);
-            }
+            )
         }
         Symbol::Rule(name) => {
+            let mut forest = Vec::new();
+
             for state_partial in columns[end_column]
                 .states
                 .iter()
@@ -158,17 +166,19 @@ fn build_forest_helper(
                         )
                 })
             {
-                for alternative in build_forest(
+                for alternative in (*build_forest(
                     cache,
                     grammar,
                     lexemes,
                     columns,
                     state_partial,
-                ) {
+                ))
+                .clone()
+                {
                     let mut leaves_extended = vec![alternative];
                     leaves_extended.append(&mut leaves.clone());
 
-                    for tree in build_forest_helper(
+                    forest.append(&mut build_forest_helper(
                         cache,
                         grammar,
                         lexemes,
@@ -177,15 +187,13 @@ fn build_forest_helper(
                         state,
                         symbol_index.overflowing_sub(1).0,
                         state_partial.start_column,
-                    ) {
-                        forest.push(tree);
-                    }
+                    ));
                 }
             }
+
+            forest
         }
     }
-
-    forest
 }
 
 fn satisfies_disambiguation(
