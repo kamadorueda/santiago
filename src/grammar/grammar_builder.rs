@@ -10,6 +10,7 @@ use crate::grammar::Production;
 use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 /// Utility for creating a [Grammar].
 ///
@@ -35,10 +36,10 @@ impl GrammarBuilder {
     }
 
     fn rule_to_symbols(&mut self, rule_name: &str, symbols: Vec<Symbol>) {
-        let rule_name = rule_name.to_string();
-        let production = Production { symbols };
+        let rule_name = Rc::new(rule_name.to_string());
+        let production = Rc::new(Production { symbols });
 
-        if self.grammar.rules.is_empty() && rule_name != START_RULE_NAME {
+        if self.grammar.rules.is_empty() && *rule_name != START_RULE_NAME {
             self.rule_to_rules(START_RULE_NAME, &[&rule_name]);
         }
 
@@ -50,7 +51,7 @@ impl GrammarBuilder {
                 self.grammar.rules.insert(
                     rule_name.clone(),
                     GrammarRule {
-                        name:           rule_name,
+                        name:           rule_name.clone(),
                         disambiguation: None,
                         productions:    vec![production],
                     },

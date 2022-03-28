@@ -5,6 +5,7 @@
 use crate::grammar::Disambiguation;
 use crate::grammar::Production;
 use std::hash::Hasher;
+use std::rc::Rc;
 
 /// Internal representation of a grammar rule.
 ///
@@ -13,9 +14,9 @@ use std::hash::Hasher;
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
 pub(crate) struct GrammarRule {
-    pub(crate) name:           String,
+    pub(crate) name:           Rc<String>,
     pub(crate) disambiguation: Option<Disambiguation>,
-    pub(crate) productions:    Vec<Production>,
+    pub(crate) productions:    Vec<Rc<Production>>,
 }
 
 impl std::fmt::Display for GrammarRule {
@@ -26,7 +27,7 @@ impl std::fmt::Display for GrammarRule {
             self.name,
             self.productions
                 .iter()
-                .map(Production::to_string)
+                .map(|production| production.to_string())
                 .collect::<Vec<String>>()
                 .join(" | ")
         )

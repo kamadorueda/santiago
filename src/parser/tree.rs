@@ -117,7 +117,7 @@ fn build_forest_helper(
             return leaves;
         }
 
-        return vec![Tree::Node { kind: state.name.clone(), leaves }];
+        return vec![Tree::Node { kind: (*state.name).clone(), leaves }];
     }
 
     let mut forest = Vec::new();
@@ -148,7 +148,7 @@ fn build_forest_helper(
                 .iter()
                 .take_while(|state_partial| *state_partial != state)
                 .filter(|state_partial| {
-                    state_partial.name == *name
+                    *state_partial.name == *name
                         && (symbol_index > 0
                             || state_partial.start_column == state.start_column)
                         && satisfies_disambiguation(

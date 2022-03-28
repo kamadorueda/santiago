@@ -7,11 +7,12 @@ use crate::grammar::Symbol;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hash;
 use std::hash::Hasher;
+use std::rc::Rc;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub(crate) struct ParserState {
-    pub(crate) name:         String,
-    pub(crate) production:   Production,
+    pub(crate) name:         Rc<String>,
+    pub(crate) production:   Rc<Production>,
     pub(crate) dot_index:    usize,
     pub(crate) start_column: usize,
     pub(crate) end_column:   usize,

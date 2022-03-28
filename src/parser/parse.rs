@@ -12,6 +12,7 @@ use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use crate::parser::Tree;
 use std::collections::HashSet;
+use std::rc::Rc;
 
 fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
     for production in &rule.productions {
@@ -57,7 +58,7 @@ fn complete(
         .enumerate()
         .filter_map(|(index, st)| match st.next_symbol() {
             Some(Symbol::Rule(name)) => {
-                if name == *state_name {
+                if name == **state_name {
                     Some(index)
                 } else {
                     None
@@ -88,7 +89,7 @@ pub fn parse(
     let columns: Vec<ParserColumn> = earley(grammar, lexemes);
 
     for state in &columns.last().unwrap().states {
-        if state.name == START_RULE_NAME && state.completed() {
+        if *state.name == START_RULE_NAME && state.completed() {
             return Ok(build(grammar, lexemes, &columns, state));
         }
     }
@@ -119,13 +120,13 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
         })
         .collect();
 
-    let name = START_RULE_NAME.to_string();
+    let name = Rc::new(START_RULE_NAME.to_string());
     columns[0].add(ParserState {
-        name:         name.clone(),
-        production:   grammar.rules.get(&name).unwrap().productions[0].clone(),
+        production: grammar.rules.get(&name).unwrap().productions[0].clone(),
+        name,
         start_column: 0,
-        end_column:   usize::MAX,
-        dot_index:    0,
+        end_column: usize::MAX,
+        dot_index: 0,
     });
 
     for column_index in 0..columns.len() {

@@ -19,6 +19,7 @@ pub use grammar_builder::GrammarBuilder;
 pub(crate) use grammar_rule::GrammarRule;
 pub(crate) use production::Production;
 use std::collections::HashMap;
+use std::rc::Rc;
 pub(crate) use symbol::Symbol;
 
 pub(crate) const START_RULE_NAME: &str = "Γ";
@@ -30,5 +31,5 @@ pub(crate) const START_RULE_NAME: &str = "Γ";
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
 pub struct Grammar {
-    pub(crate) rules: HashMap<String, GrammarRule>,
+    pub(crate) rules: HashMap<Rc<String>, GrammarRule>,
 }
