@@ -49,37 +49,63 @@ SPDX-License-Identifier: GPL-3.0-only
 
 ## Features
 
-- ✔️ **Native** 🦀
+- ✔️ **Fast** 🦀
 
-  It's written in pure [Rust](https://www.rust-lang.org/),
-  zero dependencies, maximum portability.
+  It's written in [Rust](https://www.rust-lang.org/),
+  with zero dependencies and
+  maximum portability in mind.
 
-- ✔️ **Powerful**
-
-  Santiago can parse all [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar),
-  including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar)
-  and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars.
-
-- ✔️ **Simple**
+- ✔️ **Easy to use**
 
   Defining a grammar is closely the same to its
-  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form)
 
   Creating a lexer is a matter of mapping some strings.
 
-- ✔️ **Fast**
+  Error messages contain useful information.
 
-  Santiago uses the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
-  Its time and space performance is that of the theoretical minimum.
+- ✔️ **Powerful**
 
-- ✔️ **Standing on the shoulders of giants**
+  Santiago can parse all [context-free languages](https://en.wikipedia.org/wiki/Context-free_grammar) without exceptions.
+  <!--
+    It performs:
+
+    - Linear time and space lexing.
+    - Linear time and space parsing of
+      [deterministic grammars](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar).
+    - Linear space and quadratic time of
+      [unambiguous grammars](https://en.wikipedia.org/wiki/Unambiguous_grammar).
+    - Linear space and cubic time of
+      highly [ambiguous grammars](https://en.wikipedia.org/wiki/Ambiguous_grammar).
+  -->
+
+- ✔️ **Reliable**
+
+  High coverage, battle tested.
+
+- ✔️ **Compatible**
 
   Santiago is inspired and aims to be an alternative to
   [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
   [Yacc](https://en.wikipedia.org/wiki/Yacc) and
-  [Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>).
+  [Flex](<https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)>),
+  which are amazing tools,
+  but not compatible with rust.
 
 ## Getting started
 
-Just read the [docs](https://docs.rs/santiago), we have plenty of examples over there,
+Just read the [docs](https://docs.rs/santiago),
+we have plenty of examples over there,
 plus detailed explanation of each component.
+
+Alternatively,
+you can checkout more examples
+in the [tests](https://github.com/kamadorueda/santiago/tree/main/tests)
+folder,
+and real life lexers and grammars
+in the [built-in languages](https://github.com/kamadorueda/santiago/tree/main/src/languages)
+source code.
+
+We hope you find Santiago useful!
+
+And don’t forget to give us a star ⭐
