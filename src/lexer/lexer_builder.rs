@@ -115,23 +115,6 @@ impl LexerBuilder {
 macro_rules! __lexer_rules_helper {
     (
         $builder:ident
-        | $rule_name:literal
-        = $matcher:ident $matcher_arg:literal
-    ) => {
-        $builder.$matcher(&["INITIAL"], $rule_name, $matcher_arg, |lexer| {
-            lexer.take()
-        });
-    };
-    (
-        $builder:ident
-        | $rule_name:literal
-        = $matcher:ident $matcher_arg:literal
-        => $action:expr
-    ) => {
-        $builder.$matcher(&["INITIAL"], $rule_name, $matcher_arg, $action);
-    };
-    (
-        $builder:ident
         $( $states:literal )+
         | $rule_name:literal
         = $matcher:ident $matcher_arg:literal
@@ -151,7 +134,7 @@ macro_rules! __lexer_rules_helper {
     };
 }
 
-/// Declarative utility for creating a [Grammar].
+/// Declarative utility for creating a [Grammar](crate::grammar::Grammar).
 ///
 /// Please read the [module documentation](crate) for more information and examples.
 #[macro_export]

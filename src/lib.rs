@@ -185,7 +185,7 @@
 //!   the current match,
 //!   or signal an [error](lexer::Lexer::error()).
 //!
-//! For convenience, the stack of states is initially populated with `"INITIAL"`.
+//! For convenience, the stack of states is initially populated with `"DEFAULT"`.
 //!
 //! ## Example: Smallest lexer possible
 //!

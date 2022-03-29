@@ -2,10 +2,10 @@ use santiago::lexer::LexerRules;
 
 pub fn lexer_rules() -> LexerRules {
     santiago::lexer_rules!(
-        // If the current state is "INITIAL",
+        // If the current state is "DEFAULT",
         // associate a "`" with the beginning of the string,
         // and make the current state be "INSIDE_STRING".
-        | "STRING_START" = string "`" => |lexer| {
+        "DEFAULT" | "STRING_START" = string "`" => |lexer| {
             lexer.push_state("INSIDE_STRING");
             lexer.take()
         };
@@ -39,9 +39,9 @@ pub fn lexer_rules() -> LexerRules {
         //
         // Note how the "`" in the previous rule takes precedence over this one.
         "INSIDE_STRING" | "STR" = pattern ".";
-        // If the current state is "INITIAL" or "INSIDE_STRING_INTERPOLATION"
+        // If the current state is "DEFAULT" or "INSIDE_STRING_INTERPOLATION"
         // associate a " " with whitespace, and skip it.
-        "INITIAL" "INSIDE_STRING_INTERPOLATION" | "WS" = string " " => |lexer| {
+        "DEFAULT" "INSIDE_STRING_INTERPOLATION" | "WS" = string " " => |lexer| {
             lexer.skip()
         };
     )

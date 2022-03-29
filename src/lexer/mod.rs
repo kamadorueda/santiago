@@ -242,7 +242,7 @@ pub fn lex(rules: &LexerRules, input: &str) -> Result<Vec<Lexeme>, LexerError> {
         states_stack: LinkedList::new(),
     };
 
-    lexer.push_state("INITIAL");
+    lexer.push_state("DEFAULT");
 
     let mut lexemes = LinkedList::new();
 
