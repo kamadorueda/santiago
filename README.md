@@ -58,7 +58,7 @@ SPDX-License-Identifier: GPL-3.0-only
 - ✔️ **Easy to use**
 
   Defining a grammar is closely the same to its
-  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form)
+  [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
 
   Creating a lexer is a matter of mapping some strings.
 

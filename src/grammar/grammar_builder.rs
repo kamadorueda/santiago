@@ -12,9 +12,9 @@ use crate::grammar::START_RULE_NAME;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// Utility for creating a [Grammar].
+/// Imperative utility for creating a [Grammar].
 ///
-/// Please read the [module documentation](crate::grammar) for more information and examples.
+/// Please read the [module documentation](mod@crate::grammar) for more information and examples.
 pub struct GrammarBuilder {
     current_precedence: usize,
     grammar:            Grammar,
@@ -154,4 +154,44 @@ impl GrammarBuilder {
 
         self.grammar.clone()
     }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __grammar_helper {
+    ($grammar:ident $rule_name:literal => empty) => {
+        $grammar.rule_to_rules($rule_name, &[]);
+    };
+    ($grammar:ident $rule_name:literal => rules $($rule_names:literal)*) => {
+        $grammar.rule_to_rules($rule_name, &[$($rule_names),*]);
+    };
+    ($grammar:ident $rule_name:literal => rule $($rule_names:literal)*) => {
+        $grammar.rule_to_rules($rule_name, &[$($rule_names),*]);
+    };
+    ($grammar:ident $rule_name:literal => lexemes $($lexeme_kinds:literal)*) => {
+        $grammar.rule_to_lexemes($rule_name, &[$($lexeme_kinds),*]);
+    };
+    ($grammar:ident $rule_name:literal => lexeme $($lexeme_kinds:literal)*) => {
+        $grammar.rule_to_lexemes($rule_name, &[$($lexeme_kinds),*]);
+    };
+    ($grammar:ident $associativity:expr => rules $($rule_names:literal)*) => {
+        $grammar.disambiguate($associativity, &[$($rule_names),*]);
+    };
+    ($grammar:ident $associativity:path => rule $($rule_names:literal)*) => {
+        $grammar.disambiguate($associativity, &[$($rule_names),*]);
+    };
+}
+
+/// Declarative utility for creating a [Grammar].
+///
+/// Please read the [module documentation](mod@crate::grammar) for more information and examples.
+#[macro_export]
+macro_rules! grammar {
+    ($($target:expr => $action:ident $($args:literal)*);* ;) => {{
+        let mut grammar = santiago::grammar::GrammarBuilder::new();
+
+        $(santiago::__grammar_helper!(grammar $target => $action $($args)*));*;
+
+        grammar.finish()
+    }};
 }

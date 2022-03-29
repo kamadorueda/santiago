@@ -1,13 +1,12 @@
 use santiago::grammar::Grammar;
-use santiago::grammar::GrammarBuilder;
 
 pub fn grammar() -> Grammar {
-    GrammarBuilder::new()
+    santiago::grammar!(
         // A rule for 0 characters
-        .rule_to_rules("chars", &[])
+        "chars" => empty;
         // A rule that maps to itself plus one character (recursion)
-        .rule_to_rules("chars", &["chars", "char"])
+        "chars" => rules "chars" "char";
         // A char comes from the lexeme "CHAR"
-        .rule_to_lexemes("char", &["CHAR"])
-        .finish()
+        "char" => lexeme "CHAR";
+    )
 }
