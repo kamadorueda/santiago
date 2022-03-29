@@ -14,9 +14,9 @@ mod production;
 mod symbol;
 
 pub use associativity::Associativity;
-pub(crate) use disambiguation::Disambiguation;
+pub use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
-pub(crate) use grammar_rule::GrammarRule;
+pub use grammar_rule::GrammarRule;
 pub(crate) use production::Production;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -32,4 +32,11 @@ pub(crate) const START_RULE_NAME: &str = "Γ";
 #[derive(Clone)]
 pub struct Grammar {
     pub(crate) rules: HashMap<Rc<String>, GrammarRule>,
+}
+
+impl Grammar {
+    /// Return the rules of this [Grammar].
+    pub fn rules(&self) -> &HashMap<Rc<String>, GrammarRule> {
+        &self.rules
+    }
 }

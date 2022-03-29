@@ -134,7 +134,7 @@ macro_rules! __lexer_rules_helper {
     };
 }
 
-/// Declarative utility for creating a [Grammar](crate::grammar::Grammar).
+/// Declarative utility for creating [LexerRules].
 ///
 /// Please read the [module documentation](crate) for more information and examples.
 #[macro_export]

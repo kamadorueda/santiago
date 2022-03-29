@@ -6,7 +6,7 @@ fn main() -> Result<(), String> {
     use std::io::Read;
 
     let lexing_rules = santiago::languages::nix::lexer_rules();
-    let grammar_rules = santiago::languages::nix::grammar();
+    let grammar = santiago::languages::nix::grammar();
 
     let mut stdin = String::new();
     std::io::stdin().read_to_string(&mut stdin).unwrap();
@@ -18,8 +18,7 @@ fn main() -> Result<(), String> {
         println!("  {lexeme}");
     }
 
-    let abstract_syntax_trees =
-        santiago::parser::parse(&grammar_rules, &lexemes)?;
+    let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes)?;
 
     println!("AST:");
     for ast in abstract_syntax_trees {

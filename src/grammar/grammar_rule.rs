@@ -13,7 +13,7 @@ use std::rc::Rc;
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
-pub(crate) struct GrammarRule {
+pub struct GrammarRule {
     pub(crate) name:           Rc<String>,
     pub(crate) disambiguation: Option<Disambiguation>,
     pub(crate) productions:    Vec<Rc<Production>>,

@@ -10,7 +10,7 @@ use crate::grammar::Associativity;
 /// but normally you create a [Disambiguation]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
 #[derive(Clone)]
-pub(crate) struct Disambiguation {
+pub struct Disambiguation {
     pub(crate) associativity: Associativity,
     pub(crate) precedence:    usize,
 }
