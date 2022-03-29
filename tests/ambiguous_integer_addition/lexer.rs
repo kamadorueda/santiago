@@ -1,13 +1,12 @@
-use santiago::lexer::LexerBuilder;
 use santiago::lexer::LexerRules;
 
 pub fn lexer_rules() -> LexerRules {
-    LexerBuilder::new()
+    santiago::lexer_rules!(
         // One more sequential digits from 0 to 9 will be mapped to an "INT"
-        .pattern(&["INITIAL"], "INT", r"[0-9]+", |lexer| lexer.take())
+        | "INT" = pattern r"[0-9]+";
         // A literal "+" will be mapped to "PLUS"
-        .string(&["INITIAL"], "PLUS", "+", |lexer| lexer.take())
+        | "PLUS" = string "+";
         // Whitespace " " will be skipped
-        .pattern(&["INITIAL"], "WS", r"\s", |lexer| lexer.skip())
-        .finish()
+        | "WS" = pattern r"\s" => |lexer| lexer.skip();
+    )
 }

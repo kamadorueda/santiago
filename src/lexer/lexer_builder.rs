@@ -9,7 +9,7 @@ use crate::lexer::NextLexeme;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// Utility for creating [LexerRules].
+/// Imperative utility for creating [LexerRules].
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
 pub struct LexerBuilder {
@@ -108,4 +108,70 @@ impl LexerBuilder {
     pub fn finish(&self) -> LexerRules {
         self.rules.clone()
     }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __lexer_rules_helper {
+    (
+        $builder:ident
+        | $rule_name:literal
+        = $matcher:ident $matcher_arg:literal
+    ) => {
+        $builder.$matcher(&["INITIAL"], $rule_name, $matcher_arg, |lexer| {
+            lexer.take()
+        });
+    };
+    (
+        $builder:ident
+        | $rule_name:literal
+        = $matcher:ident $matcher_arg:literal
+        => $action:expr
+    ) => {
+        $builder.$matcher(&["INITIAL"], $rule_name, $matcher_arg, $action);
+    };
+    (
+        $builder:ident
+        $( $states:literal )+
+        | $rule_name:literal
+        = $matcher:ident $matcher_arg:literal
+    ) => {
+        $builder.$matcher(&[$($states),*], $rule_name, $matcher_arg, |lexer| {
+            lexer.take()
+        });
+    };
+    (
+        $builder:ident
+        $( $states:literal )+
+        | $rule_name:literal
+        = $matcher:ident $matcher_arg:literal
+        => $action:expr
+    ) => {
+        $builder.$matcher(&[$($states),*], $rule_name, $matcher_arg, $action);
+    };
+}
+
+/// Declarative utility for creating a [Grammar].
+///
+/// Please read the [module documentation](crate) for more information and examples.
+#[macro_export]
+macro_rules! lexer_rules {
+    ($(
+        $( $states:literal )*
+        | $rule_name:literal
+        = $matcher:ident $matcher_arg:literal
+        $( => $action:expr )?
+    );* ;) => {{
+        let mut builder = santiago::lexer::LexerBuilder::new();
+
+        $(santiago::__lexer_rules_helper!(
+            builder
+            $( $states )*
+            | $rule_name
+            = $matcher $matcher_arg
+            $( => $action )?
+        ));*;
+
+        builder.finish()
+    }};
 }

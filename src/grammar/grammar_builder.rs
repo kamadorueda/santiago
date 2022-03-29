@@ -14,7 +14,7 @@ use std::rc::Rc;
 
 /// Imperative utility for creating a [Grammar].
 ///
-/// Please read the [module documentation](mod@crate::grammar) for more information and examples.
+/// Please read the [crate documentation](crate) for more information and examples.
 pub struct GrammarBuilder {
     current_precedence: usize,
     grammar:            Grammar,
@@ -184,14 +184,14 @@ macro_rules! __grammar_helper {
 
 /// Declarative utility for creating a [Grammar].
 ///
-/// Please read the [module documentation](mod@crate::grammar) for more information and examples.
+/// Please read the [crate documentation](crate) for more information and examples.
 #[macro_export]
 macro_rules! grammar {
     ($($target:expr => $action:ident $($args:literal)*);* ;) => {{
-        let mut grammar = santiago::grammar::GrammarBuilder::new();
+        let mut builder = santiago::grammar::GrammarBuilder::new();
 
-        $(santiago::__grammar_helper!(grammar $target => $action $($args)*));*;
+        $(santiago::__grammar_helper!(builder $target => $action $($args)*));*;
 
-        grammar.finish()
+        builder.finish()
     }};
 }
