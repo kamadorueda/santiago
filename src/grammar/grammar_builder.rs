@@ -9,7 +9,9 @@ use crate::grammar::GrammarRule;
 use crate::grammar::Production;
 use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::rc::Rc;
 
 /// Imperative utility for creating a [Grammar].
@@ -37,7 +39,10 @@ impl GrammarBuilder {
 
     fn rule_to_symbols(&mut self, rule_name: &str, symbols: Vec<Symbol>) {
         let rule_name = Rc::new(rule_name.to_string());
-        let production = Rc::new(Production { symbols });
+        let production = Rc::new(Production {
+            target_lexemes: RefCell::new(HashSet::new()),
+            symbols,
+        });
 
         if self.grammar.rules.is_empty() && *rule_name != START_RULE_NAME {
             self.rule_to_rules(START_RULE_NAME, &[&rule_name]);
@@ -129,8 +134,73 @@ impl GrammarBuilder {
         self
     }
 
+    fn compute_target_lexemes(&mut self) {
+        loop {
+            let mut converged = true;
+
+            for rule in self.grammar.rules.values() {
+                for production in rule.productions.iter() {
+                    if production.symbols.is_empty() {
+                        continue;
+                    }
+                    match &production.symbols[0] {
+                        Symbol::Lexeme(lexeme_kind) => {
+                            if !production
+                                .target_lexemes
+                                .borrow()
+                                .contains(lexeme_kind)
+                            {
+                                production
+                                    .target_lexemes
+                                    .borrow_mut()
+                                    .insert(lexeme_kind.clone());
+                                converged = false;
+                            }
+                        }
+                        Symbol::Rule(target_rule_name) => {
+                            for from_production in self
+                                .grammar
+                                .rules
+                                .get(target_rule_name)
+                                .unwrap()
+                                .productions
+                                .iter()
+                            {
+                                if from_production != production
+                                    && !from_production.symbols.is_empty()
+                                {
+                                    for target_lexeme in from_production
+                                        .target_lexemes
+                                        .borrow()
+                                        .iter()
+                                    {
+                                        if !production
+                                            .target_lexemes
+                                            .borrow()
+                                            .contains(target_lexeme)
+                                        {
+                                            production
+                                                .target_lexemes
+                                                .borrow_mut()
+                                                .insert(target_lexeme.clone());
+                                            converged = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if converged {
+                break;
+            }
+        }
+    }
+
     /// Return the created [Grammar], performing a few validations first.
-    pub fn finish(&self) -> Grammar {
+    pub fn finish(&mut self) -> Grammar {
         for (rule_name, rule) in self.grammar.rules.iter() {
             for production in &rule.productions {
                 for symbol in &production.symbols {
@@ -151,6 +221,8 @@ impl GrammarBuilder {
                 }
             }
         }
+
+        self.compute_target_lexemes();
 
         self.grammar.clone()
     }

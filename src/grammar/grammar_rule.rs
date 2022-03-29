@@ -29,7 +29,7 @@ impl std::fmt::Display for GrammarRule {
                 .iter()
                 .map(|production| production.to_string())
                 .collect::<Vec<String>>()
-                .join(" | ")
+                .join("\n    | ")
         )
     }
 }

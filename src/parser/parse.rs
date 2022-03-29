@@ -14,16 +14,30 @@ use crate::parser::Tree;
 use std::collections::HashSet;
 use std::rc::Rc;
 
-fn predict(column: &mut ParserColumn, rule: &GrammarRule) {
+fn predict(
+    columns: &mut Vec<ParserColumn>,
+    column_index: usize,
+    rule: &GrammarRule,
+) {
     for production in &rule.productions {
+        if column_index + 1 < columns.len()
+            && !production.target_lexemes.borrow().is_empty()
+            && !production
+                .target_lexemes
+                .borrow()
+                .contains(&columns[column_index + 1].kind)
+        {
+            continue;
+        }
+
         let new_state = ParserState {
             name:         rule.name.clone(),
             production:   production.clone(),
             dot_index:    0,
-            start_column: column.index,
+            start_column: column_index,
             end_column:   usize::MAX,
         };
-        column.add(new_state);
+        columns[column_index].add(new_state);
     }
 }
 
@@ -144,7 +158,7 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
                     Symbol::Rule(name) => {
                         if !predicted_names.contains(&name) {
                             let rule = grammar.rules.get(&name).unwrap();
-                            predict(&mut columns[column_index], rule);
+                            predict(&mut columns, column_index, rule);
                             predicted_names.insert(name);
                         }
                     }

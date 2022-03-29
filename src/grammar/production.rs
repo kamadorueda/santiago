@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::grammar::Symbol;
+use std::cell::RefCell;
+use std::collections::HashSet;
+use std::hash::Hasher;
 
-use std;
-
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct Production {
-    pub(crate) symbols: Vec<Symbol>,
+    pub(crate) symbols:        Vec<Symbol>,
+    pub(crate) target_lexemes: RefCell<HashSet<String>>,
 }
 
 impl std::fmt::Display for Production {
@@ -22,5 +24,11 @@ impl std::fmt::Display for Production {
                 .collect::<Vec<String>>()
                 .join(" ")
         )
+    }
+}
+
+impl std::hash::Hash for Production {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.symbols.hash(state);
     }
 }
