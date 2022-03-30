@@ -6,5 +6,8 @@
 //!
 //! Please read the [crate documentation](crate) for more information and examples.
 
+#[cfg(feature = "language_calculator")]
+pub mod calculator;
+
 #[cfg(feature = "language_nix")]
 pub mod nix;

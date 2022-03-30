@@ -6,7 +6,8 @@ package = "regex"
 version = "1"
 
 [features]
-default = ["crate_regex", "language_nix"]
+default = ["crate_regex", "language_calculator", "language_nix"]
+language_calculator = []
 language_nix = []
 
 [package]
