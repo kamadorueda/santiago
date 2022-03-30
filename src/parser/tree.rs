@@ -4,6 +4,7 @@
 
 use crate::grammar::Associativity;
 use crate::grammar::Grammar;
+use crate::grammar::Production;
 use crate::grammar::Symbol;
 use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
@@ -18,10 +19,12 @@ pub enum Tree {
     Leaf(Lexeme),
     /// Group of many [Tree::Leaf].
     Node {
-        /// Name of the grammar rule that produced this node.
-        kind:   String,
+        /// Name of the [GrammarRule](crate::grammar::GrammarRule) that produced this node.
+        rule_name:  Rc<String>,
+        /// Reference to the [Production] that produced this node.
+        production: Rc<Production>,
         /// Children of this Node.
-        leaves: Vec<Rc<Tree>>,
+        leaves:     Vec<Rc<Tree>>,
     },
 }
 
@@ -36,8 +39,12 @@ impl std::fmt::Display for Tree {
                 Tree::Leaf(lexeme) => {
                     writeln!(f, "{}{lexeme}", "  ".repeat(depth + 1))
                 }
-                Tree::Node { kind, leaves } => {
-                    let result = writeln!(f, "{}{kind}", "  ".repeat(depth));
+                Tree::Node { rule_name, leaves, production } => {
+                    let result = writeln!(
+                        f,
+                        "{}{rule_name} := {production}",
+                        "  ".repeat(depth)
+                    );
 
                     for leaf in leaves {
                         recurse(
@@ -124,7 +131,8 @@ fn build_forest_helper(
         }
 
         return vec![Rc::new(Tree::Node {
-            kind: (*state.name).clone(),
+            rule_name: state.rule_name.clone(),
+            production: state.production.clone(),
             leaves,
         })];
     }
@@ -155,7 +163,7 @@ fn build_forest_helper(
                 .iter()
                 .take_while(|state_partial| *state_partial != state)
                 .filter(|state_partial| {
-                    *state_partial.name == *name
+                    *state_partial.rule_name == *name
                         && (symbol_index > 0
                             || state_partial.start_column == state.start_column)
                         && satisfies_disambiguation(
@@ -251,7 +259,7 @@ fn get_disambiguation(grammar: &Grammar, state: &ParserState) -> Option<usize> {
             |(index, symbol)| {
                 if let Symbol::Rule(name) = symbol {
                     if let Some(rule) = grammar.rules.get(name) {
-                        if let Some(_) = &rule.disambiguation {
+                        if rule.disambiguation.is_some() {
                             return Some(index);
                         }
                     }

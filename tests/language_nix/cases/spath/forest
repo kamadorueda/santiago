@@ -1,13 +1,13 @@
 ---
-expr_app
-  expr_app
-    ID
+expr_app := expr_app expr_select
+  expr_app := expr_app expr_select
+    ID := "ID"
       ID "import" (1, 1)
-    SPATH
+    SPATH := "SPATH"
       SPATH "<nixpkgs>" (1, 8)
-  expr_simple
-    {
+  expr_simple := { binds }
+    { := "{"
       { "{" (1, 18)
-    binds
-    }
+    binds := 
+    } := "}"
       } "}" (1, 19)

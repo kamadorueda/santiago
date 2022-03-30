@@ -7,7 +7,7 @@ use crate::lexer::Position;
 /// Represents a group or related characters and its position.
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
-#[derive(Clone, Debug, Hash)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Lexeme {
     pub(crate) kind:     String,
     pub(crate) raw:      String,

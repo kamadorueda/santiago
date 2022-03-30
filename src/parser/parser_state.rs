@@ -15,7 +15,7 @@ use std::rc::Rc;
 /// relative the input [Lexemes](crate::lexer::Lexeme).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct ParserState {
-    pub(crate) name:         Rc<String>,
+    pub(crate) rule_name:    Rc<String>,
     pub(crate) production:   Rc<Production>,
     pub(crate) dot_index:    usize,
     pub(crate) start_column: usize,
@@ -31,7 +31,7 @@ impl std::fmt::Display for ParserState {
         write!(
             f,
             "{} := {} [{}-{}]",
-            self.name,
+            self.rule_name,
             symbols.join(" "),
             self.start_column,
             if self.end_column == usize::MAX {

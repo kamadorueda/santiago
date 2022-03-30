@@ -1,14 +1,14 @@
 ---
-chars
-  chars
-    chars
-      chars
-        chars
-        char
+chars := chars char
+  chars := chars char
+    chars := chars char
+      chars := chars char
+        chars := 
+        char := "CHAR"
           CHAR "a" (1, 1)
-      char
+      char := "CHAR"
         CHAR "b" (1, 2)
-    char
+    char := "CHAR"
       CHAR "c" (1, 3)
-  char
+  char := "CHAR"
     CHAR "d" (1, 4)

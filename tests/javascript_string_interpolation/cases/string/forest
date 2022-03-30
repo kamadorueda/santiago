@@ -1,16 +1,16 @@
 ---
-string
-  string_start
+string := string_start str_content string_end
+  string_start := "STRING_START"
     STRING_START "`" (1, 1)
-  str_content
-    str_content
-      str_content
-        str_content
-        str
+  str_content := str_content str
+    str_content := str_content str
+      str_content := str_content str
+        str_content := 
+        str := "STR"
           STR "a" (1, 2)
-      str
+      str := "STR"
         STR "b" (1, 3)
-    str
+    str := "STR"
       STR "c" (1, 4)
-  string_end
+  string_end := "STRING_END"
     STRING_END "`" (1, 5)

@@ -1,22 +1,22 @@
 ---
-string
-  string_start
+string := string_start str_content string_end
+  string_start := "STRING_START"
     STRING_START "`" (1, 1)
-  str_content
-    str_content
-      str_content
-        str_content
-          str_content
-            str_content
-            str
+  str_content := str_content str
+    str_content := str_content var
+      str_content := str_content str
+        str_content := str_content var
+          str_content := str_content str
+            str_content := 
+            str := "STR"
               STR "a" (1, 2)
-          var
+          var := "VAR"
             VAR "b" (1, 6)
-        str
+        str := "STR"
           STR "c" (1, 9)
-      var
+      var := "VAR"
         VAR "d" (1, 13)
-    str
+    str := "STR"
       STR "e" (1, 16)
-  string_end
+  string_end := "STRING_END"
     STRING_END "`" (1, 17)

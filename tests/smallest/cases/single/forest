@@ -1,5 +1,5 @@
 ---
-chars
-  chars
-  char
+chars := chars char
+  chars := 
+  char := "CHAR"
     CHAR "a" (1, 1)

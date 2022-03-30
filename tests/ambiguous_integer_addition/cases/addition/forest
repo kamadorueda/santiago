@@ -1,26 +1,26 @@
 ---
-sum
-  sum
-    sum
+sum := sum plus sum
+  sum := sum plus sum
+    sum := "INT"
       INT "11" (1, 1)
-    plus
+    plus := "PLUS"
       PLUS "+" (1, 4)
-    sum
+    sum := "INT"
       INT "22" (1, 6)
-  plus
+  plus := "PLUS"
     PLUS "+" (1, 9)
-  sum
+  sum := "INT"
     INT "33" (1, 11)
 ---
-sum
-  sum
+sum := sum plus sum
+  sum := "INT"
     INT "11" (1, 1)
-  plus
+  plus := "PLUS"
     PLUS "+" (1, 4)
-  sum
-    sum
+  sum := sum plus sum
+    sum := "INT"
       INT "22" (1, 6)
-    plus
+    plus := "PLUS"
       PLUS "+" (1, 9)
-    sum
+    sum := "INT"
       INT "33" (1, 11)

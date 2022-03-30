@@ -19,6 +19,7 @@
 //! a [lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module,
 //! and out-of-the-box parsers for the following languages:
 //!
+//! - [Calculator](languages::calculator)
 //! - [Nix Expression Language](languages::nix)
 //!
 //! Santiago aims to be the Rust alternative to

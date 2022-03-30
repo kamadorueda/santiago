@@ -32,7 +32,7 @@ fn predict(
         }
 
         let new_state = ParserState {
-            name:         rule.name.clone(),
+            rule_name:    rule.name.clone(),
             production:   production.clone(),
             dot_index:    0,
             start_column: column_index,
@@ -49,7 +49,7 @@ fn scan(
 ) {
     let state = &columns[column_index].states[state_index];
     let new_state = ParserState {
-        name:         state.name.clone(),
+        rule_name:    state.rule_name.clone(),
         production:   state.production.clone(),
         start_column: state.start_column,
         end_column:   usize::MAX,
@@ -63,7 +63,7 @@ fn complete(
     column_index: usize,
     state_index: usize,
 ) {
-    let state_name = &columns[column_index].states[state_index].name;
+    let state_name = &columns[column_index].states[state_index].rule_name;
     let state_start_column =
         columns[column_index].states[state_index].start_column;
 
@@ -86,7 +86,7 @@ fn complete(
     for index in indexes {
         let st = &columns[state_start_column].states[index];
         let new_state = ParserState {
-            name:         st.name.clone(),
+            rule_name:    st.rule_name.clone(),
             production:   st.production.clone(),
             start_column: st.start_column,
             end_column:   usize::MAX,
@@ -105,7 +105,7 @@ pub fn parse(
 
     let mut parent = None;
     for state in &columns.last().unwrap().states {
-        if *state.name == START_RULE_NAME && state.completed() {
+        if *state.rule_name == START_RULE_NAME && state.completed() {
             parent = Some(state.clone());
             break;
         }
@@ -161,10 +161,11 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
         })
         .collect();
 
-    let name = Rc::new(START_RULE_NAME.to_string());
+    let rule_name = Rc::new(START_RULE_NAME.to_string());
     columns[0].add(ParserState {
-        production: grammar.rules.get(&name).unwrap().productions[0].clone(),
-        name,
+        production: grammar.rules.get(&rule_name).unwrap().productions[0]
+            .clone(),
+        rule_name,
         start_column: 0,
         end_column: usize::MAX,
         dot_index: 0,

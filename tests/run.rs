@@ -35,11 +35,21 @@ fn integer_addition() {
 }
 
 #[test]
-fn language_nix() {
-    let lexer_rules = santiago::languages::nix::lexer_rules();
-    let grammar = santiago::languages::nix::grammar();
+fn language_calculator() {
+    run(
+        "language_calculator",
+        &santiago::languages::calculator::lexer_rules(),
+        &santiago::languages::calculator::grammar(),
+    );
+}
 
-    run("language_nix", &lexer_rules, &grammar);
+#[test]
+fn language_nix() {
+    run(
+        "language_nix",
+        &santiago::languages::nix::lexer_rules(),
+        &santiago::languages::nix::grammar(),
+    );
 }
 
 #[test]

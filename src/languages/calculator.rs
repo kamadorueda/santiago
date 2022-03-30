@@ -7,8 +7,8 @@
 //! Example usage:
 //! ```rust
 //! # let input = include_str!("../../tests/language_calculator/cases/example/input");
-//! let lexer_rules = santiago::languages::nix::lexer_rules();
-//! let grammar = santiago::languages::nix::grammar();
+//! let lexer_rules = santiago::languages::calculator::lexer_rules();
+//! let grammar = santiago::languages::calculator::grammar();
 //!
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! let abstract_syntax_trees =
