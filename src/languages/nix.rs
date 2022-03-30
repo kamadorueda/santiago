@@ -247,8 +247,8 @@ pub fn lexer_rules() -> LexerRules {
         .pattern(&["INPATH_SLASH"], "ERROR", concat!(ANY!(), "|$"), |lexer| {
             lexer.error("Path has a trailing slash")
         })
-        .string(&["DEFAULT"], "SPATH", SPATH!(), |lexer| lexer.take())
-        .string(&["DEFAULT"], "URI", URI!(), |lexer| lexer.take())
+        .pattern(&["DEFAULT"], "SPATH", SPATH!(), |lexer| lexer.take())
+        .pattern(&["DEFAULT"], "URI", URI!(), |lexer| lexer.take())
         .pattern(&["DEFAULT"], "WS", r"[ \t\r\n]+", |lexer| lexer.skip())
         .pattern(&["DEFAULT"], "COMMENT", r"\#[^\r\n]*", |lexer| lexer.skip())
         .pattern(&["DEFAULT"], "COMMENT", r"/\*([^*]|\*+[^*/])*\*+/", |lexer| {

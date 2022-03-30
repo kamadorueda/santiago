@@ -1,0 +1,13 @@
+---
+expr_app
+  expr_app
+    ID
+      ID "import" (1, 1)
+    SPATH
+      SPATH "<nixpkgs>" (1, 8)
+  expr_simple
+    {
+      { "{" (1, 18)
+    binds
+    }
+      } "}" (1, 19)
