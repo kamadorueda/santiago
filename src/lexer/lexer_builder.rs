@@ -117,7 +117,7 @@ macro_rules! __lexer_rules_helper {
         $builder:ident
         $( $states:literal )+
         | $rule_name:literal
-        = $matcher:ident $matcher_arg:literal
+        = $matcher:ident $matcher_arg:expr
     ) => {
         $builder.$matcher(&[$($states),*], $rule_name, $matcher_arg, |lexer| {
             lexer.take()
@@ -127,7 +127,7 @@ macro_rules! __lexer_rules_helper {
         $builder:ident
         $( $states:literal )+
         | $rule_name:literal
-        = $matcher:ident $matcher_arg:literal
+        = $matcher:ident $matcher_arg:expr
         => $action:expr
     ) => {
         $builder.$matcher(&[$($states),*], $rule_name, $matcher_arg, $action);
@@ -142,7 +142,7 @@ macro_rules! lexer_rules {
     ($(
         $( $states:literal )*
         | $rule_name:literal
-        = $matcher:ident $matcher_arg:literal
+        = $matcher:ident $matcher_arg:expr
         $( => $action:expr )?
     );* ;) => {{
         let mut builder = santiago::lexer::LexerBuilder::new();
