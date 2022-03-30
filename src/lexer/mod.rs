@@ -8,12 +8,14 @@
 //! Please read the [crate documentation](crate) for more information and examples.
 mod lexeme;
 mod lexer_builder;
+mod lexer_error;
 mod lexer_rule;
 mod lexer_rules;
 mod position;
 
 pub use lexeme::Lexeme;
 pub use lexer_builder::LexerBuilder;
+pub use lexer_error::LexerError;
 pub(crate) use lexer_rule::LexerRule;
 pub use lexer_rules::LexerRules;
 pub use position::Position;
@@ -49,21 +51,6 @@ pub enum NextLexeme {
     Skip,
     /// Instructs the [Lexer] that we reached the end of the input.
     Finished,
-}
-
-/// Internal representation of an error encountered by the [Lexer].
-#[derive(Debug)]
-pub struct LexerError {
-    /// Byte index relative to the [Lexer] input where the error was encountered.
-    pub byte_index:   usize,
-    /// Length of the current match, or none if the [Lexer] did not match something.
-    pub match_len:    Option<usize>,
-    /// Human readable representation of the error.
-    pub message:      String,
-    /// [Position] where the error was found.
-    pub position:     Position,
-    /// Current stack of states in the [Lexer].
-    pub states_stack: Vec<String>,
 }
 
 impl<'a> Lexer<'a> {

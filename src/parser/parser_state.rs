@@ -9,8 +9,12 @@ use std::hash::Hash;
 use std::hash::Hasher;
 use std::rc::Rc;
 
+/// Internal representation of a [Production] that has been matched
+/// up to certain [Symbol],
+/// starting at `start_column` and ending at `end_column`
+/// relative the input [Lexemes](crate::lexer::Lexeme).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub(crate) struct ParserState {
+pub struct ParserState {
     pub(crate) name:         Rc<String>,
     pub(crate) production:   Rc<Production>,
     pub(crate) dot_index:    usize,

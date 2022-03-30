@@ -1,19 +1,31 @@
 0
+  Γ := • chars [0-0]
   chars := • [0-0]
+  chars := • chars char [0-0]
   Γ := chars • [0-0]
+  chars := chars • char [0-0]
+  char := • "CHAR" [0-0]
 1
   char := "CHAR" • [0-1]
   chars := chars char • [0-1]
   Γ := chars • [0-1]
+  chars := chars • char [0-1]
+  char := • "CHAR" [1-1]
 2
   char := "CHAR" • [1-2]
   chars := chars char • [0-2]
   Γ := chars • [0-2]
+  chars := chars • char [0-2]
+  char := • "CHAR" [2-2]
 3
   char := "CHAR" • [2-3]
   chars := chars char • [0-3]
   Γ := chars • [0-3]
+  chars := chars • char [0-3]
+  char := • "CHAR" [3-3]
 4
   char := "CHAR" • [3-4]
   chars := chars char • [0-4]
   Γ := chars • [0-4]
+  chars := chars • char [0-4]
+  char := • "CHAR" [4-4]

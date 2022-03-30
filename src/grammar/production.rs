@@ -7,7 +7,7 @@ use std::cell::RefCell;
 use std::collections::HashSet;
 use std::hash::Hasher;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug)]
 pub(crate) struct Production {
     pub(crate) symbols:        Vec<Symbol>,
     pub(crate) target_lexemes: RefCell<HashSet<String>>,
@@ -24,6 +24,14 @@ impl std::fmt::Display for Production {
                 .collect::<Vec<String>>()
                 .join(" ")
         )
+    }
+}
+
+impl std::cmp::Eq for Production {}
+
+impl std::cmp::PartialEq for Production {
+    fn eq(&self, other: &Production) -> bool {
+        self.symbols.eq(&other.symbols)
     }
 }
 

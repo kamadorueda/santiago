@@ -8,6 +8,7 @@ use crate::grammar::Symbol;
 use crate::grammar::START_RULE_NAME;
 use crate::lexer::Lexeme;
 use crate::parser::tree::build;
+use crate::parser::ParseError;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use crate::parser::Tree;
@@ -99,16 +100,42 @@ fn complete(
 pub fn parse(
     grammar: &Grammar,
     lexemes: &[Lexeme],
-) -> Result<Vec<Rc<Tree>>, String> {
-    let columns: Vec<ParserColumn> = earley(grammar, lexemes);
+) -> Result<Vec<Rc<Tree>>, ParseError> {
+    let mut columns: Vec<ParserColumn> = earley(grammar, lexemes);
 
+    let mut parent = None;
     for state in &columns.last().unwrap().states {
         if *state.name == START_RULE_NAME && state.completed() {
-            return Ok(build(grammar, lexemes, &columns, state));
+            parent = Some(state.clone());
+            break;
         }
     }
 
-    Err(String::new())
+    if let Some(state) = parent {
+        for column in columns.iter_mut() {
+            column.states = column
+                .states
+                .iter()
+                .filter(|state| state.completed())
+                .cloned()
+                .collect();
+        }
+
+        Ok(build(grammar, lexemes, &columns, &state))
+    } else if lexemes.is_empty() {
+        Err(ParseError { at: None, states: columns[0].states.clone() })
+    } else {
+        let column = columns
+            .iter()
+            .rev()
+            .find(|column| !column.states.is_empty())
+            .unwrap();
+
+        Err(ParseError {
+            at:     lexemes.get(column.index.overflowing_sub(1).0).cloned(),
+            states: column.states.clone(),
+        })
+    }
 }
 
 /// Parse the provided [Lexemes](Lexeme) with the given [Grammar]
@@ -175,15 +202,6 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
             state_index += 1;
             state_len = columns[column_index].states.len();
         }
-    }
-
-    for column in columns.iter_mut() {
-        column.states = column
-            .states
-            .iter()
-            .filter(|state| state.completed())
-            .cloned()
-            .collect();
     }
 
     // println!();

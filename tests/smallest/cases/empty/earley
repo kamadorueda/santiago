@@ -1,3 +1,7 @@
 0
+  Γ := • chars [0-0]
   chars := • [0-0]
+  chars := • chars char [0-0]
   Γ := chars • [0-0]
+  chars := chars • char [0-0]
+  char := • "CHAR" [0-0]

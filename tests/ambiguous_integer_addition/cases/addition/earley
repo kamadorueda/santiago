@@ -1,18 +1,36 @@
 0
-
+  Γ := • sum [0-0]
+  sum := • sum plus sum [0-0]
+  sum := • "INT" [0-0]
 1
   sum := "INT" • [0-1]
   Γ := sum • [0-1]
+  sum := sum • plus sum [0-1]
+  plus := • "PLUS" [1-1]
 2
   plus := "PLUS" • [1-2]
+  sum := sum plus • sum [0-2]
+  sum := • sum plus sum [2-2]
+  sum := • "INT" [2-2]
 3
   sum := "INT" • [2-3]
   sum := sum plus sum • [0-3]
+  sum := sum • plus sum [2-3]
   Γ := sum • [0-3]
+  sum := sum • plus sum [0-3]
+  plus := • "PLUS" [3-3]
 4
   plus := "PLUS" • [3-4]
+  sum := sum plus • sum [2-4]
+  sum := sum plus • sum [0-4]
+  sum := • sum plus sum [4-4]
+  sum := • "INT" [4-4]
 5
   sum := "INT" • [4-5]
   sum := sum plus sum • [2-5]
   sum := sum plus sum • [0-5]
+  sum := sum • plus sum [4-5]
+  sum := sum • plus sum [2-5]
   Γ := sum • [0-5]
+  sum := sum • plus sum [0-5]
+  plus := • "PLUS" [5-5]

@@ -34,10 +34,10 @@ impl std::fmt::Display for Tree {
         ) -> std::fmt::Result {
             match tree {
                 Tree::Leaf(lexeme) => {
-                    write!(f, "{}{lexeme}\n", "  ".repeat(depth + 1))
+                    writeln!(f, "{}{lexeme}", "  ".repeat(depth + 1))
                 }
                 Tree::Node { kind, leaves } => {
-                    let result = write!(f, "{}{kind}\n", "  ".repeat(depth));
+                    let result = writeln!(f, "{}{kind}", "  ".repeat(depth));
 
                     for leaf in leaves {
                         recurse(
@@ -129,11 +129,10 @@ fn build_forest_helper(
         })];
     }
 
-
     match &state.production.symbols[symbol_index] {
         Symbol::Lexeme(_) => {
             let lexeme = &lexemes[end_column - 1];
-            let mut leaves = leaves.clone();
+            let mut leaves = leaves;
             let mut leaves_extended = vec![Rc::new(Tree::Leaf(lexeme.clone()))];
             leaves_extended.append(&mut leaves);
 
