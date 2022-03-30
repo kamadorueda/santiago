@@ -4,54 +4,30 @@
 
 //! Lexer and Parser for the [Nix expression language](https://nixos.org/).
 //!
+//! Example usage:
 //! ```rust
-//! let input = "let var = 123; in var";
-//!
+//! # let input = include_str!("../../tests/language_nix/cases/pkg/input");
 //! let lexer_rules = santiago::languages::nix::lexer_rules();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, input).unwrap();
-//!
-//! assert_eq!(
-//!     vec![
-//!         // kind raw (line, column)
-//!         r#"LET "let" (1, 1)"#,
-//!         r#"ID "var" (1, 5)"#,
-//!         r#"= "=" (1, 9)"#,
-//!         r#"INT "123" (1, 11)"#,
-//!         r#"; ";" (1, 14)"#,
-//!         r#"IN "in" (1, 16)"#,
-//!         r#"ID "var" (1, 19)"#,
-//!     ],
-//!     lexemes
-//!         .iter()
-//!         .map(santiago::lexer::Lexeme::to_string)
-//!         .collect::<Vec<String>>()
-//! );
-//!
 //! let grammar = santiago::languages::nix::grammar();
 //!
-//! let ast = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
-//! assert_eq!(
-//!     vec![
-//!         r#"expr_function"#,
-//!         r#"  LET"#,
-//!         r#"    LET "let" (1, 1)"#,
-//!         r#"  binds"#,
-//!         r#"    binds"#,
-//!         r#"    ID"#,
-//!         r#"      ID "var" (1, 5)"#,
-//!         r#"    ="#,
-//!         r#"      = "=" (1, 9)"#,
-//!         r#"    INT"#,
-//!         r#"      INT "123" (1, 11)"#,
-//!         r#"    ;"#,
-//!         r#"      ; ";" (1, 14)"#,
-//!         r#"  IN"#,
-//!         r#"    IN "in" (1, 16)"#,
-//!         r#"  ID"#,
-//!         r#"    ID "var" (1, 19)"#,
-//!     ],
-//!     ast.to_string().lines().collect::<Vec<&str>>(),
-//! );
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//!
+//! Example input:
+//!
+//! ```nix
+#![doc = include_str!("../../tests/language_nix/cases/pkg/input")]
+//! ```
+//! 
+//! Lexemes:
+//! ```text
+#![doc = include_str!("../../tests/language_nix/cases/pkg/lexemes")]
+//! ```
+//! 
+//! Abstract Syntax Tree:
+//! ```text
+#![doc = include_str!("../../tests/language_nix/cases/pkg/forest")]
 //! ```
 
 use crate::def;
