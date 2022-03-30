@@ -17,10 +17,10 @@ pub use associativity::Associativity;
 pub use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
 pub use grammar_rule::GrammarRule;
-pub(crate) use production::Production;
+pub use production::Production;
 use std::collections::HashMap;
 use std::rc::Rc;
-pub(crate) use symbol::Symbol;
+pub use symbol::Symbol;
 
 pub(crate) const START_RULE_NAME: &str = "Γ";
 

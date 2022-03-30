@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+/// Terminal or non-terminal element of a [Production](crate::grammar::Production).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub(crate) enum Symbol {
+pub enum Symbol {
+    /// A terminal symbol.
     Lexeme(String),
+    /// A non-terminal symbol.
     Rule(String),
 }
 

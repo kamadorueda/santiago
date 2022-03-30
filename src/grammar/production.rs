@@ -7,8 +7,9 @@ use std::cell::RefCell;
 use std::collections::HashSet;
 use std::hash::Hasher;
 
+/// One possible derivation of a [GrammarRule](crate::grammar::GrammarRule).
 #[derive(Clone, Debug)]
-pub(crate) struct Production {
+pub struct Production {
     pub(crate) symbols:        Vec<Symbol>,
     pub(crate) target_lexemes: RefCell<HashSet<String>>,
 }
