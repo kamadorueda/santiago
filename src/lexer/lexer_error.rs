@@ -4,7 +4,7 @@
 
 use super::Position;
 
-/// Internal representation of an error encountered by the [Lexer].
+/// Internal representation of an error encountered by the [Lexer](crate::lexer::Lexer).
 #[derive(Debug)]
 pub struct LexerError {
     /// Byte index relative to the [Lexer](crate::lexer::Lexer)

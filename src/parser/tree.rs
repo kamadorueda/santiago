@@ -200,12 +200,14 @@ fn satisfies_disambiguation(
     state_partial: &ParserState,
     state: &ParserState,
 ) -> bool {
-    if state_partial.production.symbols.len() == 3
-        && state.production.symbols.len() == 3
-    {
-        if let (Symbol::Rule(name_partial), Symbol::Rule(name)) =
-            (&state_partial.production.symbols[1], &state.production.symbols[1])
-        {
+    if let (Some(partial_index), Some(index)) = (
+        get_disambiguation(grammar, state_partial),
+        get_disambiguation(grammar, state),
+    ) {
+        if let (Symbol::Rule(name_partial), Symbol::Rule(name)) = (
+            &state_partial.production.symbols[partial_index],
+            &state.production.symbols[index],
+        ) {
             if let (Some(rule_partial), Some(rule)) =
                 (grammar.rules.get(name_partial), grammar.rules.get(name))
             {
@@ -241,4 +243,23 @@ fn satisfies_disambiguation(
     }
 
     true
+}
+
+fn get_disambiguation(grammar: &Grammar, state: &ParserState) -> Option<usize> {
+    let mut disambiguations =
+        state.production.symbols.iter().enumerate().filter_map(
+            |(index, symbol)| {
+                if let Symbol::Rule(name) = symbol {
+                    if let Some(rule) = grammar.rules.get(name) {
+                        if let Some(_) = &rule.disambiguation {
+                            return Some(index);
+                        }
+                    }
+                }
+
+                None
+            },
+        );
+
+    disambiguations.next()
 }

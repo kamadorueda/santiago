@@ -5,7 +5,7 @@
 use crate::lexer::Lexeme;
 use crate::parser::ParserState;
 
-/// Internal representation of an error encountered by [parse()].
+/// Internal representation of an error encountered by [crate::parser::parse()].
 #[derive(Debug)]
 pub struct ParseError {
     /// [Lexeme] where the error was found.

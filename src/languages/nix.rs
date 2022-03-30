@@ -316,8 +316,8 @@ pub fn grammar() -> Grammar {
         (
             "expr_op",
             vec![
-                vec!["!", "expr_op"],
-                vec!["-", "expr_op"],
+                vec!["NOT", "expr_op"],
+                vec!["NEGATE", "expr_op"],
                 vec!["expr_op", "EQ", "expr_op"],
                 vec!["expr_op", "NEQ", "expr_op"],
                 vec!["expr_op", "<", "expr_op"],
@@ -489,7 +489,6 @@ pub fn grammar() -> Grammar {
         "*",
         "+",
         ",",
-        "-",
         ".",
         "/",
         ":",
@@ -544,6 +543,9 @@ pub fn grammar() -> Grammar {
     ] {
         builder.rule_to_lexemes(lexeme_kind, &[lexeme_kind]);
     }
+    builder.rule_to_lexemes("NOT", &["!"]);
+    builder.rule_to_lexemes("NEGATE", &["-"]);
+    builder.rule_to_lexemes("-", &["-"]);
 
     builder.disambiguate(Associativity::Right, &["IMPL"]);
     builder.disambiguate(Associativity::Left, &["OR"]);
@@ -551,12 +553,12 @@ pub fn grammar() -> Grammar {
     builder.disambiguate(Associativity::None, &["EQ", "NEQ"]);
     builder.disambiguate(Associativity::None, &["<", ">", "LEQ", "GEQ"]);
     builder.disambiguate(Associativity::Right, &["UPDATE"]);
-    // builder.disambiguate(Associativity::Left, &["NOT"]);
+    builder.disambiguate(Associativity::Left, &["NOT"]);
     builder.disambiguate(Associativity::Left, &["+", "-"]);
     builder.disambiguate(Associativity::Left, &["*", "/"]);
     builder.disambiguate(Associativity::Right, &["CONCAT"]);
     builder.disambiguate(Associativity::None, &["?"]);
-    // builder.disambiguate(Associativity::None, &["NEGATE"]);
+    builder.disambiguate(Associativity::None, &["NEGATE"]);
 
     builder.finish()
 }
