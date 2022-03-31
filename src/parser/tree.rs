@@ -10,6 +10,7 @@ use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
 use std::collections::HashMap;
+use std::collections::LinkedList;
 use std::rc::Rc;
 
 /// Representation of an AST
@@ -64,6 +65,27 @@ impl std::fmt::Display for Tree {
         }
 
         recurse(f, 0, self)
+    }
+}
+
+impl Tree {
+    /// Traverse the tree in pre-order.
+    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree> {
+        let mut todo: LinkedList<&Tree> = LinkedList::new();
+        let mut ordered: LinkedList<&Tree> = LinkedList::new();
+
+        todo.push_back(self);
+        ordered.push_front(self);
+        while !todo.is_empty() {
+            if let Some(Tree::Node { leaves, .. }) = todo.pop_front() {
+                for tree in leaves {
+                    ordered.push_front(tree);
+                    todo.push_back(tree);
+                }
+            }
+        }
+
+        ordered
     }
 }
 
