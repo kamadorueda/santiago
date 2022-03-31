@@ -9,9 +9,15 @@ use crate::lexer::Position;
 /// Please read the [crate documentation](crate) for more information and examples.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Lexeme {
-    pub(crate) kind:     String,
-    pub(crate) raw:      String,
-    pub(crate) position: Position,
+    /// Name of the [LexerRules](crate::lexer::LexerRules)
+    /// that produced this [Lexeme].
+    pub kind:     String,
+    /// Raw content of this [Lexeme],
+    /// as matched by the [Lexer](crate::lexer::Lexer).
+    pub raw:      String,
+    /// [Position] of this [Lexeme] relative to the input
+    /// passed to the [Lexer](crate::lexer::Lexer).
+    pub position: Position,
 }
 
 impl std::fmt::Display for Lexeme {
