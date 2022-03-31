@@ -78,7 +78,7 @@ impl Tree {
         ordered.push_front(self);
         while !todo.is_empty() {
             if let Some(Tree::Node { leaves, .. }) = todo.pop_front() {
-                for tree in leaves {
+                for tree in leaves.iter().rev() {
                     ordered.push_front(tree);
                     todo.push_back(tree);
                 }

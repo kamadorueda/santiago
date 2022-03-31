@@ -52,19 +52,22 @@ pub fn lexer_rules() -> LexerRules {
 pub fn grammar() -> Grammar {
     use crate as santiago;
     santiago::grammar!(
-        "sum" => rules "sum" "plus" "sum";
-        "sum" => rules "sum" "subtract" "sum";
-        "sum" => rules "sum" "multiply" "sum";
-        "sum" => rules "sum" "divide" "sum";
+        "expr" => rules "bin_op";
+        "expr" => rules "int";
 
-        "sum" => lexemes "INT";
+        "bin_op" => rules "expr" "add" "expr";
+        "bin_op" => rules "expr" "subtract" "expr";
+        "bin_op" => rules "expr" "multiply" "expr";
+        "bin_op" => rules "expr" "divide" "expr";
 
-        "plus" => lexemes "+";
+        "int" => lexemes "INT";
+
+        "add" => lexemes "+";
         "subtract" => lexemes "-";
         "multiply" => lexemes "*";
         "divide" => lexemes "/";
 
-        Associativity::Left => rules "plus" "subtract";
+        Associativity::Left => rules "add" "subtract";
         Associativity::Left => rules "multiply" "divide";
     )
 }
