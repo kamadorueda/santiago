@@ -5,7 +5,7 @@
 use crate::grammar::Associativity;
 use crate::grammar::Grammar;
 use crate::grammar::Production;
-use crate::grammar::Symbol;
+use crate::grammar::ProductionKind;
 use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
 use crate::parser::ParserState;
@@ -159,8 +159,8 @@ fn build_forest_helper(
         })];
     }
 
-    match &state.production.symbols[symbol_index] {
-        Symbol::Lexeme(_) => {
+    match &state.production.kind {
+        ProductionKind::Lexemes => {
             let lexeme = &lexemes[end_column - 1];
             let mut leaves = leaves;
             let mut leaves_extended = vec![Rc::new(Tree::Leaf(lexeme.clone()))];
@@ -177,7 +177,8 @@ fn build_forest_helper(
                 state.end_column - 1,
             )
         }
-        Symbol::Rule(name) => {
+        ProductionKind::Rules => {
+            let rule_name = &state.production.symbols[symbol_index];
             let mut forest = Vec::new();
 
             for state_partial in columns[end_column]
@@ -185,7 +186,7 @@ fn build_forest_helper(
                 .iter()
                 .take_while(|state_partial| *state_partial != state)
                 .filter(|state_partial| {
-                    *state_partial.rule_name == *name
+                    *state_partial.rule_name == *rule_name
                         && (symbol_index > 0
                             || state_partial.start_column == state.start_column)
                         && satisfies_disambiguation(
@@ -234,10 +235,12 @@ fn satisfies_disambiguation(
         get_disambiguation(grammar, state_partial),
         get_disambiguation(grammar, state),
     ) {
-        if let (Symbol::Rule(name_partial), Symbol::Rule(name)) = (
-            &state_partial.production.symbols[partial_index],
-            &state.production.symbols[index],
-        ) {
+        if let (ProductionKind::Rules, ProductionKind::Rules) =
+            (&state_partial.production.kind, &state.production.kind)
+        {
+            let name_partial = &state_partial.production.symbols[partial_index];
+            let name = &state.production.symbols[index];
+
             if let (Some(rule_partial), Some(rule)) =
                 (grammar.rules.get(name_partial), grammar.rules.get(name))
             {
@@ -276,20 +279,22 @@ fn satisfies_disambiguation(
 }
 
 fn get_disambiguation(grammar: &Grammar, state: &ParserState) -> Option<usize> {
-    let mut disambiguations =
-        state.production.symbols.iter().enumerate().filter_map(
-            |(index, symbol)| {
-                if let Symbol::Rule(name) = symbol {
-                    if let Some(rule) = grammar.rules.get(name) {
+    if let ProductionKind::Rules = state.production.kind {
+        let mut disambiguations =
+            state.production.symbols.iter().enumerate().filter_map(
+                |(index, symbol)| {
+                    if let Some(rule) = grammar.rules.get(symbol) {
                         if rule.disambiguation.is_some() {
                             return Some(index);
                         }
                     }
-                }
 
-                None
-            },
-        );
+                    None
+                },
+            );
 
-    disambiguations.next()
+        disambiguations.next()
+    } else {
+        None
+    }
 }

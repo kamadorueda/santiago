@@ -1,9 +1,9 @@
 0
-  Γ := • sum [0-0]
-  sum := • sum plus sum [0-0]
-  sum := • "INT" [0-0]
+  "Γ" := rules • "sum" [0-0]
+  "sum" := rules • "sum" "plus" "sum" [0-0]
+  "sum" := lexemes • "INT" [0-0]
 1
-  sum := "INT" • [0-1]
-  Γ := sum • [0-1]
-  sum := sum • plus sum [0-1]
-  plus := • "PLUS" [1-1]
+  "sum" := lexemes "INT" • [0-1]
+  "Γ" := rules "sum" • [0-1]
+  "sum" := rules "sum" • "plus" "sum" [0-1]
+  "plus" := lexemes • "PLUS" [1-1]

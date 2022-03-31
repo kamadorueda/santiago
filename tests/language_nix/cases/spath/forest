@@ -1,13 +1,13 @@
 ---
-expr_app := expr_app expr_select
-  expr_app := expr_app expr_select
-    ID := "ID"
+expr_app := rules "expr_app" "expr_select"
+  expr_app := rules "expr_app" "expr_select"
+    ID := lexemes "ID"
       ID "import" (1, 1)
-    SPATH := "SPATH"
+    SPATH := lexemes "SPATH"
       SPATH "<nixpkgs>" (1, 8)
-  expr_simple := { binds }
-    { := "{"
+  expr_simple := rules "{" "binds" "}"
+    { := lexemes "{"
       { "{" (1, 18)
-    binds := 
-    } := "}"
+    binds := rules 
+    } := lexemes "}"
       } "}" (1, 19)

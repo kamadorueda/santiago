@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::grammar::Production;
-use crate::grammar::Symbol;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hash;
 use std::hash::Hasher;
@@ -24,15 +23,21 @@ pub struct ParserState {
 
 impl std::fmt::Display for ParserState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut symbols: Vec<String> =
-            self.production.symbols.iter().map(Symbol::to_string).collect();
-        symbols.insert(self.dot_index, "•".to_string());
-
         write!(
             f,
-            "{} := {} [{}-{}]",
+            "{:?} := {} {}• {}[{}-{}]",
             self.rule_name,
-            symbols.join(" "),
+            self.production.kind,
+            self.production.symbols[0..self.dot_index]
+                .iter()
+                .map(|symbol| format!("{symbol:?} "))
+                .collect::<Vec<String>>()
+                .join(""),
+            self.production.symbols[self.dot_index..]
+                .iter()
+                .map(|symbol| format!("{symbol:?} "))
+                .collect::<Vec<String>>()
+                .join(""),
             self.start_column,
             if self.end_column == usize::MAX {
                 "".to_string()
@@ -48,8 +53,8 @@ impl ParserState {
         self.dot_index >= self.production.symbols.len()
     }
 
-    pub(crate) fn next_symbol(&self) -> Option<Symbol> {
-        self.production.symbols.get(self.dot_index).map(Symbol::clone)
+    pub(crate) fn next_symbol(&self) -> Option<&String> {
+        self.production.symbols.get(self.dot_index)
     }
 
     pub(crate) fn hash_me(&self) -> u64 {

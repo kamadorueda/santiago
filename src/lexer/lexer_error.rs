@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-use super::Position;
+use crate::lexer::Position;
 
 /// Internal representation of an error encountered by the [Lexer](crate::lexer::Lexer).
 #[derive(Debug)]

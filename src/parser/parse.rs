@@ -4,7 +4,7 @@
 
 use crate::grammar::Grammar;
 use crate::grammar::GrammarRule;
-use crate::grammar::Symbol;
+use crate::grammar::ProductionKind;
 use crate::grammar::START_RULE_NAME;
 use crate::lexer::Lexeme;
 use crate::parser::tree::build;
@@ -71,15 +71,21 @@ fn complete(
         .states
         .iter()
         .enumerate()
-        .filter_map(|(index, st)| match st.next_symbol() {
-            Some(Symbol::Rule(name)) => {
-                if name == **state_name {
-                    Some(index)
-                } else {
-                    None
+        .filter_map(|(index, st)| {
+            if let ProductionKind::Rules = st.production.kind {
+                match st.next_symbol() {
+                    Some(rule_name) => {
+                        if *rule_name == **state_name {
+                            Some(index)
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
                 }
+            } else {
+                None
             }
-            _ => None,
         })
         .collect();
 
@@ -182,17 +188,19 @@ pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
             if columns[column_index].states[state_index].completed() {
                 complete(&mut columns, column_index, state_index);
             } else {
-                match state.next_symbol().unwrap() {
-                    Symbol::Rule(name) => {
-                        if !predicted_names.contains(&name) {
-                            let rule = grammar.rules.get(&name).unwrap();
+                match state.production.kind {
+                    ProductionKind::Rules => {
+                        let rule_name = state.next_symbol().unwrap().clone();
+                        if !predicted_names.contains(&rule_name) {
+                            let rule = grammar.rules.get(&rule_name).unwrap();
+                            predicted_names.insert(rule_name);
                             predict(&mut columns, column_index, rule);
-                            predicted_names.insert(name);
                         }
                     }
-                    Symbol::Lexeme(kind) => {
+                    ProductionKind::Lexemes => {
                         if column_index + 1 < columns.len()
-                            && kind == columns[column_index + 1].kind
+                            && *state.next_symbol().unwrap()
+                                == columns[column_index + 1].kind
                         {
                             scan(&mut columns, column_index, state_index);
                         }

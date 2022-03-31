@@ -11,16 +11,15 @@ mod disambiguation;
 mod grammar_builder;
 mod grammar_rule;
 mod production;
-mod symbol;
 
 pub use associativity::Associativity;
 pub use disambiguation::Disambiguation;
 pub use grammar_builder::GrammarBuilder;
 pub use grammar_rule::GrammarRule;
 pub use production::Production;
+pub use production::ProductionKind;
 use std::collections::HashMap;
 use std::rc::Rc;
-pub use symbol::Symbol;
 
 pub(crate) const START_RULE_NAME: &str = "Γ";
 

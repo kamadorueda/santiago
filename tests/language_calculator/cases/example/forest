@@ -1,23 +1,23 @@
 ---
-sum := sum subtract sum
-  sum := sum plus sum
-    sum := "INT"
+sum := rules "sum" "subtract" "sum"
+  sum := rules "sum" "plus" "sum"
+    sum := lexemes "INT"
       INT "1" (1, 1)
-    plus := "+"
+    plus := lexemes "+"
       + "+" (1, 3)
-    sum := sum divide sum
-      sum := sum multiply sum
-        sum := "INT"
+    sum := rules "sum" "divide" "sum"
+      sum := rules "sum" "multiply" "sum"
+        sum := lexemes "INT"
           INT "2" (1, 5)
-        multiply := "*"
+        multiply := lexemes "*"
           * "*" (1, 7)
-        sum := "INT"
+        sum := lexemes "INT"
           INT "3" (1, 9)
-      divide := "/"
+      divide := lexemes "/"
         / "/" (1, 11)
-      sum := "INT"
+      sum := lexemes "INT"
         INT "4" (1, 13)
-  subtract := "-"
+  subtract := lexemes "-"
     - "-" (1, 15)
-  sum := "INT"
+  sum := lexemes "INT"
     INT "5" (1, 17)

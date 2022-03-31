@@ -7,7 +7,7 @@ use crate::grammar::Disambiguation;
 use crate::grammar::Grammar;
 use crate::grammar::GrammarRule;
 use crate::grammar::Production;
-use crate::grammar::Symbol;
+use crate::grammar::ProductionKind;
 use crate::grammar::START_RULE_NAME;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -37,11 +37,20 @@ impl GrammarBuilder {
         }
     }
 
-    fn rule_to_symbols(&mut self, rule_name: &str, symbols: Vec<Symbol>) {
+    fn rule_to_symbols(
+        &mut self,
+        rule_name: &str,
+        symbols: &[&str],
+        symbols_kind: ProductionKind,
+    ) {
         let rule_name = Rc::new(rule_name.to_string());
         let production = Rc::new(Production {
             target_lexemes: RefCell::new(HashSet::new()),
-            symbols,
+            symbols:        symbols
+                .iter()
+                .map(|symbol| symbol.to_string())
+                .collect(),
+            kind:           symbols_kind,
         });
 
         if self.grammar.rules.is_empty() && *rule_name != START_RULE_NAME {
@@ -73,10 +82,8 @@ impl GrammarBuilder {
     ) -> &mut GrammarBuilder {
         self.rule_to_symbols(
             lexeme_kind,
-            lexeme_kinds
-                .iter()
-                .map(|lexeme_kind| Symbol::Lexeme(lexeme_kind.to_string()))
-                .collect(),
+            lexeme_kinds,
+            ProductionKind::Lexemes,
         );
 
         self
@@ -88,13 +95,7 @@ impl GrammarBuilder {
         rule_name: &str,
         rule_names: &[&str],
     ) -> &mut GrammarBuilder {
-        self.rule_to_symbols(
-            rule_name,
-            rule_names
-                .iter()
-                .map(|rule_name| Symbol::Rule(rule_name.to_string()))
-                .collect(),
-        );
+        self.rule_to_symbols(rule_name, rule_names, ProductionKind::Rules);
 
         self
     }
@@ -143,8 +144,11 @@ impl GrammarBuilder {
                     if production.symbols.is_empty() {
                         continue;
                     }
-                    match &production.symbols[0] {
-                        Symbol::Lexeme(lexeme_kind) => {
+
+                    match &production.kind {
+                        ProductionKind::Lexemes => {
+                            let lexeme_kind = &production.symbols[0];
+
                             if !production
                                 .target_lexemes
                                 .borrow()
@@ -157,7 +161,9 @@ impl GrammarBuilder {
                                 converged = false;
                             }
                         }
-                        Symbol::Rule(target_rule_name) => {
+                        ProductionKind::Rules => {
+                            let target_rule_name = &production.symbols[0];
+
                             for from_production in self
                                 .grammar
                                 .rules
@@ -203,20 +209,17 @@ impl GrammarBuilder {
     pub fn finish(&mut self) -> Grammar {
         for (rule_name, rule) in self.grammar.rules.iter() {
             for production in &rule.productions {
-                for symbol in &production.symbols {
-                    match &symbol {
-                        Symbol::Rule(name) => {
-                            if !self.grammar.rules.contains_key(name) {
-                                panic!(
-                                    "\n\nError at rule: {rule_name}\nIn \
-                                     production: {production}\nYour grammar \
-                                     references a rule with name: {name}\nBut \
-                                     this rule has not been defined in the \
-                                     grammar.\n\n",
-                                )
-                            }
+                if let ProductionKind::Rules = production.kind {
+                    for symbol in &production.symbols {
+                        if !self.grammar.rules.contains_key(symbol) {
+                            panic!(
+                                "\n\nError at rule: {rule_name}\nIn \
+                                 production: {production}\nYour grammar \
+                                 references a rule with name: {symbol}\nBut \
+                                 this rule has not been defined in the \
+                                 grammar.\n\n",
+                            )
                         }
-                        Symbol::Lexeme(_) => {}
                     }
                 }
             }

@@ -1,314 +1,314 @@
 ---
-expr_function := { formals } : expr_function
-  { := "{"
+expr_function := rules "{" "formals" "}" ":" "expr_function"
+  { := lexemes "{"
     { "{" (1, 1)
-  formals := formal , formals
-    ID := "ID"
+  formals := rules "formal" "," "formals"
+    ID := lexemes "ID"
       ID "lib" (2, 3)
-    , := ","
+    , := lexemes ","
       , "," (2, 6)
-    formals := formal , formals
-      ID := "ID"
+    formals := rules "formal" "," "formals"
+      ID := lexemes "ID"
         ID "rustPlatform" (3, 3)
-      , := ","
+      , := lexemes ","
         , "," (3, 15)
-      formals := formal , formals
-        ID := "ID"
+      formals := rules "formal" "," "formals"
+        ID := lexemes "ID"
           ID "fetchFromGitHub" (4, 3)
-        , := ","
+        , := lexemes ","
           , "," (4, 18)
-        formals := formal , formals
-          ID := "ID"
+        formals := rules "formal" "," "formals"
+          ID := lexemes "ID"
             ID "testVersion" (5, 3)
-          , := ","
+          , := lexemes ","
             , "," (5, 14)
-          formals := formal , formals
-            ID := "ID"
+          formals := rules "formal" "," "formals"
+            ID := lexemes "ID"
               ID "alejandra" (6, 3)
-            , := ","
+            , := lexemes ","
               , "," (6, 12)
-            formals := 
-  } := "}"
+            formals := rules 
+  } := lexemes "}"
     } "}" (7, 1)
-  : := ":"
+  : := lexemes ":"
     : ":" (7, 2)
-  expr_app := expr_app expr_select
-    expr_select := expr_simple . attrpath
-      ID := "ID"
+  expr_app := rules "expr_app" "expr_select"
+    expr_select := rules "expr_simple" "." "attrpath"
+      ID := lexemes "ID"
         ID "rustPlatform" (8, 1)
-      . := "."
+      . := lexemes "."
         . "." (8, 13)
-      ID := "ID"
+      ID := lexemes "ID"
         ID "buildRustPackage" (8, 14)
-    expr_simple := REC { binds }
-      REC := "REC"
+    expr_simple := rules "REC" "{" "binds" "}"
+      REC := lexemes "REC"
         REC "rec" (8, 31)
-      { := "{"
+      { := lexemes "{"
         { "{" (8, 35)
-      binds := binds attrpath = expr ;
-        binds := binds attrpath = expr ;
-          binds := binds attrpath = expr ;
-            binds := binds attrpath = expr ;
-              binds := binds attrpath = expr ;
-                binds := binds attrpath = expr ;
-                  binds := 
-                  ID := "ID"
+      binds := rules "binds" "attrpath" "=" "expr" ";"
+        binds := rules "binds" "attrpath" "=" "expr" ";"
+          binds := rules "binds" "attrpath" "=" "expr" ";"
+            binds := rules "binds" "attrpath" "=" "expr" ";"
+              binds := rules "binds" "attrpath" "=" "expr" ";"
+                binds := rules "binds" "attrpath" "=" "expr" ";"
+                  binds := rules 
+                  ID := lexemes "ID"
                     ID "pname" (9, 3)
-                  = := "="
+                  = := lexemes "="
                     = "=" (9, 9)
-                  expr_simple := " string_parts "
-                    " := "\""
+                  expr_simple := rules "\"" "string_parts" "\""
+                    " := lexemes "\""
                       " "\"" (9, 11)
-                    STR := "STR"
+                    STR := lexemes "STR"
                       STR "alejandra" (9, 12)
-                    " := "\""
+                    " := lexemes "\""
                       " "\"" (9, 21)
-                  ; := ";"
+                  ; := lexemes ";"
                     ; ";" (9, 22)
-                ID := "ID"
+                ID := lexemes "ID"
                   ID "version" (10, 3)
-                = := "="
+                = := lexemes "="
                   = "=" (10, 11)
-                expr_simple := " string_parts "
-                  " := "\""
+                expr_simple := rules "\"" "string_parts" "\""
+                  " := lexemes "\""
                     " "\"" (10, 13)
-                  STR := "STR"
+                  STR := lexemes "STR"
                     STR "1.1.0" (10, 14)
-                  " := "\""
+                  " := lexemes "\""
                     " "\"" (10, 19)
-                ; := ";"
+                ; := lexemes ";"
                   ; ";" (10, 20)
-              ID := "ID"
+              ID := lexemes "ID"
                 ID "src" (12, 3)
-              = := "="
+              = := lexemes "="
                 = "=" (12, 7)
-              expr_app := expr_app expr_select
-                ID := "ID"
+              expr_app := rules "expr_app" "expr_select"
+                ID := lexemes "ID"
                   ID "fetchFromGitHub" (12, 9)
-                expr_simple := { binds }
-                  { := "{"
+                expr_simple := rules "{" "binds" "}"
+                  { := lexemes "{"
                     { "{" (12, 25)
-                  binds := binds attrpath = expr ;
-                    binds := binds attrpath = expr ;
-                      binds := binds attrpath = expr ;
-                        binds := binds attrpath = expr ;
-                          binds := 
-                          ID := "ID"
+                  binds := rules "binds" "attrpath" "=" "expr" ";"
+                    binds := rules "binds" "attrpath" "=" "expr" ";"
+                      binds := rules "binds" "attrpath" "=" "expr" ";"
+                        binds := rules "binds" "attrpath" "=" "expr" ";"
+                          binds := rules 
+                          ID := lexemes "ID"
                             ID "owner" (13, 5)
-                          = := "="
+                          = := lexemes "="
                             = "=" (13, 11)
-                          expr_simple := " string_parts "
-                            " := "\""
+                          expr_simple := rules "\"" "string_parts" "\""
+                            " := lexemes "\""
                               " "\"" (13, 13)
-                            STR := "STR"
+                            STR := lexemes "STR"
                               STR "kamadorueda" (13, 14)
-                            " := "\""
+                            " := lexemes "\""
                               " "\"" (13, 25)
-                          ; := ";"
+                          ; := lexemes ";"
                             ; ";" (13, 26)
-                        ID := "ID"
+                        ID := lexemes "ID"
                           ID "repo" (14, 5)
-                        = := "="
+                        = := lexemes "="
                           = "=" (14, 10)
-                        expr_simple := " string_parts "
-                          " := "\""
+                        expr_simple := rules "\"" "string_parts" "\""
+                          " := lexemes "\""
                             " "\"" (14, 12)
-                          STR := "STR"
+                          STR := lexemes "STR"
                             STR "alejandra" (14, 13)
-                          " := "\""
+                          " := lexemes "\""
                             " "\"" (14, 22)
-                        ; := ";"
+                        ; := lexemes ";"
                           ; ";" (14, 23)
-                      ID := "ID"
+                      ID := lexemes "ID"
                         ID "rev" (15, 5)
-                      = := "="
+                      = := lexemes "="
                         = "=" (15, 9)
-                      ID := "ID"
+                      ID := lexemes "ID"
                         ID "version" (15, 11)
-                      ; := ";"
+                      ; := lexemes ";"
                         ; ";" (15, 18)
-                    ID := "ID"
+                    ID := lexemes "ID"
                       ID "sha256" (16, 5)
-                    = := "="
+                    = := lexemes "="
                       = "=" (16, 12)
-                    expr_simple := " string_parts "
-                      " := "\""
+                    expr_simple := rules "\"" "string_parts" "\""
+                      " := lexemes "\""
                         " "\"" (16, 14)
-                      STR := "STR"
+                      STR := lexemes "STR"
                         STR "sha256-vkFKYnSmhPPXtc3AH7iRtqRRqxhj0o5WySqPT+klDWU=" (16, 15)
-                      " := "\""
+                      " := lexemes "\""
                         " "\"" (16, 66)
-                    ; := ";"
+                    ; := lexemes ";"
                       ; ";" (16, 67)
-                  } := "}"
+                  } := lexemes "}"
                     } "}" (17, 3)
-              ; := ";"
+              ; := lexemes ";"
                 ; ";" (17, 4)
-            ID := "ID"
+            ID := lexemes "ID"
               ID "cargoSha256" (19, 3)
-            = := "="
+            = := lexemes "="
               = "=" (19, 15)
-            expr_simple := " string_parts "
-              " := "\""
+            expr_simple := rules "\"" "string_parts" "\""
+              " := lexemes "\""
                 " "\"" (19, 17)
-              STR := "STR"
+              STR := lexemes "STR"
                 STR "sha256-MsXaanznE4UtZMj54EDq86aJ2t4xT8O5ziTpa/KCwBw=" (19, 18)
-              " := "\""
+              " := lexemes "\""
                 " "\"" (19, 69)
-            ; := ";"
+            ; := lexemes ";"
               ; ";" (19, 70)
-          attrpath := attrpath . attr
-            ID := "ID"
+          attrpath := rules "attrpath" "." "attr"
+            ID := lexemes "ID"
               ID "passthru" (21, 3)
-            . := "."
+            . := lexemes "."
               . "." (21, 11)
-            ID := "ID"
+            ID := lexemes "ID"
               ID "tests" (21, 12)
-          = := "="
+          = := lexemes "="
             = "=" (21, 18)
-          expr_simple := { binds }
-            { := "{"
+          expr_simple := rules "{" "binds" "}"
+            { := lexemes "{"
               { "{" (21, 20)
-            binds := binds attrpath = expr ;
-              binds := 
-              ID := "ID"
+            binds := rules "binds" "attrpath" "=" "expr" ";"
+              binds := rules 
+              ID := lexemes "ID"
                 ID "version" (22, 5)
-              = := "="
+              = := lexemes "="
                 = "=" (22, 13)
-              expr_app := expr_app expr_select
-                ID := "ID"
+              expr_app := rules "expr_app" "expr_select"
+                ID := lexemes "ID"
                   ID "testVersion" (22, 15)
-                expr_simple := { binds }
-                  { := "{"
+                expr_simple := rules "{" "binds" "}"
+                  { := lexemes "{"
                     { "{" (22, 27)
-                  binds := binds attrpath = expr ;
-                    binds := 
-                    ID := "ID"
+                  binds := rules "binds" "attrpath" "=" "expr" ";"
+                    binds := rules 
+                    ID := lexemes "ID"
                       ID "package" (22, 28)
-                    = := "="
+                    = := lexemes "="
                       = "=" (22, 36)
-                    ID := "ID"
+                    ID := lexemes "ID"
                       ID "alejandra" (22, 38)
-                    ; := ";"
+                    ; := lexemes ";"
                       ; ";" (22, 47)
-                  } := "}"
+                  } := lexemes "}"
                     } "}" (22, 48)
-              ; := ";"
+              ; := lexemes ";"
                 ; ";" (22, 49)
-            } := "}"
+            } := lexemes "}"
               } "}" (23, 3)
-          ; := ";"
+          ; := lexemes ";"
             ; ";" (23, 4)
-        ID := "ID"
+        ID := lexemes "ID"
           ID "meta" (25, 3)
-        = := "="
+        = := lexemes "="
           = "=" (25, 8)
-        expr_function := WITH expr ; expr_function
-          WITH := "WITH"
+        expr_function := rules "WITH" "expr" ";" "expr_function"
+          WITH := lexemes "WITH"
             WITH "with" (25, 10)
-          ID := "ID"
+          ID := lexemes "ID"
             ID "lib" (25, 15)
-          ; := ";"
+          ; := lexemes ";"
             ; ";" (25, 18)
-          expr_simple := { binds }
-            { := "{"
+          expr_simple := rules "{" "binds" "}"
+            { := lexemes "{"
               { "{" (25, 20)
-            binds := binds attrpath = expr ;
-              binds := binds attrpath = expr ;
-                binds := binds attrpath = expr ;
-                  binds := binds attrpath = expr ;
-                    binds := binds attrpath = expr ;
-                      binds := 
-                      ID := "ID"
+            binds := rules "binds" "attrpath" "=" "expr" ";"
+              binds := rules "binds" "attrpath" "=" "expr" ";"
+                binds := rules "binds" "attrpath" "=" "expr" ";"
+                  binds := rules "binds" "attrpath" "=" "expr" ";"
+                    binds := rules "binds" "attrpath" "=" "expr" ";"
+                      binds := rules 
+                      ID := lexemes "ID"
                         ID "description" (26, 5)
-                      = := "="
+                      = := lexemes "="
                         = "=" (26, 17)
-                      expr_simple := " string_parts "
-                        " := "\""
+                      expr_simple := rules "\"" "string_parts" "\""
+                        " := lexemes "\""
                           " "\"" (26, 19)
-                        STR := "STR"
+                        STR := lexemes "STR"
                           STR "The Uncompromising Nix Code Formatter" (26, 20)
-                        " := "\""
+                        " := lexemes "\""
                           " "\"" (26, 57)
-                      ; := ";"
+                      ; := lexemes ";"
                         ; ";" (26, 58)
-                    ID := "ID"
+                    ID := lexemes "ID"
                       ID "homepage" (27, 5)
-                    = := "="
+                    = := lexemes "="
                       = "=" (27, 14)
-                    expr_simple := " string_parts "
-                      " := "\""
+                    expr_simple := rules "\"" "string_parts" "\""
+                      " := lexemes "\""
                         " "\"" (27, 16)
-                      STR := "STR"
+                      STR := lexemes "STR"
                         STR "https://github.com/kamadorueda/alejandra" (27, 17)
-                      " := "\""
+                      " := lexemes "\""
                         " "\"" (27, 57)
-                    ; := ";"
+                    ; := lexemes ";"
                       ; ";" (27, 58)
-                  ID := "ID"
+                  ID := lexemes "ID"
                     ID "changelog" (28, 5)
-                  = := "="
+                  = := lexemes "="
                     = "=" (28, 15)
-                  expr_simple := " string_parts "
-                    " := "\""
+                  expr_simple := rules "\"" "string_parts" "\""
+                    " := lexemes "\""
                       " "\"" (28, 17)
-                    string_parts_interpolated := string_parts_interpolated STR
-                      string_parts_interpolated := STR DOLLAR_CURLY expr }
-                        STR := "STR"
+                    string_parts_interpolated := rules "string_parts_interpolated" "STR"
+                      string_parts_interpolated := rules "STR" "DOLLAR_CURLY" "expr" "}"
+                        STR := lexemes "STR"
                           STR "https://github.com/kamadorueda/alejandra/blob/" (28, 18)
-                        DOLLAR_CURLY := "DOLLAR_CURLY"
+                        DOLLAR_CURLY := lexemes "DOLLAR_CURLY"
                           DOLLAR_CURLY "${" (28, 64)
-                        ID := "ID"
+                        ID := lexemes "ID"
                           ID "version" (28, 66)
-                        } := "}"
+                        } := lexemes "}"
                           } "}" (28, 73)
-                      STR := "STR"
+                      STR := lexemes "STR"
                         STR "/CHANGELOG.md" (28, 74)
-                    " := "\""
+                    " := lexemes "\""
                       " "\"" (28, 87)
-                  ; := ";"
+                  ; := lexemes ";"
                     ; ";" (28, 88)
-                ID := "ID"
+                ID := lexemes "ID"
                   ID "license" (29, 5)
-                = := "="
+                = := lexemes "="
                   = "=" (29, 13)
-                expr_select := expr_simple . attrpath
-                  ID := "ID"
+                expr_select := rules "expr_simple" "." "attrpath"
+                  ID := lexemes "ID"
                     ID "licenses" (29, 15)
-                  . := "."
+                  . := lexemes "."
                     . "." (29, 23)
-                  ID := "ID"
+                  ID := lexemes "ID"
                     ID "unlicense" (29, 24)
-                ; := ";"
+                ; := lexemes ";"
                   ; ";" (29, 33)
-              ID := "ID"
+              ID := lexemes "ID"
                 ID "maintainers" (30, 5)
-              = := "="
+              = := lexemes "="
                 = "=" (30, 17)
-              expr_function := WITH expr ; expr_function
-                WITH := "WITH"
+              expr_function := rules "WITH" "expr" ";" "expr_function"
+                WITH := lexemes "WITH"
                   WITH "with" (30, 19)
-                ID := "ID"
+                ID := lexemes "ID"
                   ID "maintainers" (30, 24)
-                ; := ";"
+                ; := lexemes ";"
                   ; ";" (30, 35)
-                expr_simple := [ expr_list ]
-                  [ := "["
+                expr_simple := rules "[" "expr_list" "]"
+                  [ := lexemes "["
                     [ "[" (30, 37)
-                  expr_list := expr_list expr_select
-                    expr_list := expr_list expr_select
-                      expr_list := 
-                      ID := "ID"
+                  expr_list := rules "expr_list" "expr_select"
+                    expr_list := rules "expr_list" "expr_select"
+                      expr_list := rules 
+                      ID := lexemes "ID"
                         ID "_0x4A6F" (30, 38)
-                    ID := "ID"
+                    ID := lexemes "ID"
                       ID "kamadorueda" (30, 46)
-                  ] := "]"
+                  ] := lexemes "]"
                     ] "]" (30, 57)
-              ; := ";"
+              ; := lexemes ";"
                 ; ";" (30, 58)
-            } := "}"
+            } := lexemes "}"
               } "}" (31, 3)
-        ; := ";"
+        ; := lexemes ";"
           ; ";" (31, 4)
-      } := "}"
+      } := lexemes "}"
         } "}" (32, 1)
