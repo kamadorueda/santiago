@@ -46,7 +46,7 @@ fn integer_addition() {
 }
 
 #[test]
-fn languanixge_nix() {
+fn nix() {
     run("nix", &nix::lexer::lexer_rules(), &nix::grammar::grammar());
 }
 

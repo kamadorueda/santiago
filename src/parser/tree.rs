@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use std::collections::LinkedList;
 use std::rc::Rc;
 
-/// Representation of an AST
+/// Representation of an AST.
 pub enum Tree<Value> {
     /// Leaf nodes of the tree, containing a [Lexeme].
     Leaf(Lexeme),
@@ -36,46 +36,43 @@ impl<Value> std::fmt::Debug for Tree<Value> {
 
 impl<Value> std::fmt::Display for Tree<Value> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fn recurse<Value>(
-            f: &mut std::fmt::Formatter<'_>,
-            depth: usize,
-            tree: &Tree<Value>,
-        ) -> std::fmt::Result {
+        let mut stack = LinkedList::new();
+
+        for tree in self.traverse_in_pre_order() {
+            let indent = "  ".repeat(stack.len());
+
             match tree {
                 Tree::Leaf(lexeme) => {
-                    writeln!(f, "{}{lexeme}", "  ".repeat(depth + 1))
+                    writeln!(f, "{indent}{lexeme}")?;
                 }
-                Tree::Node { rule_name, leaves, production } => {
-                    let result = writeln!(
-                        f,
-                        "{}{rule_name} := {production}",
-                        "  ".repeat(depth)
-                    );
-
-                    for leaf in leaves {
-                        recurse(
-                            f,
-                            depth
-                                + match **leaf {
-                                    Tree::Leaf { .. } => 0,
-                                    Tree::Node { .. } => 1,
-                                },
-                            leaf,
-                        )?;
-                    }
-
-                    result
+                Tree::Node { rule_name, production, .. } => {
+                    writeln!(f, "{indent}{rule_name} := {production}")?;
+                    stack.push_back(production.symbols.len());
                 }
+            }
+
+            while let Some(remaining) = stack.back_mut() {
+                if *remaining == 0 {
+                    stack.pop_back();
+                } else {
+                    *remaining -= 1;
+                    break;
+                };
             }
         }
 
-        recurse(f, 0, self)
+        Ok(())
     }
 }
 
 impl<Value> Tree<Value> {
-    /// Traverse the tree in pre-order.
-    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree<Value>> {
+    /// Traverse the tree in post-order.
+    ///
+    /// - Recursively traverse the current node's Nth subtree.
+    /// - Recursively traverse the current node's (N-1)th subtree.
+    /// - ...
+    /// - Visit the current node.
+    pub fn traverse_in_post_order(&self) -> LinkedList<&Tree<Value>> {
         let mut todo: LinkedList<&Tree<Value>> = LinkedList::new();
         let mut ordered: LinkedList<&Tree<Value>> = LinkedList::new();
 
@@ -86,6 +83,29 @@ impl<Value> Tree<Value> {
                 for tree in leaves.iter().rev() {
                     ordered.push_front(tree);
                     todo.push_back(tree);
+                }
+            }
+        }
+
+        ordered
+    }
+
+    /// Traverse the tree in pre-order.
+    ///
+    /// - Visit the current node.
+    /// - Recursively traverse the current node's 0 subtree.
+    /// - Recursively traverse the current node's 1 subtree.
+    /// - ...
+    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree<Value>> {
+        let mut todo: LinkedList<&Tree<Value>> = LinkedList::new();
+        let mut ordered: LinkedList<&Tree<Value>> = LinkedList::new();
+
+        todo.push_front(self);
+        while !todo.is_empty() {
+            ordered.push_back(todo.pop_front().unwrap());
+            if let Some(Tree::Node { leaves, .. }) = ordered.back() {
+                for tree in leaves.iter().rev() {
+                    todo.push_front(tree);
                 }
             }
         }

@@ -101,10 +101,7 @@ plus detailed explanation of each component.
 Alternatively,
 you can checkout more examples
 in the [tests](https://github.com/kamadorueda/santiago/tree/main/tests)
-folder,
-and real life lexers and grammars
-in the [built-in languages](https://github.com/kamadorueda/santiago/tree/main/src/languages)
-source code.
+folder.
 
 We hope you find Santiago useful!
 
