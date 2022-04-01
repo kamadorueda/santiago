@@ -28,12 +28,16 @@ use std::collections::LinkedList;
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
 pub struct Lexer<'a> {
-    input:              &'a str,
-    current_byte_index: usize,
-    current_match_len:  usize,
-    current_rule_name:  &'a str,
-    position:           Position,
-    states_stack:       LinkedList<&'a str>,
+    input:                 &'a str,
+    current_byte_index:    usize,
+    /// The current match length.
+    ///
+    /// You can use this field to go back a few bytes in the input
+    /// (for instance to simulate a "trailing context" pattern in Flex).
+    pub current_match_len: usize,
+    current_rule_name:     &'a str,
+    position:              Position,
+    states_stack:          LinkedList<&'a str>,
 }
 
 /// Return type of a lexer rule action.

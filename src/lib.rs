@@ -36,9 +36,9 @@
 //! santiago = "*"
 //! ```
 //!
-//! ## Examples
+//! # Examples
 //!
-//! # Calculator
+//! ## Calculator
 //!
 //! For this example
 //! we are interested in lexing and parsing the addition of integer numbers

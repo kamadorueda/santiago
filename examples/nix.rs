@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 Kevin Amado <kamadorueda@gmail.com>
+//
+// SPDX-License-Identifier: GPL-3.0-only
+
 include!("../tests/nix/lexer.rs");
 include!("../tests/nix/grammar.rs");
 

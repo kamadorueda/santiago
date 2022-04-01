@@ -1,6 +1,6 @@
 use santiago::lexer::LexerRules;
 
-santiago::def!(ANY, r".|\n");
+santiago::def!(ANY, r"(?:.|\n)");
 santiago::def!(ID, r"[a-zA-Z_][a-zA-Z0-9_'\-]*");
 santiago::def!(INT, r"[0-9]+");
 santiago::def!(
@@ -68,9 +68,12 @@ pub fn lexer_rules() -> LexerRules {
             ANY!(),
             r"|\$\\",
             ANY!(),
-            r#")*\$/""#
+            r#")*\$""#
         )
-        => |lexer| lexer.take_and_map(unescape_string);
+        => |lexer| {
+            lexer.current_match_len -= 1;
+            lexer.take_and_map(unescape_string)
+        };
         "STRING" | "STR"
         = pattern concat!(
             r#"([^\$"\\]|\$[^\{"\\]|\\"#,
