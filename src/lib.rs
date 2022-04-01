@@ -263,7 +263,61 @@
 #![doc = include_str!("../tests/smallest/cases/multiple/forest")]
 //! ```
 //! 
-//! ## JavaScript string interpolations:
+//! ## Calculator with four operations
+//!
+//! This lexer can handle integer arithmetic in the form:
+//!
+//! - `1 + 2 * 3 / 4 - 5`
+//!
+//! Similar to those you find in a basic calculator.
+//! ```rust
+#![doc = include_str!("../tests/calculator/lexer.rs")]
+//! ```
+//! 
+//! For example:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/calculator/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "1 + 2 * 3 / 4 - 5";
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! ```
+//! 
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/calculator/cases/example/lexemes")]
+//! ```
+//! 
+//! Now let's build an Abstract Syntax Tree:
+//! ```rust
+#![doc = include_str!("../tests/calculator/grammar.rs")]
+//! ```
+//! 
+//! And parse!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/calculator/grammar.rs");
+//! #   include!("../tests/calculator/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "1 + 2 * 3 / 4 - 5";
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! 
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/calculator/cases/example/forest")]
+//! ```
+//! 
+//! ## JavaScript string interpolations
 //!
 //! This lexer can handle strings interpolations in the form:
 //!
@@ -315,6 +369,64 @@
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/forest")]
+//! ```
+//! 
+//! ## Nix Expression Language
+//!
+//! This lexer can handle the Nix expression language,
+//! whose original lexer and parser is written in Flex and GNU Bison:
+//! - <https://github.com/NixOS/nix/blob/9174d884d750b7b49a571bd55275f0883c2dabda/src/libexpr/lexer.l>.
+//! - <https://github.com/NixOS/nix/blob/9174d884d750b7b49a571bd55275f0883c2dabda/src/libexpr/parser.y>.
+//! ```rust
+#![doc = include_str!("../tests/nix/lexer.rs")]
+//! ```
+//! 
+//! Example input:
+//! ```nix
+#![doc = include_str!("../tests/nix/cases/pkg/input")]
+//! ```
+//! 
+//! Let's perform lexical analysis:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/nix/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = include_str!("../tests/nix/cases/pkg/input");
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! ```
+//! 
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/nix/cases/pkg/lexemes")]
+//! ```
+//! 
+//! Now let's build an Abstract Syntax Tree:
+//! ```rust
+#![doc = include_str!("../tests/nix/grammar.rs")]
+//! ```
+//! 
+//! And parse!
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/nix/grammar.rs");
+//! #   include!("../tests/nix/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = include_str!("../tests/nix/cases/pkg/input");
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! ```
+//! 
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/nix/cases/pkg/forest")]
 //! ```
 //! 
 //! # Next steps
