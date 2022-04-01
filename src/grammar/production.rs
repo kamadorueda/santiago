@@ -65,7 +65,7 @@ pub enum ProductionAction<Value> {
     Rules(Rc<dyn Fn(Vec<Value>) -> Value>),
 }
 
-/// Kinds of [Symbols].
+/// Kinds of symbols.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum ProductionKind {
     /// All Symbols are [Lexemes](crate::lexer::Lexeme).

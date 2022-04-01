@@ -12,15 +12,13 @@
 #![deny(rustdoc::private_intra_doc_links)]
 #![deny(rustdoc::private_doc_tests)]
 //! Santiago is a lexing and parsing toolkit for Rust.
-//! It provides a library for defining
-//! [context-free grammars](https://en.wikipedia.org/wiki/Context-free_grammar),
-//! including [ambiguous](https://en.wikipedia.org/wiki/Ambiguous_grammar)
-//! and [recursive](https://en.wikipedia.org/wiki/Recursive_grammar) grammars;
+//! It provides a library for defining any
+//! [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar),
 //! a [lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module,
-//! and out-of-the-box parsers for the following languages:
+//! and facilities for building evaluators of the language.
 //!
-//! - [Calculator](languages::calculator)
-//! - [Nix Expression Language](languages::nix)
+//! With Santiago, you have everything you need to build your own programming
+//! language, and a compiler or interpreter for it.
 //!
 //! Santiago aims to be the Rust alternative to
 //! [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
@@ -47,7 +45,9 @@
 //! like:
 //! - `11 + 22 + 33`
 //!
-//! And turning them into an
+//! And evaluating it to a single value: `66`.
+//!
+//! In the process we will create an
 //! [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
 //! like:
 //!
@@ -55,7 +55,7 @@
 #![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
 //! 
-//! So let's start with creating a lexer to:
+//! So let's start with a lexer to:
 //! - Group the digits into integers called `"INT"`
 //! - Capture the plus sign (`+`) and name it `"PLUS"`
 //! - Ignore all whitespace
@@ -87,18 +87,14 @@
 //! 
 //! At this point all we are missing is creating a parser.
 //!
-//! Let's create a grammar to recognize the addition of integer numbers:
-//! ```bnf
-//! <sum> ::= <sum> <plus> <sum> | "INT"
-//! <plus> ::= "PLUS"
-//! ```
-//! 
+//! Let's create a grammar to recognize the addition of integer numbers.
+//!
 //! In code this would be:
 //! ```rust
 #![doc = include_str!("../tests/ambiguous_integer_addition/grammar.rs")]
 //! ```
 //! 
-//! Now we can generate all possible Abstract Syntax Trees!
+//! Now we can generate an Abstract Syntax Tree!
 //! ```rust
 //! # mod m {
 //! #   include!("../tests/ambiguous_integer_addition/grammar.rs");
@@ -119,13 +115,17 @@
 #![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/forest")]
 //! ```
 //! 
-//! Notice that we intentionally created an
-//! [ambiguous grammar](https://en.wikipedia.org/wiki/Ambiguous_grammar)
-//! and this is why we have 2 possible Abstract Syntax Trees.
+//! Notice that we obtained 2 possible abstract syntax trees,
+//! since we can understand the input as:
+//! - `(11 + 22) + 33`
+//! - `11 + (22 + 33)`
 //!
-//! However, we can do better and remove the ambiguities
-//! by adding associativity constraints to the "plus" rule.
-//!
+//! This happens because we created an
+//! [ambiguous grammar](https://en.wikipedia.org/wiki/Ambiguous_grammar),
+//! but this is no problem for Santiago!
+//! We can remove the ambiguities
+//! by adding associativity constraints to the "plus" rule,
+//! in order to select `(11 + 22) + 33` as our source of truth.
 //! In code, we only need to add one line at the end of our previous grammar:
 //! ```rust
 #![doc = include_str!("../tests/integer_addition/grammar.rs")]
@@ -147,12 +147,13 @@
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
-//! With this constraint our grammar becomes
+//! This time our grammar is
 //! [deterministic](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar)
 //! and we will always have a single unambiguous Abstract Syntax Tree:
 //! ```text
 #![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
+//! 
 //! # Technical details
 //!
 //! ## Lexical Analysis
@@ -188,7 +189,32 @@
 //!
 //! For convenience, the stack of states is initially populated with `"DEFAULT"`.
 //!
-//! ## Example: Smallest lexer possible
+//! ## Grammars
+//!
+//! A [Grammar](https://en.wikipedia.org/wiki/Formal_grammar)
+//! is a simple way of describing a language,
+//! like `JSON`, `TOML`, `YAML`, `Python`, `Go`, or `Rust`.
+//! They are commonly described in
+//! [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
+//!
+//! Grammars are composed of [grammar rules](grammar::GrammarRule),
+//! which define how a rule can be produce other rules
+//! or [Lexemes](lexer::Lexeme),
+//! for example,
+//! a full name is composed of a given name and a family name:
+//! - `"full_name" => rules "given_name" "family_name"`
+//!
+//! And a given name can be "Jane" or "Kevin", and so on:
+//! - `"given_name" => lexemes "Jane"`
+//! - `"given_name" => lexemes "Kevin"`
+//! - `"given_name" => lexemes "..."`
+//!
+//! # Examples
+//!
+//! In this section we explore a few more full examples,
+//! ordered by complexity.
+//!
+//! ## Smallest lexer possible
 //!
 //! This lexer will copy char by char the input:
 //! ```rust
@@ -211,45 +237,7 @@
 #![doc = include_str!("../tests/smallest/cases/multiple/lexemes")]
 //! ```
 //! 
-//! ## Example: JavaScript string interpolations:
-//! This lexer can handle strings interpolations in the form:
-//! - ``` `Hello ${ name }, your age is: ${ age }.` ```
-//!
-//! Similar to those you find in many programming languages.
-//! ```rust
-#![doc = include_str!("../tests/javascript_string_interpolation/lexer.rs")]
-//! ```
-//! 
-//! For example:
-//! ```rust
-//! # mod m {
-//! #   include!("../tests/javascript_string_interpolation/lexer.rs");
-//! # }
-//! # use m::*;
-//! let input = "`a${ b }c${ d }e`";
-//!
-//! let lexer_rules = lexer_rules();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
-//! ```
-//! Which outputs:
-//! ```text
-#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/lexemes")]
-//! ```
-//! 
-//! # Grammars
-//!
-//! A [Grammar](https://en.wikipedia.org/wiki/Formal_grammar)
-//! is a simple way of describing a language,
-//! like `JSON`, `TOML`, `YAML`, `Python`, `Go`, or `Rust`.
-//!
-//! Grammars are commonly described in [Backus–Naur form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form).
-//! Mapping this syntax to Santiago is very straight forward.
-//!
-//! ## Example: Smallest grammar possible
-//!
-//! Note: This example is a continuation of the same example in the lexer section.
-//!
-//! Let's build a grammar for a sequence of characters:
+//! And we can build a grammar to recognize a sequence of characters:
 //! ```rust
 #![doc = include_str!("../tests/smallest/grammar.rs")]
 //! ```
@@ -273,11 +261,34 @@
 #![doc = include_str!("../tests/smallest/cases/multiple/forest")]
 //! ```
 //! 
-//! ## Example: JavaScript string interpolations:
-//! Note: This example is a continuation of the same example in the lexer section.
+//! ## JavaScript string interpolations:
 //!
-//! Let's build a grammar for strings interpolations in the form:
+//! This lexer can handle strings interpolations in the form:
+//!
 //! - ``` `Hello ${ name }, your age is: ${ age }.` ```
+//!
+//! Similar to those you find in many programming languages.
+//! ```rust
+#![doc = include_str!("../tests/javascript_string_interpolation/lexer.rs")]
+//! ```
+//! 
+//! For example:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/javascript_string_interpolation/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "`a${ b }c${ d }e`";
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! ```
+//! Which outputs:
+//! ```text
+#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/lexemes")]
+//! ```
+//! 
+//! Now let's build an Abstract Syntax Tree:
 //! ```rust
 #![doc = include_str!("../tests/javascript_string_interpolation/grammar.rs")]
 //! ```
@@ -305,13 +316,12 @@
 //! # Next steps
 //!
 //! This tutorial ends here,
-//! you should now have everything to lex and parse the world!
+//! you should now have everything to lex,
+//! parse, and evaluate the world,
+//! and build your own programming languages, compilers and interpreters!
 //!
 //! You can checkout more examples in the tests folder:
 //! - <https://github.com/kamadorueda/santiago/tree/main/tests>
-//!
-//! And real life lexers and grammars in the built-in languages section:
-//! - <https://github.com/kamadorueda/santiago/tree/main/src/languages>
 //!
 //! We hope you find Santiago useful!
 //!

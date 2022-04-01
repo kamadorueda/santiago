@@ -9,7 +9,7 @@ use std::hash::Hasher;
 use std::rc::Rc;
 
 /// Internal representation of a [Production] that has been matched
-/// up to certain [Symbol],
+/// up to certain symbol,
 /// starting at `start_column` and ending at `end_column`
 /// relative the input [Lexemes](crate::lexer::Lexeme).
 pub struct ParserState<Value> {
