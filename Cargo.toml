@@ -25,7 +25,7 @@ keywords = ["parser", "api", "framework", "text", "serialization"]
 license = "GPL-3.0-only"
 name = "santiago"
 repository = "https://github.com/kamadorueda/santiago"
-version = "0.21.0"
+version = "0.21.1"
 
 [profile.release]
 codegen-units = 1
