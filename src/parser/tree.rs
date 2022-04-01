@@ -5,6 +5,7 @@
 use crate::grammar::Associativity;
 use crate::grammar::Grammar;
 use crate::grammar::Production;
+use crate::grammar::ProductionAction;
 use crate::grammar::ProductionKind;
 use crate::lexer::Lexeme;
 use crate::parser::ParserColumn;
@@ -66,6 +67,43 @@ impl<Value> std::fmt::Display for Tree<Value> {
 }
 
 impl<Value> Tree<Value> {
+    /// Evaluate this Tree according to the [ProductionAction]s
+    /// defined in the [Grammar].
+    pub fn evaluate(&self) -> Value {
+        let mut values: LinkedList<Value> = LinkedList::new();
+        let mut lexemes: LinkedList<&Lexeme> = LinkedList::new();
+
+        for tree in self.traverse_in_post_order() {
+            match tree {
+                Tree::Leaf(lexeme) => {
+                    lexemes.push_back(lexeme);
+                }
+                Tree::Node { production, .. } => {
+                    let symbols = production.symbols.len();
+
+                    match &*production.action {
+                        ProductionAction::Lexemes(evaluator) => {
+                            let args: Vec<&Lexeme> = (0..symbols)
+                                .map(|_| lexemes.pop_front().unwrap())
+                                .collect();
+
+                            values.push_back(evaluator(args.as_slice()));
+                        }
+                        ProductionAction::Rules(evaluator) => {
+                            let args: Vec<Value> = (0..symbols)
+                                .map(|_| values.pop_front().unwrap())
+                                .collect();
+
+                            values.push_back(evaluator(args));
+                        }
+                    };
+                }
+            }
+        }
+
+        values.pop_front().unwrap()
+    }
+
     /// Traverse the tree in post-order.
     ///
     /// - Recursively traverse the current node's Nth subtree.
