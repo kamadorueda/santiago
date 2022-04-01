@@ -14,8 +14,7 @@ use std::collections::LinkedList;
 use std::rc::Rc;
 
 /// Representation of an AST
-#[derive(Clone, Debug, Hash)]
-pub enum Tree {
+pub enum Tree<Value> {
     /// Leaf nodes of the tree, containing a [Lexeme].
     Leaf(Lexeme),
     /// Group of many [Tree::Leaf].
@@ -23,18 +22,24 @@ pub enum Tree {
         /// Name of the [GrammarRule](crate::grammar::GrammarRule) that produced this node.
         rule_name:  Rc<String>,
         /// Reference to the [Production] that produced this node.
-        production: Rc<Production>,
+        production: Rc<Production<Value>>,
         /// Children of this Node.
-        leaves:     Vec<Rc<Tree>>,
+        leaves:     Vec<Rc<Tree<Value>>>,
     },
 }
 
-impl std::fmt::Display for Tree {
+impl<Value> std::fmt::Debug for Tree<Value> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fn recurse(
+        write!(f, "{self}")
+    }
+}
+
+impl<Value> std::fmt::Display for Tree<Value> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fn recurse<Value>(
             f: &mut std::fmt::Formatter<'_>,
             depth: usize,
-            tree: &Tree,
+            tree: &Tree<Value>,
         ) -> std::fmt::Result {
             match tree {
                 Tree::Leaf(lexeme) => {
@@ -68,11 +73,11 @@ impl std::fmt::Display for Tree {
     }
 }
 
-impl Tree {
+impl<Value> Tree<Value> {
     /// Traverse the tree in pre-order.
-    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree> {
-        let mut todo: LinkedList<&Tree> = LinkedList::new();
-        let mut ordered: LinkedList<&Tree> = LinkedList::new();
+    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree<Value>> {
+        let mut todo: LinkedList<&Tree<Value>> = LinkedList::new();
+        let mut ordered: LinkedList<&Tree<Value>> = LinkedList::new();
 
         todo.push_back(self);
         ordered.push_front(self);
@@ -89,13 +94,13 @@ impl Tree {
     }
 }
 
-pub(crate) fn build(
-    grammar: &Grammar,
+pub(crate) fn build<Value>(
+    grammar: &Grammar<Value>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn],
-    state: &ParserState,
-) -> Vec<Rc<Tree>> {
-    let mut cache: HashMap<u64, Rc<Vec<Rc<Tree>>>> = HashMap::new();
+    columns: &[ParserColumn<Value>],
+    state: &ParserState<Value>,
+) -> Vec<Rc<Tree<Value>>> {
+    let mut cache: HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>> = HashMap::new();
 
     for column in columns.iter() {
         for state_partial in &column.states {
@@ -106,13 +111,13 @@ pub(crate) fn build(
     (*cache.remove(&state.hash_me()).unwrap()).clone()
 }
 
-fn build_forest(
-    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree>>>>,
-    grammar: &Grammar,
+fn build_forest<Value>(
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>>,
+    grammar: &Grammar<Value>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn],
-    state: &ParserState,
-) -> Rc<Vec<Rc<Tree>>> {
+    columns: &[ParserColumn<Value>],
+    state: &ParserState<Value>,
+) -> Rc<Vec<Rc<Tree<Value>>>> {
     let key = state.hash_me();
     match cache.get(&key) {
         Some(forest) => forest.clone(),
@@ -136,17 +141,17 @@ fn build_forest(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn build_forest_helper(
-    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree>>>>,
-    grammar: &Grammar,
+fn build_forest_helper<Value>(
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>>,
+    grammar: &Grammar<Value>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn],
+    columns: &[ParserColumn<Value>],
 
-    leaves: Vec<Rc<Tree>>,
-    state: &ParserState,
+    leaves: Vec<Rc<Tree<Value>>>,
+    state: &ParserState<Value>,
     symbol_index: usize,
     end_column: usize,
-) -> Vec<Rc<Tree>> {
+) -> Vec<Rc<Tree<Value>>> {
     if symbol_index == usize::MAX {
         if leaves.len() == 1 && matches!(*leaves[0], Tree::Node { .. }) {
             return leaves;
@@ -226,10 +231,10 @@ fn build_forest_helper(
     }
 }
 
-fn satisfies_disambiguation(
-    grammar: &Grammar,
-    state_partial: &ParserState,
-    state: &ParserState,
+fn satisfies_disambiguation<Value>(
+    grammar: &Grammar<Value>,
+    state_partial: &ParserState<Value>,
+    state: &ParserState<Value>,
 ) -> bool {
     if let (Some(partial_index), Some(index)) = (
         get_disambiguation(grammar, state_partial),
@@ -257,15 +262,19 @@ fn satisfies_disambiguation(
                         == disambiguation.precedence
                     {
                         if state_partial.end_column == state.end_column
-                            && disambiguation_partial.associativity
-                                == Associativity::Left
+                            && matches!(
+                                disambiguation_partial.associativity,
+                                Associativity::Left
+                            )
                         {
                             return false;
                         }
 
                         if state_partial.start_column == state.start_column
-                            && disambiguation.associativity
-                                == Associativity::Right
+                            && matches!(
+                                disambiguation.associativity,
+                                Associativity::Right
+                            )
                         {
                             return false;
                         }
@@ -278,7 +287,10 @@ fn satisfies_disambiguation(
     true
 }
 
-fn get_disambiguation(grammar: &Grammar, state: &ParserState) -> Option<usize> {
+fn get_disambiguation<Value>(
+    grammar: &Grammar<Value>,
+    state: &ParserState<Value>,
+) -> Option<usize> {
     if let ProductionKind::Rules = state.production.kind {
         let mut disambiguations =
             state.production.symbols.iter().enumerate().filter_map(

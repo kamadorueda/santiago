@@ -12,16 +12,21 @@ use std::rc::Rc;
 /// up to certain [Symbol],
 /// starting at `start_column` and ending at `end_column`
 /// relative the input [Lexemes](crate::lexer::Lexeme).
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct ParserState {
+pub struct ParserState<Value> {
     pub(crate) rule_name:    Rc<String>,
-    pub(crate) production:   Rc<Production>,
+    pub(crate) production:   Rc<Production<Value>>,
     pub(crate) dot_index:    usize,
     pub(crate) start_column: usize,
     pub(crate) end_column:   usize,
 }
 
-impl std::fmt::Display for ParserState {
+impl<Value> std::fmt::Debug for ParserState<Value> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+impl<Value> std::fmt::Display for ParserState<Value> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -48,7 +53,41 @@ impl std::fmt::Display for ParserState {
     }
 }
 
-impl ParserState {
+impl<Value> core::clone::Clone for ParserState<Value> {
+    fn clone(&self) -> ParserState<Value> {
+        ParserState {
+            rule_name:    self.rule_name.clone(),
+            production:   self.production.clone(),
+            dot_index:    self.dot_index,
+            start_column: self.start_column,
+            end_column:   self.end_column,
+        }
+    }
+}
+
+impl<Value> std::cmp::Eq for ParserState<Value> {}
+
+impl<Value> std::cmp::PartialEq for ParserState<Value> {
+    fn eq(&self, other: &ParserState<Value>) -> bool {
+        let left = (
+            &self.rule_name,
+            &self.production,
+            &self.dot_index,
+            &self.start_column,
+            &self.end_column,
+        );
+        let right = (
+            &other.rule_name,
+            &other.production,
+            &other.dot_index,
+            &other.start_column,
+            &other.end_column,
+        );
+
+        left.eq(&right)
+    }
+}
+impl<Value> ParserState<Value> {
     pub(crate) fn completed(&self) -> bool {
         self.dot_index >= self.production.symbols.len()
     }
@@ -59,7 +98,11 @@ impl ParserState {
 
     pub(crate) fn hash_me(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
-        self.hash(&mut hasher);
+        self.rule_name.hash(&mut hasher);
+        self.production.hash(&mut hasher);
+        self.dot_index.hash(&mut hasher);
+        self.start_column.hash(&mut hasher);
+        self.end_column.hash(&mut hasher);
         hasher.finish()
     }
 }

@@ -12,14 +12,23 @@ use std::rc::Rc;
 /// [GrammarRule] is exposed so you can use its type and traits
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
-#[derive(Clone)]
-pub struct GrammarRule {
+pub struct GrammarRule<Value> {
     pub(crate) name:           Rc<String>,
     pub(crate) disambiguation: Option<Disambiguation>,
-    pub(crate) productions:    Vec<Rc<Production>>,
+    pub(crate) productions:    Vec<Rc<Production<Value>>>,
 }
 
-impl std::fmt::Display for GrammarRule {
+impl<Value> std::clone::Clone for GrammarRule<Value> {
+    fn clone(&self) -> GrammarRule<Value> {
+        GrammarRule {
+            name:           self.name.clone(),
+            disambiguation: self.disambiguation.clone(),
+            productions:    self.productions.clone(),
+        }
+    }
+}
+
+impl<Value> std::fmt::Display for GrammarRule<Value> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -34,7 +43,7 @@ impl std::fmt::Display for GrammarRule {
     }
 }
 
-impl std::hash::Hash for GrammarRule {
+impl<Value> std::hash::Hash for GrammarRule<Value> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
     }

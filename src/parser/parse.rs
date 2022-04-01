@@ -15,10 +15,10 @@ use crate::parser::Tree;
 use std::collections::HashSet;
 use std::rc::Rc;
 
-fn predict(
-    columns: &mut Vec<ParserColumn>,
+fn predict<Value>(
+    columns: &mut Vec<ParserColumn<Value>>,
     column_index: usize,
-    rule: &GrammarRule,
+    rule: &GrammarRule<Value>,
 ) {
     for production in &rule.productions {
         if column_index + 1 < columns.len()
@@ -42,8 +42,8 @@ fn predict(
     }
 }
 
-fn scan(
-    columns: &mut Vec<ParserColumn>,
+fn scan<Value>(
+    columns: &mut Vec<ParserColumn<Value>>,
     column_index: usize,
     state_index: usize,
 ) {
@@ -58,8 +58,8 @@ fn scan(
     columns[column_index + 1].add(new_state);
 }
 
-fn complete(
-    columns: &mut Vec<ParserColumn>,
+fn complete<Value>(
+    columns: &mut Vec<ParserColumn<Value>>,
     column_index: usize,
     state_index: usize,
 ) {
@@ -103,11 +103,11 @@ fn complete(
 }
 
 /// Parse the provided (Lexemes)(Lexeme) with the given [Grammar]
-pub fn parse(
-    grammar: &Grammar,
+pub fn parse<Value>(
+    grammar: &Grammar<Value>,
     lexemes: &[Lexeme],
-) -> Result<Vec<Rc<Tree>>, ParseError> {
-    let mut columns: Vec<ParserColumn> = earley(grammar, lexemes);
+) -> Result<Vec<Rc<Tree<Value>>>, ParseError<Value>> {
+    let mut columns: Vec<ParserColumn<Value>> = earley(grammar, lexemes);
 
     let mut parent = None;
     for state in &columns.last().unwrap().states {
@@ -146,8 +146,11 @@ pub fn parse(
 
 /// Parse the provided [Lexemes](Lexeme) with the given [Grammar]
 /// and the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
-pub fn earley(grammar: &Grammar, lexemes: &[Lexeme]) -> Vec<ParserColumn> {
-    let mut columns: Vec<ParserColumn> = (0..=lexemes.len())
+pub fn earley<Value>(
+    grammar: &Grammar<Value>,
+    lexemes: &[Lexeme],
+) -> Vec<ParserColumn<Value>> {
+    let mut columns: Vec<ParserColumn<Value>> = (0..=lexemes.len())
         .map(|index| {
             if index == 0 {
                 ParserColumn {

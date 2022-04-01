@@ -10,15 +10,15 @@ use std::collections::HashSet;
 /// [ParserColumn] is exposed so you can use its type and traits
 /// but normally you create a [ParserColumn]
 /// by using [earley](crate::parser::earley).
-pub struct ParserColumn {
+pub struct ParserColumn<Value> {
     pub(crate) index:  usize,
     pub(crate) kind:   String,
-    pub(crate) states: Vec<ParserState>,
+    pub(crate) states: Vec<ParserState<Value>>,
     pub(crate) unique: HashSet<u64>,
 }
 
-impl ParserColumn {
-    pub(crate) fn add(&mut self, state: ParserState) {
+impl<Value> ParserColumn<Value> {
+    pub(crate) fn add(&mut self, state: ParserState<Value>) {
         let mut state = state;
         let digest = state.hash_me();
 
@@ -30,7 +30,7 @@ impl ParserColumn {
     }
 }
 
-impl std::fmt::Display for ParserColumn {
+impl<Value> std::fmt::Display for ParserColumn<Value> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,

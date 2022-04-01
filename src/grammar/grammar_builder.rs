@@ -7,8 +7,10 @@ use crate::grammar::Disambiguation;
 use crate::grammar::Grammar;
 use crate::grammar::GrammarRule;
 use crate::grammar::Production;
+use crate::grammar::ProductionAction;
 use crate::grammar::ProductionKind;
 use crate::grammar::START_RULE_NAME;
+use crate::lexer::Lexeme;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -17,20 +19,20 @@ use std::rc::Rc;
 /// Imperative utility for creating a [Grammar].
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
-pub struct GrammarBuilder {
+pub struct GrammarBuilder<Value> {
     current_precedence: usize,
-    grammar:            Grammar,
+    grammar:            Grammar<Value>,
 }
 
-impl Default for GrammarBuilder {
-    fn default() -> GrammarBuilder {
+impl<Value> Default for GrammarBuilder<Value> {
+    fn default() -> GrammarBuilder<Value> {
         GrammarBuilder::new()
     }
 }
 
-impl GrammarBuilder {
+impl<Value> GrammarBuilder<Value> {
     /// Creates a new [GrammarBuilder] with no rules.
-    pub fn new() -> GrammarBuilder {
+    pub fn new() -> GrammarBuilder<Value> {
         GrammarBuilder {
             current_precedence: 0,
             grammar:            Grammar { rules: HashMap::new() },
@@ -42,9 +44,21 @@ impl GrammarBuilder {
         rule_name: &str,
         symbols: &[&str],
         symbols_kind: ProductionKind,
+        production_action: ProductionAction<Value>,
     ) {
         let rule_name = Rc::new(rule_name.to_string());
+
+        if self.grammar.rules.is_empty() && *rule_name != START_RULE_NAME {
+            self.rule_to_symbols(
+                START_RULE_NAME,
+                &[&rule_name],
+                ProductionKind::Rules,
+                ProductionAction::Rules(Rc::new(|_| todo!())),
+            );
+        }
+
         let production = Rc::new(Production {
+            action:         Rc::new(production_action),
             target_lexemes: RefCell::new(HashSet::new()),
             symbols:        symbols
                 .iter()
@@ -52,10 +66,6 @@ impl GrammarBuilder {
                 .collect(),
             kind:           symbols_kind,
         });
-
-        if self.grammar.rules.is_empty() && *rule_name != START_RULE_NAME {
-            self.rule_to_rules(START_RULE_NAME, &[&rule_name]);
-        }
 
         match self.grammar.rules.get_mut(&rule_name) {
             Some(rule) => {
@@ -75,27 +85,41 @@ impl GrammarBuilder {
     }
 
     /// Map a rule with name `name` to zero or more lexemes.
-    pub fn rule_to_lexemes(
+    pub fn rule_to_lexemes<Action: 'static>(
         &mut self,
-        lexeme_kind: &str,
+        rule_name: &str,
         lexeme_kinds: &[&str],
-    ) -> &mut GrammarBuilder {
+        action: Action,
+    ) -> &mut GrammarBuilder<Value>
+    where
+        Action: Fn(&[&Lexeme]) -> Value,
+    {
         self.rule_to_symbols(
-            lexeme_kind,
+            rule_name,
             lexeme_kinds,
             ProductionKind::Lexemes,
+            ProductionAction::Lexemes(Rc::new(action)),
         );
 
         self
     }
 
     /// Map a rule with name `name` to zero or more rules.
-    pub fn rule_to_rules(
+    pub fn rule_to_rules<Action: 'static>(
         &mut self,
         rule_name: &str,
         rule_names: &[&str],
-    ) -> &mut GrammarBuilder {
-        self.rule_to_symbols(rule_name, rule_names, ProductionKind::Rules);
+        action: Action,
+    ) -> &mut GrammarBuilder<Value>
+    where
+        Action: Fn(Vec<Value>) -> Value,
+    {
+        self.rule_to_symbols(
+            rule_name,
+            rule_names,
+            ProductionKind::Rules,
+            ProductionAction::Rules(Rc::new(action)),
+        );
 
         self
     }
@@ -109,7 +133,7 @@ impl GrammarBuilder {
         &mut self,
         associativity: Associativity,
         rule_names: &[&str],
-    ) -> &mut GrammarBuilder {
+    ) -> &mut GrammarBuilder<Value> {
         for rule_name in rule_names {
             let rule_name = rule_name.to_string();
 
@@ -206,7 +230,7 @@ impl GrammarBuilder {
     }
 
     /// Return the created [Grammar], performing a few validations first.
-    pub fn finish(&mut self) -> Grammar {
+    pub fn finish(&mut self) -> Grammar<Value> {
         for (rule_name, rule) in self.grammar.rules.iter() {
             for production in &rule.productions {
                 if let ProductionKind::Rules = production.kind {
@@ -234,26 +258,88 @@ impl GrammarBuilder {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __grammar_helper {
-    ($grammar:ident $rule_name:literal => empty) => {
-        $grammar.rule_to_rules($rule_name, &[]);
+    // rule_to_rules
+    (
+        $grammar:ident
+        $rule_name:literal
+        => empty
+        => $production_action:expr
+    ) => {
+        $grammar.rule_to_rules($rule_name, &[], $production_action);
     };
-    ($grammar:ident $rule_name:literal => rules $($rule_names:literal)*) => {
-        $grammar.rule_to_rules($rule_name, &[$($rule_names),*]);
+    (
+        $grammar:ident
+        $rule_name:literal
+        => empty
+    ) => {
+        santiago::__grammar_helper!(
+            $grammar
+            $rule_name
+            => empty
+            => |_| todo!($rule_name)
+        );
     };
-    ($grammar:ident $rule_name:literal => rule $($rule_names:literal)*) => {
-        $grammar.rule_to_rules($rule_name, &[$($rule_names),*]);
+    (
+        $grammar:ident
+        $rule_name:literal
+        => rules $( $production_symbols:literal )*
+        => $production_action:expr
+    ) => {
+        $grammar.rule_to_rules(
+            $rule_name,
+            &[$( $production_symbols ),*],
+            $production_action,
+        );
     };
-    ($grammar:ident $rule_name:literal => lexemes $($lexeme_kinds:literal)*) => {
-        $grammar.rule_to_lexemes($rule_name, &[$($lexeme_kinds),*]);
+    (
+        $grammar:ident
+        $rule_name:literal
+        => rules $( $production_symbols:literal )*
+    ) => {
+        santiago::__grammar_helper!(
+            $grammar
+            $rule_name
+            => rules $( $production_symbols )*
+            => |_| todo!($rule_name)
+        );
     };
-    ($grammar:ident $rule_name:literal => lexeme $($lexeme_kinds:literal)*) => {
-        $grammar.rule_to_lexemes($rule_name, &[$($lexeme_kinds),*]);
+
+    // rule_to_lexemes
+    (
+        $grammar:ident
+        $rule_name:literal
+        => lexemes $( $production_symbols:literal )*
+        => $production_action:expr
+    ) => {
+        $grammar.rule_to_lexemes(
+            $rule_name,
+            &[$( $production_symbols ),*],
+            $production_action,
+        );
     };
-    ($grammar:ident $associativity:expr => rules $($rule_names:literal)*) => {
-        $grammar.disambiguate($associativity, &[$($rule_names),*]);
+    (
+        $grammar:ident
+        $rule_name:literal
+        => lexemes $( $production_symbols:literal )*
+    ) => {
+        santiago::__grammar_helper!(
+            $grammar
+            $rule_name
+            => lexemes $( $production_symbols )*
+            => |_| todo!($rule_name)
+        );
     };
-    ($grammar:ident $associativity:path => rule $($rule_names:literal)*) => {
-        $grammar.disambiguate($associativity, &[$($rule_names),*]);
+
+    // disambiguate
+    (
+        $grammar:ident
+        $associativity:expr
+        => rules $( $production_symbols:literal )*
+    ) => {
+        $grammar.disambiguate(
+            $associativity,
+            &[$( $production_symbols ),*],
+        );
     };
 }
 
@@ -262,10 +348,23 @@ macro_rules! __grammar_helper {
 /// Please read the [crate documentation](crate) for more information and examples.
 #[macro_export]
 macro_rules! grammar {
-    ($($target:expr => $action:ident $($args:literal)*);* ;) => {{
+    (
+        $(
+            $rule_name:expr
+            => $command:ident $( $production_symbols:literal )*
+            $( => $production_action:expr )?
+        );*
+    ;) => {{
         let mut builder = santiago::grammar::GrammarBuilder::new();
 
-        $(santiago::__grammar_helper!(builder $target => $action $($args)*));*;
+        $(
+            santiago::__grammar_helper!(
+                builder
+                $rule_name
+                => $command $( $production_symbols )*
+                $( => $production_action )?
+            );
+        )*
 
         builder.finish()
     }};

@@ -61,10 +61,10 @@ fn smallest() {
     );
 }
 
-fn run(
+fn run<Value>(
     name: &str,
     lexer_rules: &santiago::lexer::LexerRules,
-    grammar: &santiago::grammar::Grammar,
+    grammar: &santiago::grammar::Grammar<Value>,
 ) {
     use std::io::Write;
     let should_update = std::env::var("UPDATE").is_ok();

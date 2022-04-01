@@ -238,7 +238,7 @@ pub fn lexer_rules() -> LexerRules {
 }
 
 /// Build a set of grammar rules for The Nix Expression Language.
-pub fn grammar() -> Grammar {
+pub fn grammar() -> Grammar<()> {
     let mut builder = GrammarBuilder::new();
 
     for (kind, rules) in &[
@@ -434,7 +434,7 @@ pub fn grammar() -> Grammar {
         ),
     ] {
         for rule in rules.iter() {
-            builder.rule_to_rules(kind, rule);
+            builder.rule_to_rules(kind, rule, |_| todo!());
         }
     }
 
@@ -498,11 +498,11 @@ pub fn grammar() -> Grammar {
         "WITH",
         "WS",
     ] {
-        builder.rule_to_lexemes(lexeme_kind, &[lexeme_kind]);
+        builder.rule_to_lexemes(lexeme_kind, &[lexeme_kind], |_| todo!());
     }
-    builder.rule_to_lexemes("NOT", &["!"]);
-    builder.rule_to_lexemes("NEGATE", &["-"]);
-    builder.rule_to_lexemes("-", &["-"]);
+    builder.rule_to_lexemes("NOT", &["!"], |_| todo!());
+    builder.rule_to_lexemes("NEGATE", &["-"], |_| todo!());
+    builder.rule_to_lexemes("-", &["-"], |_| todo!());
 
     builder.disambiguate(Associativity::Right, &["IMPL"]);
     builder.disambiguate(Associativity::Left, &["OR"]);

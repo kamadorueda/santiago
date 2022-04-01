@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Ways in which repeated uses of rules with the same precedence nest.
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone)]
 pub enum Associativity {
     /// Specifies left associativity: `(x op y) op z`.
     Left,
