@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 pub mod ambiguous_integer_addition;
+pub mod calculator;
 pub mod integer_addition;
 pub mod javascript_string_interpolation;
+pub mod nix;
 pub mod smallest;
 
 #[test]
@@ -13,6 +15,15 @@ fn ambiguous_integer_addition() {
         "ambiguous_integer_addition",
         &ambiguous_integer_addition::lexer::lexer_rules(),
         &ambiguous_integer_addition::grammar::grammar(),
+    );
+}
+
+#[test]
+fn calculator() {
+    run(
+        "calculator",
+        &calculator::lexer::lexer_rules(),
+        &calculator::grammar::grammar(),
     );
 }
 
@@ -35,21 +46,8 @@ fn integer_addition() {
 }
 
 #[test]
-fn language_calculator() {
-    run(
-        "language_calculator",
-        &santiago::languages::calculator::lexer_rules(),
-        &santiago::languages::calculator::grammar(),
-    );
-}
-
-#[test]
-fn language_nix() {
-    run(
-        "language_nix",
-        &santiago::languages::nix::lexer_rules(),
-        &santiago::languages::nix::grammar(),
-    );
+fn languanixge_nix() {
+    run("nix", &nix::lexer::lexer_rules(), &nix::grammar::grammar());
 }
 
 #[test]
