@@ -232,6 +232,7 @@
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
+//! 
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/smallest/cases/multiple/lexemes")]
@@ -256,6 +257,7 @@
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
+//! 
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/smallest/cases/multiple/forest")]
@@ -265,7 +267,7 @@
 //!
 //! This lexer can handle strings interpolations in the form:
 //!
-//! - ``` `Hello ${ name }, your age is: ${ age }.` ```
+//! - `'Hello ${ name }, your age is: ${ age }.'`
 //!
 //! Similar to those you find in many programming languages.
 //! ```rust
@@ -278,11 +280,12 @@
 //! #   include!("../tests/javascript_string_interpolation/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "`a${ b }c${ d }e`";
+//! let input = "'a${ b }c${ d }e'";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! ```
+//! 
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/lexemes")]
@@ -300,7 +303,7 @@
 //! #   include!("../tests/javascript_string_interpolation/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "`a${ b }c${ d }e`";
+//! let input = "'a${ b }c${ d }e'";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
@@ -308,6 +311,7 @@
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
+//! 
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/forest")]

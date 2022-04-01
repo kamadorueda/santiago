@@ -3,9 +3,9 @@ use santiago::lexer::LexerRules;
 pub fn lexer_rules() -> LexerRules {
     santiago::lexer_rules!(
         // If the current state is "DEFAULT",
-        // associate a "`" with the beginning of the string,
+        // associate a "'" with the beginning of the string,
         // and make the current state be "INSIDE_STRING".
-        "DEFAULT" | "STRING_START" = string "`" => |lexer| {
+        "DEFAULT" | "STRING_START" = string "'" => |lexer| {
             lexer.push_state("INSIDE_STRING");
             lexer.take()
         };
@@ -28,16 +28,16 @@ pub fn lexer_rules() -> LexerRules {
             lexer.skip()
         };
         // If the current state is "INSIDE_STRING",
-        // associate a "`" with the end of the string
+        // associate a "'" with the end of the string
         // and go back to the previous state.
-        "INSIDE_STRING" | "STRING_END" = string "`" => |lexer| {
+        "INSIDE_STRING" | "STRING_END" = string "'" => |lexer| {
             lexer.pop_state();
             lexer.take()
         };
         // If the current state is "INSIDE_STRING"
         // associate anything with a "STR".
         //
-        // Note how the "`" in the previous rule takes precedence over this one.
+        // Note how the "'" in the previous rule takes precedence over this one.
         "INSIDE_STRING" | "STR" = pattern ".";
         // If the current state is "DEFAULT" or "INSIDE_STRING_INTERPOLATION"
         // associate a " " with whitespace, and skip it.

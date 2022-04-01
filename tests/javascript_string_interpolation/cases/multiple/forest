@@ -1,7 +1,7 @@
 ---
 string := rules "string_start" "str_content" "string_end"
   string_start := lexemes "STRING_START"
-    STRING_START "`" (1, 1)
+    STRING_START "'" (1, 1)
   str_content := rules "str_content" "str"
     str_content := rules "str_content" "var"
       str_content := rules "str_content" "str"
@@ -19,4 +19,4 @@ string := rules "string_start" "str_content" "string_end"
     str := lexemes "STR"
       STR "e" (1, 16)
   string_end := lexemes "STRING_END"
-    STRING_END "`" (1, 17)
+    STRING_END "'" (1, 17)
