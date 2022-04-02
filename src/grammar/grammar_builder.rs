@@ -278,7 +278,7 @@ macro_rules! __grammar_helper {
             $grammar
             $rule_name
             => empty
-            => |_| todo!($rule_name)
+            => |_| todo!("{}", $rule_name)
         );
     };
     (
@@ -314,7 +314,7 @@ macro_rules! __grammar_helper {
             $grammar
             $rule_name
             => rules $( $production_symbols )*
-            => |_| todo!($rule_name)
+            => |_| todo!("{}", $rule_name)
         );
     };
 
@@ -340,7 +340,7 @@ macro_rules! __grammar_helper {
             $grammar
             $rule_name
             => lexemes $( $production_symbols )*
-            => |_| todo!($rule_name)
+            => |_| todo!("{}", $rule_name)
         );
     };
 
