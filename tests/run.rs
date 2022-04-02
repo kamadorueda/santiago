@@ -86,13 +86,13 @@ fn smallest() {
     );
 }
 
-fn run<Value>(
+fn run<AST>(
     name: &str,
     lexer_rules: &santiago::lexer::LexerRules,
-    grammar: &santiago::grammar::Grammar<Value>,
+    grammar: &santiago::grammar::Grammar<AST>,
     test_values: bool,
 ) where
-    Value: std::fmt::Debug,
+    AST: std::fmt::Debug,
 {
     use std::io::Write;
     let should_update = std::env::var("UPDATE").is_ok();
@@ -109,7 +109,7 @@ fn run<Value>(
         let path_input = format!("{cases_dir}/{case}/input");
         let path_lexemes = format!("{cases_dir}/{case}/lexemes");
         let path_earley = format!("{cases_dir}/{case}/earley");
-        let path_forest = format!("{cases_dir}/{case}/forest");
+        let path_parse_trees = format!("{cases_dir}/{case}/parse_trees");
         let path_values = format!("{cases_dir}/{case}/values");
 
         let input = std::fs::read_to_string(&path_input)
@@ -147,10 +147,10 @@ fn run<Value>(
                 .unwrap();
         }
 
-        let forest = santiago::parser::parse(grammar, &lexemes).unwrap();
-        let forest_str: String = forest
+        let parse_trees = santiago::parser::parse(grammar, &lexemes).unwrap();
+        let parse_trees_str: String = parse_trees
             .iter()
-            .map(|ast| format!("---\n{ast}"))
+            .map(|parse_tree| format!("---\n{parse_tree}"))
             .collect::<String>()
             .lines()
             .collect::<Vec<&str>>()
@@ -158,9 +158,9 @@ fn run<Value>(
 
         #[cfg(not(tarpaulin))]
         if should_update {
-            std::fs::File::create(&path_forest)
+            std::fs::File::create(&path_parse_trees)
                 .unwrap()
-                .write_all(forest_str.as_bytes())
+                .write_all(parse_trees_str.as_bytes())
                 .unwrap();
         }
         assert_eq!(
@@ -168,14 +168,19 @@ fn run<Value>(
             std::fs::read_to_string(&path_lexemes).unwrap()
         );
         assert_eq!(earley_str, std::fs::read_to_string(&path_earley).unwrap());
-        assert_eq!(forest_str, std::fs::read_to_string(&path_forest).unwrap());
+        assert_eq!(
+            parse_trees_str,
+            std::fs::read_to_string(&path_parse_trees).unwrap()
+        );
 
         if test_values {
-            let values: Vec<Value> =
-                forest.iter().map(|ast| ast.evaluate()).collect();
+            let values: Vec<AST> = parse_trees
+                .iter()
+                .map(|parse_tree| parse_tree.as_abstract_syntax_tree())
+                .collect();
             let values_str: String = values
                 .iter()
-                .map(|ast| format!("---\n{ast:?}"))
+                .map(|parse_tree| format!("---\n{parse_tree:?}"))
                 .collect::<String>()
                 .lines()
                 .collect::<Vec<&str>>()

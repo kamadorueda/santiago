@@ -12,14 +12,14 @@ use std::rc::Rc;
 /// [GrammarRule] is exposed so you can use its type and traits
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
-pub struct GrammarRule<Value> {
+pub struct GrammarRule<AST> {
     pub(crate) name:           Rc<String>,
     pub(crate) disambiguation: Option<Disambiguation>,
-    pub(crate) productions:    Vec<Rc<Production<Value>>>,
+    pub(crate) productions:    Vec<Rc<Production<AST>>>,
 }
 
-impl<Value> std::clone::Clone for GrammarRule<Value> {
-    fn clone(&self) -> GrammarRule<Value> {
+impl<AST> std::clone::Clone for GrammarRule<AST> {
+    fn clone(&self) -> GrammarRule<AST> {
         GrammarRule {
             name:           self.name.clone(),
             disambiguation: self.disambiguation.clone(),
@@ -28,7 +28,7 @@ impl<Value> std::clone::Clone for GrammarRule<Value> {
     }
 }
 
-impl<Value> std::fmt::Display for GrammarRule<Value> {
+impl<AST> std::fmt::Display for GrammarRule<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -43,7 +43,7 @@ impl<Value> std::fmt::Display for GrammarRule<Value> {
     }
 }
 
-impl<Value> std::hash::Hash for GrammarRule<Value> {
+impl<AST> std::hash::Hash for GrammarRule<AST> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
     }

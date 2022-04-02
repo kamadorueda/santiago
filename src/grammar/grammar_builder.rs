@@ -19,20 +19,20 @@ use std::rc::Rc;
 /// Imperative utility for creating a [Grammar].
 ///
 /// Please read the [crate documentation](crate) for more information and examples.
-pub struct GrammarBuilder<Value> {
+pub struct GrammarBuilder<AST> {
     current_precedence: usize,
-    grammar:            Grammar<Value>,
+    grammar:            Grammar<AST>,
 }
 
-impl<Value> Default for GrammarBuilder<Value> {
-    fn default() -> GrammarBuilder<Value> {
+impl<AST> Default for GrammarBuilder<AST> {
+    fn default() -> GrammarBuilder<AST> {
         GrammarBuilder::new()
     }
 }
 
-impl<Value> GrammarBuilder<Value> {
+impl<AST> GrammarBuilder<AST> {
     /// Creates a new [GrammarBuilder] with no rules.
-    pub fn new() -> GrammarBuilder<Value> {
+    pub fn new() -> GrammarBuilder<AST> {
         GrammarBuilder {
             current_precedence: 0,
             grammar:            Grammar { rules: HashMap::new() },
@@ -44,7 +44,7 @@ impl<Value> GrammarBuilder<Value> {
         rule_name: &str,
         symbols: &[&str],
         symbols_kind: ProductionKind,
-        production_action: ProductionAction<Value>,
+        production_action: ProductionAction<AST>,
     ) {
         let rule_name = Rc::new(rule_name.to_string());
 
@@ -92,9 +92,9 @@ impl<Value> GrammarBuilder<Value> {
         rule_name: &str,
         lexeme_kinds: &[&str],
         action: Action,
-    ) -> &mut GrammarBuilder<Value>
+    ) -> &mut GrammarBuilder<AST>
     where
-        Action: Fn(&[&Lexeme]) -> Value,
+        Action: Fn(&[&Lexeme]) -> AST,
     {
         self.rule_to_symbols(
             rule_name,
@@ -112,9 +112,9 @@ impl<Value> GrammarBuilder<Value> {
         rule_name: &str,
         rule_names: &[&str],
         action: Action,
-    ) -> &mut GrammarBuilder<Value>
+    ) -> &mut GrammarBuilder<AST>
     where
-        Action: Fn(Vec<Value>) -> Value,
+        Action: Fn(Vec<AST>) -> AST,
     {
         self.rule_to_symbols(
             rule_name,
@@ -135,7 +135,7 @@ impl<Value> GrammarBuilder<Value> {
         &mut self,
         associativity: Associativity,
         rule_names: &[&str],
-    ) -> &mut GrammarBuilder<Value> {
+    ) -> &mut GrammarBuilder<AST> {
         for rule_name in rule_names {
             let rule_name = rule_name.to_string();
 
@@ -232,7 +232,7 @@ impl<Value> GrammarBuilder<Value> {
     }
 
     /// Return the created [Grammar], performing a few validations first.
-    pub fn finish(&mut self) -> Grammar<Value> {
+    pub fn finish(&mut self) -> Grammar<AST> {
         for (rule_name, rule) in self.grammar.rules.iter() {
             for production in &rule.productions {
                 if let ProductionKind::Rules = production.kind {

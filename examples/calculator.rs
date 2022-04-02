@@ -23,15 +23,18 @@ fn main() -> Result<(), ()> {
             }
 
             match santiago::parser::parse(&grammar, &lexemes) {
-                Ok(abstract_syntax_trees) => {
-                    println!("Abstract Syntax Trees:");
-                    let ast = &abstract_syntax_trees[0];
-                    println!("{ast}");
+                Ok(parse_trees) => {
+                    println!("Parse Trees:");
+                    let parse_tree = &parse_trees[0];
+                    println!("{parse_tree}");
 
-                    let value = ast.evaluate();
+                    let ast = parse_tree.as_abstract_syntax_tree();
+
+                    println!("Abstract Syntax Tree:");
+                    println!("{ast:?}");
 
                     println!("Evaluated:");
-                    println!("{}", eval(&value));
+                    println!("{}", eval(&ast));
 
                     Ok(())
                 }

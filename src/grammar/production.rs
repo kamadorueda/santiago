@@ -9,7 +9,7 @@ use std::hash::Hasher;
 use std::rc::Rc;
 
 /// One possible derivation of a [GrammarRule](crate::grammar::GrammarRule).
-pub struct Production<Value> {
+pub struct Production<AST> {
     /// Kind of symbols.
     pub kind:                  ProductionKind,
     /// Name of the [Grammar Rules](crate::grammar::GrammarRule)
@@ -17,17 +17,17 @@ pub struct Production<Value> {
     /// that this [Production] may yield.
     pub symbols:               Vec<String>,
     /// Action that this rule will perform at evaluation time.
-    pub action:                Rc<ProductionAction<Value>>,
+    pub action:                Rc<ProductionAction<AST>>,
     pub(crate) target_lexemes: RefCell<HashSet<String>>,
 }
 
-impl<Value> std::fmt::Debug for Production<Value> {
+impl<AST> std::fmt::Debug for Production<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self}")
     }
 }
 
-impl<Value> std::fmt::Display for Production<Value> {
+impl<AST> std::fmt::Display for Production<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -42,15 +42,15 @@ impl<Value> std::fmt::Display for Production<Value> {
     }
 }
 
-impl<Value> std::cmp::Eq for Production<Value> {}
+impl<AST> std::cmp::Eq for Production<AST> {}
 
-impl<Value> std::cmp::PartialEq for Production<Value> {
-    fn eq(&self, other: &Production<Value>) -> bool {
+impl<AST> std::cmp::PartialEq for Production<AST> {
+    fn eq(&self, other: &Production<AST>) -> bool {
         (&self.kind, &self.symbols).eq(&(&other.kind, &other.symbols))
     }
 }
 
-impl<Value> std::hash::Hash for Production<Value> {
+impl<AST> std::hash::Hash for Production<AST> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.kind.hash(state);
         self.symbols.hash(state);
@@ -58,11 +58,11 @@ impl<Value> std::hash::Hash for Production<Value> {
 }
 
 /// Action that a production will perform once evaluated.
-pub enum ProductionAction<Value> {
+pub enum ProductionAction<AST> {
     /// Action to execute when this [Production] is of kind [ProductionKind::Lexemes].
-    Lexemes(Rc<dyn Fn(&[&Lexeme]) -> Value>),
+    Lexemes(Rc<dyn Fn(&[&Lexeme]) -> AST>),
     /// Action to execute when this [Production] is of kind [ProductionKind::Rules]
-    Rules(Rc<dyn Fn(Vec<Value>) -> Value>),
+    Rules(Rc<dyn Fn(Vec<AST>) -> AST>),
 }
 
 /// Kinds of symbols.

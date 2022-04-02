@@ -6,20 +6,20 @@ use crate::lexer::Lexeme;
 use crate::parser::ParserState;
 
 /// Internal representation of an error encountered by [crate::parser::parse()].
-pub struct ParseError<Value> {
+pub struct ParseError<AST> {
     /// [Lexeme] where the error was found.
     pub at:     Option<Lexeme>,
     /// Matched, partially matched, and expected lexemes up at this point.
-    pub states: Vec<ParserState<Value>>,
+    pub states: Vec<ParserState<AST>>,
 }
 
-impl<Value> std::fmt::Debug for ParseError<Value> {
+impl<AST> std::fmt::Debug for ParseError<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self}")
     }
 }
 
-impl<Value> std::fmt::Display for ParseError<Value> {
+impl<AST> std::fmt::Display for ParseError<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(at) = &self.at {
             writeln!(f, "At: {}", at)?;

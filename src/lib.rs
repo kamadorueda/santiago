@@ -52,9 +52,17 @@
 //! like:
 //!
 //! ```text
-#![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
+//! BinaryOperation(vec![
+//!     BinaryOperation(vec![
+//!         Int(10),
+//!         OperatorAdd,
+//!         Int(20),
+//!     ]),
+//!     OperatorAdd,
+//!     Int(30),
+//! ])
 //! ```
-//! 
+//!
 //! So let's start with a lexer to:
 //! - Group the digits into integers called `"INT"`
 //! - Capture the plus sign (`+`) and name it `"PLUS"`
@@ -94,7 +102,7 @@
 #![doc = include_str!("../tests/ambiguous_integer_addition/grammar.rs")]
 //! ```
 //! 
-//! Now we can generate an Abstract Syntax Tree!
+//! Now we can generate a Parse Tree!
 //! ```rust
 //! # mod m {
 //! #   include!("../tests/ambiguous_integer_addition/grammar.rs");
@@ -107,12 +115,12 @@
 //! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! #
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! And voilà!
 //! ```text
-#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/forest")]
+#![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/parse_trees")]
 //! ```
 //! 
 //! Notice that we obtained 2 possible abstract syntax trees,
@@ -144,14 +152,14 @@
 //! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! #
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! This time our grammar is
 //! [deterministic](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar)
-//! and we will always have a single unambiguous Abstract Syntax Tree:
+//! and we will always have a single unambiguous Parse Tree:
 //! ```text
-#![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
+#![doc = include_str!("../tests/integer_addition/cases/addition/parse_trees")]
 //! ```
 //! 
 //! All we are missing now is evaluating the addition,
@@ -162,7 +170,7 @@
 #![doc = include_str!("../tests/integer_addition_with_value/grammar.rs")]
 //! ```
 //! 
-//! We just need to call Santiago's builtin-function `evaluate()`.
+//! We just need to call Santiago's builtin-function `as_abstract_syntax_tree()`.
 //! ```rust
 //! # mod m {
 //! #   include!("../tests/integer_addition_with_value/eval.rs");
@@ -176,10 +184,10 @@
 //! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! #
 //! # let grammar = grammar();
-//! # let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
-//! use Value::*;
+//! # let parse_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! use AST::*;
 //!
-//! let value = abstract_syntax_tree.evaluate();
+//! let ast = parse_tree.as_abstract_syntax_tree();
 //!
 //! assert_eq!(
 //!     value,
@@ -220,9 +228,9 @@
 //! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //! #
 //! # let grammar = grammar();
-//! # let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! # let parse_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
 //! #
-//! let value = abstract_syntax_tree.evaluate();
+//! let ast = parse_tree.as_abstract_syntax_tree();
 //!
 //! assert_eq!(eval(&value), 60);
 //! ```
@@ -334,12 +342,12 @@
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! Which outputs:
 //! ```text
-#![doc = include_str!("../tests/smallest/cases/multiple/forest")]
+#![doc = include_str!("../tests/smallest/cases/multiple/parse_trees")]
 //! ```
 //! 
 //! ## Calculator with four operations
@@ -370,7 +378,7 @@
 #![doc = include_str!("../tests/calculator/cases/example/lexemes")]
 //! ```
 //! 
-//! Now let's build an Abstract Syntax Tree:
+//! Now let's build a Parse Tree:
 //! ```rust
 #![doc = include_str!("../tests/calculator/grammar.rs")]
 //! ```
@@ -388,12 +396,12 @@
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! Which outputs:
 //! ```text
-#![doc = include_str!("../tests/calculator/cases/example/forest")]
+#![doc = include_str!("../tests/calculator/cases/example/parse_trees")]
 //! ```
 //! 
 //! We can also create an interpreter that performs the indicated
@@ -427,9 +435,9 @@
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
-//! let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! let parse_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
 //!
-//! let value = abstract_syntax_tree.evaluate();
+//! let ast = parse_tree.as_abstract_syntax_tree();
 //!
 //! assert_eq!(eval(&value), -6);
 //! ```
@@ -462,7 +470,7 @@
 #![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/lexemes")]
 //! ```
 //! 
-//! Now let's build an Abstract Syntax Tree:
+//! Now let's build a Parse Tree:
 //! ```rust
 #![doc = include_str!("../tests/javascript_string_interpolation/grammar.rs")]
 //! ```
@@ -480,12 +488,12 @@
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! Which outputs:
 //! ```text
-#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/forest")]
+#![doc = include_str!("../tests/javascript_string_interpolation/cases/multiple/parse_trees")]
 //! ```
 //! 
 //! ## Nix Expression Language
@@ -520,7 +528,7 @@
 #![doc = include_str!("../tests/nix/cases/pkg/lexemes")]
 //! ```
 //! 
-//! Now let's build an Abstract Syntax Tree:
+//! Now let's build a Parse Tree:
 //! ```rust
 #![doc = include_str!("../tests/nix/grammar.rs")]
 //! ```
@@ -538,19 +546,19 @@
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
 //!
 //! let grammar = grammar();
-//! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
+//! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
 //! Which outputs:
 //! ```text
-#![doc = include_str!("../tests/nix/cases/pkg/forest")]
+#![doc = include_str!("../tests/nix/cases/pkg/parse_trees")]
 //! ```
 //! 
 //! # Next steps
 //!
 //! This tutorial ends here,
 //! you should now have everything to lex,
-//! parse, and evaluate the world,
+//! parse, and as_abstract_syntax_tree the world,
 //! and build your own programming languages, compilers and interpreters!
 //!
 //! You can checkout more examples in the tests folder:

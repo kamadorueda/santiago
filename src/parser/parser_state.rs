@@ -12,21 +12,21 @@ use std::rc::Rc;
 /// up to certain symbol,
 /// starting at `start_column` and ending at `end_column`
 /// relative the input [Lexemes](crate::lexer::Lexeme).
-pub struct ParserState<Value> {
+pub struct ParserState<AST> {
     pub(crate) rule_name:    Rc<String>,
-    pub(crate) production:   Rc<Production<Value>>,
+    pub(crate) production:   Rc<Production<AST>>,
     pub(crate) dot_index:    usize,
     pub(crate) start_column: usize,
     pub(crate) end_column:   usize,
 }
 
-impl<Value> std::fmt::Debug for ParserState<Value> {
+impl<AST> std::fmt::Debug for ParserState<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
-impl<Value> std::fmt::Display for ParserState<Value> {
+impl<AST> std::fmt::Display for ParserState<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -53,8 +53,8 @@ impl<Value> std::fmt::Display for ParserState<Value> {
     }
 }
 
-impl<Value> core::clone::Clone for ParserState<Value> {
-    fn clone(&self) -> ParserState<Value> {
+impl<AST> core::clone::Clone for ParserState<AST> {
+    fn clone(&self) -> ParserState<AST> {
         ParserState {
             rule_name:    self.rule_name.clone(),
             production:   self.production.clone(),
@@ -65,10 +65,10 @@ impl<Value> core::clone::Clone for ParserState<Value> {
     }
 }
 
-impl<Value> std::cmp::Eq for ParserState<Value> {}
+impl<AST> std::cmp::Eq for ParserState<AST> {}
 
-impl<Value> std::cmp::PartialEq for ParserState<Value> {
-    fn eq(&self, other: &ParserState<Value>) -> bool {
+impl<AST> std::cmp::PartialEq for ParserState<AST> {
+    fn eq(&self, other: &ParserState<AST>) -> bool {
         let left = (
             &self.rule_name,
             &self.production,
@@ -87,7 +87,7 @@ impl<Value> std::cmp::PartialEq for ParserState<Value> {
         left.eq(&right)
     }
 }
-impl<Value> ParserState<Value> {
+impl<AST> ParserState<AST> {
     pub(crate) fn completed(&self) -> bool {
         self.dot_index >= self.production.symbols.len()
     }

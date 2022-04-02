@@ -22,9 +22,9 @@ fn main() -> Result<(), ()> {
             }
 
             match santiago::parser::parse(&grammar, &lexemes) {
-                Ok(abstract_syntax_trees) => {
-                    println!("Abstract Syntax Trees:");
-                    for ast in abstract_syntax_trees {
+                Ok(parse_trees) => {
+                    println!("Parse Trees:");
+                    for ast in parse_trees {
                         println!("{ast}");
                     }
                     Ok(())

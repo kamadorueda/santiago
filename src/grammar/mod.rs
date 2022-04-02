@@ -29,13 +29,13 @@ pub(crate) const START_RULE_NAME: &str = "Γ";
 /// [Grammar] is exposed so you can use its type and traits
 /// but normally you create a [Grammar]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
-pub struct Grammar<Value> {
+pub struct Grammar<AST> {
     /// Internal representation of the rules of this [Grammar].
-    pub rules: HashMap<Rc<String>, GrammarRule<Value>>,
+    pub rules: HashMap<Rc<String>, GrammarRule<AST>>,
 }
 
-impl<Value> std::clone::Clone for Grammar<Value> {
-    fn clone(&self) -> Grammar<Value> {
+impl<AST> std::clone::Clone for Grammar<AST> {
+    fn clone(&self) -> Grammar<AST> {
         Grammar { rules: self.rules.clone() }
     }
 }

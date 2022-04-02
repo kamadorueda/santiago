@@ -15,10 +15,10 @@ use crate::parser::Tree;
 use std::collections::HashSet;
 use std::rc::Rc;
 
-fn predict<Value>(
-    columns: &mut Vec<ParserColumn<Value>>,
+fn predict<AST>(
+    columns: &mut Vec<ParserColumn<AST>>,
     column_index: usize,
-    rule: &GrammarRule<Value>,
+    rule: &GrammarRule<AST>,
 ) {
     for production in &rule.productions {
         if column_index + 1 < columns.len()
@@ -42,8 +42,8 @@ fn predict<Value>(
     }
 }
 
-fn scan<Value>(
-    columns: &mut Vec<ParserColumn<Value>>,
+fn scan<AST>(
+    columns: &mut Vec<ParserColumn<AST>>,
     column_index: usize,
     state_index: usize,
 ) {
@@ -58,8 +58,8 @@ fn scan<Value>(
     columns[column_index + 1].add(new_state);
 }
 
-fn complete<Value>(
-    columns: &mut Vec<ParserColumn<Value>>,
+fn complete<AST>(
+    columns: &mut Vec<ParserColumn<AST>>,
     column_index: usize,
     state_index: usize,
 ) {
@@ -102,12 +102,14 @@ fn complete<Value>(
     }
 }
 
-/// Parse the provided (Lexemes)(Lexeme) with the given [Grammar]
-pub fn parse<Value>(
-    grammar: &Grammar<Value>,
+/// Parse the provided [Lexeme]s with the given [Grammar].
+///
+/// Return all possible Parse Trees.
+pub fn parse<AST>(
+    grammar: &Grammar<AST>,
     lexemes: &[Lexeme],
-) -> Result<Vec<Rc<Tree<Value>>>, ParseError<Value>> {
-    let mut columns: Vec<ParserColumn<Value>> = earley(grammar, lexemes);
+) -> Result<Vec<Rc<Tree<AST>>>, ParseError<AST>> {
+    let mut columns: Vec<ParserColumn<AST>> = earley(grammar, lexemes);
 
     let mut parent = None;
     for state in &columns.last().unwrap().states {
@@ -146,11 +148,11 @@ pub fn parse<Value>(
 
 /// Parse the provided [Lexemes](Lexeme) with the given [Grammar]
 /// and the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
-pub fn earley<Value>(
-    grammar: &Grammar<Value>,
+pub fn earley<AST>(
+    grammar: &Grammar<AST>,
     lexemes: &[Lexeme],
-) -> Vec<ParserColumn<Value>> {
-    let mut columns: Vec<ParserColumn<Value>> = (0..=lexemes.len())
+) -> Vec<ParserColumn<AST>> {
+    let mut columns: Vec<ParserColumn<AST>> = (0..=lexemes.len())
         .map(|index| {
             if index == 0 {
                 ParserColumn {

@@ -15,7 +15,7 @@ use std::collections::LinkedList;
 use std::rc::Rc;
 
 /// Representation of an AST.
-pub enum Tree<Value> {
+pub enum Tree<AST> {
     /// Leaf nodes of the tree, containing a [Lexeme].
     Leaf(Lexeme),
     /// Group of many [Tree::Leaf].
@@ -23,19 +23,19 @@ pub enum Tree<Value> {
         /// Name of the [GrammarRule](crate::grammar::GrammarRule) that produced this node.
         rule_name:  Rc<String>,
         /// Reference to the [Production] that produced this node.
-        production: Rc<Production<Value>>,
+        production: Rc<Production<AST>>,
         /// Children of this Node.
-        leaves:     Vec<Rc<Tree<Value>>>,
+        leaves:     Vec<Rc<Tree<AST>>>,
     },
 }
 
-impl<Value> std::fmt::Debug for Tree<Value> {
+impl<AST> std::fmt::Debug for Tree<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self}")
     }
 }
 
-impl<Value> std::fmt::Display for Tree<Value> {
+impl<AST> std::fmt::Display for Tree<AST> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut stack = LinkedList::new();
 
@@ -66,11 +66,11 @@ impl<Value> std::fmt::Display for Tree<Value> {
     }
 }
 
-impl<Value> Tree<Value> {
+impl<AST> Tree<AST> {
     /// Evaluate this Tree according to the [ProductionAction]s
     /// defined in the [Grammar].
-    pub fn evaluate(&self) -> Value {
-        let mut values: LinkedList<Value> = LinkedList::new();
+    pub fn as_abstract_syntax_tree(&self) -> AST {
+        let mut values: LinkedList<AST> = LinkedList::new();
         let mut lexemes: LinkedList<&Lexeme> = LinkedList::new();
 
         for tree in self.traverse_in_post_order() {
@@ -90,7 +90,7 @@ impl<Value> Tree<Value> {
                             values.push_back(evaluator(args.as_slice()));
                         }
                         ProductionAction::Rules(evaluator) => {
-                            let args: Vec<Value> = (0..symbols)
+                            let args: Vec<AST> = (0..symbols)
                                 .map(|_| values.pop_front().unwrap())
                                 .collect();
 
@@ -110,9 +110,9 @@ impl<Value> Tree<Value> {
     /// - Recursively traverse the current node's (N-1)th subtree.
     /// - ...
     /// - Visit the current node.
-    pub fn traverse_in_post_order(&self) -> LinkedList<&Tree<Value>> {
-        let mut todo: LinkedList<&Tree<Value>> = LinkedList::new();
-        let mut ordered: LinkedList<&Tree<Value>> = LinkedList::new();
+    pub fn traverse_in_post_order(&self) -> LinkedList<&Tree<AST>> {
+        let mut todo: LinkedList<&Tree<AST>> = LinkedList::new();
+        let mut ordered: LinkedList<&Tree<AST>> = LinkedList::new();
 
         todo.push_back(self);
         ordered.push_front(self);
@@ -134,9 +134,9 @@ impl<Value> Tree<Value> {
     /// - Recursively traverse the current node's 0 subtree.
     /// - Recursively traverse the current node's 1 subtree.
     /// - ...
-    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree<Value>> {
-        let mut todo: LinkedList<&Tree<Value>> = LinkedList::new();
-        let mut ordered: LinkedList<&Tree<Value>> = LinkedList::new();
+    pub fn traverse_in_pre_order(&self) -> LinkedList<&Tree<AST>> {
+        let mut todo: LinkedList<&Tree<AST>> = LinkedList::new();
+        let mut ordered: LinkedList<&Tree<AST>> = LinkedList::new();
 
         todo.push_front(self);
         while !todo.is_empty() {
@@ -152,35 +152,41 @@ impl<Value> Tree<Value> {
     }
 }
 
-pub(crate) fn build<Value>(
-    grammar: &Grammar<Value>,
+pub(crate) fn build<AST>(
+    grammar: &Grammar<AST>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn<Value>],
-    state: &ParserState<Value>,
-) -> Vec<Rc<Tree<Value>>> {
-    let mut cache: HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>> = HashMap::new();
+    columns: &[ParserColumn<AST>],
+    state: &ParserState<AST>,
+) -> Vec<Rc<Tree<AST>>> {
+    let mut cache: HashMap<u64, Rc<Vec<Rc<Tree<AST>>>>> = HashMap::new();
 
     for column in columns.iter() {
         for state_partial in &column.states {
-            build_forest(&mut cache, grammar, lexemes, columns, state_partial);
+            build_parse_trees(
+                &mut cache,
+                grammar,
+                lexemes,
+                columns,
+                state_partial,
+            );
         }
     }
 
     (*cache.remove(&state.hash_me()).unwrap()).clone()
 }
 
-fn build_forest<Value>(
-    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>>,
-    grammar: &Grammar<Value>,
+fn build_parse_trees<AST>(
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<AST>>>>>,
+    grammar: &Grammar<AST>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn<Value>],
-    state: &ParserState<Value>,
-) -> Rc<Vec<Rc<Tree<Value>>>> {
+    columns: &[ParserColumn<AST>],
+    state: &ParserState<AST>,
+) -> Rc<Vec<Rc<Tree<AST>>>> {
     let key = state.hash_me();
     match cache.get(&key) {
-        Some(forest) => forest.clone(),
+        Some(parse_trees) => parse_trees.clone(),
         None => {
-            let forest = Rc::new(build_forest_helper(
+            let parse_trees = Rc::new(build_parse_trees_helper(
                 cache,
                 grammar,
                 lexemes,
@@ -191,25 +197,25 @@ fn build_forest<Value>(
                 state.end_column,
             ));
 
-            cache.insert(key, forest.clone());
+            cache.insert(key, parse_trees.clone());
 
-            forest
+            parse_trees
         }
     }
 }
 
 #[allow(clippy::too_many_arguments)]
-fn build_forest_helper<Value>(
-    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<Value>>>>>,
-    grammar: &Grammar<Value>,
+fn build_parse_trees_helper<AST>(
+    cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<AST>>>>>,
+    grammar: &Grammar<AST>,
     lexemes: &[Lexeme],
-    columns: &[ParserColumn<Value>],
+    columns: &[ParserColumn<AST>],
 
-    leaves: Vec<Rc<Tree<Value>>>,
-    state: &ParserState<Value>,
+    leaves: Vec<Rc<Tree<AST>>>,
+    state: &ParserState<AST>,
     symbol_index: usize,
     end_column: usize,
-) -> Vec<Rc<Tree<Value>>> {
+) -> Vec<Rc<Tree<AST>>> {
     if symbol_index == usize::MAX {
         if leaves.len() == 1 && matches!(*leaves[0], Tree::Node { .. }) {
             return leaves;
@@ -229,7 +235,7 @@ fn build_forest_helper<Value>(
             let mut leaves_extended = vec![Rc::new(Tree::Leaf(lexeme.clone()))];
             leaves_extended.append(&mut leaves);
 
-            build_forest_helper(
+            build_parse_trees_helper(
                 cache,
                 grammar,
                 lexemes,
@@ -242,7 +248,7 @@ fn build_forest_helper<Value>(
         }
         ProductionKind::Rules => {
             let rule_name = &state.production.symbols[symbol_index];
-            let mut forest = Vec::new();
+            let mut parse_trees = Vec::new();
 
             for state_partial in columns[end_column]
                 .states
@@ -259,7 +265,7 @@ fn build_forest_helper<Value>(
                         )
                 })
             {
-                for alternative in (*build_forest(
+                for alternative in (*build_parse_trees(
                     cache,
                     grammar,
                     lexemes,
@@ -271,7 +277,7 @@ fn build_forest_helper<Value>(
                     let mut leaves_extended = vec![alternative];
                     leaves_extended.append(&mut leaves.clone());
 
-                    forest.append(&mut build_forest_helper(
+                    parse_trees.append(&mut build_parse_trees_helper(
                         cache,
                         grammar,
                         lexemes,
@@ -284,15 +290,15 @@ fn build_forest_helper<Value>(
                 }
             }
 
-            forest
+            parse_trees
         }
     }
 }
 
-fn satisfies_disambiguation<Value>(
-    grammar: &Grammar<Value>,
-    state_partial: &ParserState<Value>,
-    state: &ParserState<Value>,
+fn satisfies_disambiguation<AST>(
+    grammar: &Grammar<AST>,
+    state_partial: &ParserState<AST>,
+    state: &ParserState<AST>,
 ) -> bool {
     if let (Some(partial_index), Some(index)) = (
         get_disambiguation(grammar, state_partial),
@@ -345,9 +351,9 @@ fn satisfies_disambiguation<Value>(
     true
 }
 
-fn get_disambiguation<Value>(
-    grammar: &Grammar<Value>,
-    state: &ParserState<Value>,
+fn get_disambiguation<AST>(
+    grammar: &Grammar<AST>,
+    state: &ParserState<AST>,
 ) -> Option<usize> {
     if let ProductionKind::Rules = state.production.kind {
         let mut disambiguations =
