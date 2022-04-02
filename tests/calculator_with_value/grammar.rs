@@ -17,13 +17,13 @@ pub fn grammar() -> Grammar<AST> {
         "expr" => rules "int";
 
         "bin_op" => rules "expr" "add" "expr" =>
-            |values| AST::BinaryOperation(values);
+            AST::BinaryOperation;
         "bin_op" => rules "expr" "subtract" "expr" =>
-            |values| AST::BinaryOperation(values);
+            AST::BinaryOperation;
         "bin_op" => rules "expr" "multiply" "expr" =>
-            |values| AST::BinaryOperation(values);
+            AST::BinaryOperation;
         "bin_op" => rules "expr" "divide" "expr" =>
-            |values| AST::BinaryOperation(values);
+            AST::BinaryOperation;
 
         "add" => lexemes "+" =>
             |_| AST::OperatorAdd;

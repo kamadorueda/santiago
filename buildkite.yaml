@@ -9,7 +9,7 @@ steps:
       - direnv allow
       - eval "$(direnv export bash)"
       - echo +++ Check
-      - cargo check
+      - cargo check --all-targets
 
   - label: coverage
     if: build.branch == "main"
@@ -40,7 +40,7 @@ steps:
       - direnv allow
       - eval "$(direnv export bash)"
       - echo +++ Lint
-      - cargo clippy
+      - cargo clippy --all-targets
 
   - label: test
     command:
@@ -48,4 +48,4 @@ steps:
       - direnv allow
       - eval "$(direnv export bash)"
       - echo +++ Test
-      - cargo test
+      - cargo test --all-targets

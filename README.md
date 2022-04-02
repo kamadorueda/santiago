@@ -47,6 +47,16 @@ SPDX-License-Identifier: GPL-3.0-only
 
 </p>
 
+Santiago provides you:
+
+- A library for defining any
+  [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar).
+- A [Lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module.
+- And facilities for building interpreters or compilers of the language.
+
+With Santiago you have everything that is needed
+to build your own programming language!
+
 ## Features
 
 - ✔️ **Fast** 🦀

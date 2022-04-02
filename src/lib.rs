@@ -12,15 +12,16 @@
 #![deny(rustdoc::private_intra_doc_links)]
 #![deny(rustdoc::private_doc_tests)]
 //! Santiago is a lexing and parsing toolkit for Rust.
-//! It provides a library for defining any
-//! [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar),
-//! a [lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module,
-//! and facilities for building evaluators of the language.
+//! It provides you:
+//! - A library for defining any
+//!  [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar),
+//! - A [Lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module,
+//! - And facilities for building interpreters or compilers of the language.
 //!
-//! With Santiago, you have everything you need to build your own programming
-//! language, and a compiler or interpreter for it.
+//! With Santiago you have everything that is needed
+//! to build your own programming language!
 //!
-//! Santiago aims to be the Rust alternative to
+//! We are the Rust alternative to
 //! [GNU Bison](https://en.wikipedia.org/wiki/GNU_Bison),
 //! [Yacc](https://en.wikipedia.org/wiki/Yacc) and
 //! [Flex](https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)).
@@ -118,7 +119,7 @@
 //! let parse_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
 //! 
-//! And voilà!
+//! Which looks like:
 //! ```text
 #![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/parse_trees")]
 //! ```
@@ -162,15 +163,19 @@
 #![doc = include_str!("../tests/integer_addition/cases/addition/parse_trees")]
 //! ```
 //! 
-//! All we are missing now is evaluating the addition,
-//! for this let's modify the grammar
+//! All we are missing now is evaluating the addition.
+//! For this let's modify the grammar
 //! so that each time a rule matches
-//! we produce an amenable data-structure:
+//! we produce an amenable data-structure
+//! that can be turned into an Abstract Syntax Tree:
 //! ```rust
 #![doc = include_str!("../tests/integer_addition_with_value/grammar.rs")]
 //! ```
 //! 
-//! We just need to call Santiago's builtin-function `as_abstract_syntax_tree()`.
+//! Now, the next time we parse,
+//! we can transform our Parse Tree into
+//! an Abstract Syntax Tree
+//! by calling Santiago's builtin-function `as_abstract_syntax_tree()`.
 //! ```rust
 //! # mod m {
 //! #   include!("../tests/integer_addition_with_value/eval.rs");
@@ -190,7 +195,7 @@
 //! let ast = parse_tree.as_abstract_syntax_tree();
 //!
 //! assert_eq!(
-//!     value,
+//!     ast,
 //!     BinaryOperation(vec![
 //!         BinaryOperation(vec![
 //!             Int(10),
@@ -232,7 +237,7 @@
 //! #
 //! let ast = parse_tree.as_abstract_syntax_tree();
 //!
-//! assert_eq!(eval(&value), 60);
+//! assert_eq!(eval(&ast), 60);
 //! ```
 //! 
 //! How nice is that?
@@ -439,7 +444,7 @@
 //!
 //! let ast = parse_tree.as_abstract_syntax_tree();
 //!
-//! assert_eq!(eval(&value), -6);
+//! assert_eq!(eval(&ast), -6);
 //! ```
 //! 
 //! ## JavaScript string interpolations

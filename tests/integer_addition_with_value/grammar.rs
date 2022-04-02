@@ -14,7 +14,7 @@ pub enum AST {
 pub fn grammar() -> Grammar<AST> {
     santiago::grammar!(
         "sum" => rules "sum" "plus" "sum" =>
-            |values| AST::BinaryOperation(values);
+            AST::BinaryOperation;
 
         "sum" => lexemes "INT" => |lexemes| {
             // &str to isize conversion

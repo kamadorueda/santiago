@@ -14,7 +14,8 @@ use std::collections::HashMap;
 use std::collections::LinkedList;
 use std::rc::Rc;
 
-/// Representation of an AST.
+/// Representation of a Parse Tree,
+/// than can be turned into an Abstract Syntax Tree.
 pub enum Tree<AST> {
     /// Leaf nodes of the tree, containing a [Lexeme].
     Leaf(Lexeme),
