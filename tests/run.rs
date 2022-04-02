@@ -6,6 +6,7 @@ mod ambiguous_integer_addition;
 mod calculator;
 mod calculator_with_value;
 mod integer_addition;
+mod integer_addition_with_value;
 mod javascript_string_interpolation;
 mod nix;
 mod smallest;
@@ -57,6 +58,16 @@ fn integer_addition() {
         &integer_addition::lexer::lexer_rules(),
         &integer_addition::grammar::grammar(),
         false,
+    );
+}
+
+#[test]
+fn integer_addition_with_value() {
+    run(
+        "integer_addition_with_value",
+        &integer_addition_with_value::lexer::lexer_rules(),
+        &integer_addition_with_value::grammar::grammar(),
+        true,
     );
 }
 

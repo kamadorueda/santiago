@@ -52,6 +52,7 @@
             Cargo.lock \
             Cargo.toml \
             tests/*/cases/*/* \
+            tests/*/eval.rs \
             tests/*/grammar.rs \
             tests/*/lexer.rs \
             flake.nix \

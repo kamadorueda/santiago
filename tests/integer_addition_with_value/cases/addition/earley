@@ -1,0 +1,36 @@
+0
+  "Γ" := rules • "sum" [0-0]
+  "sum" := rules • "sum" "plus" "sum" [0-0]
+  "sum" := lexemes • "INT" [0-0]
+1
+  "sum" := lexemes "INT" • [0-1]
+  "Γ" := rules "sum" • [0-1]
+  "sum" := rules "sum" • "plus" "sum" [0-1]
+  "plus" := lexemes • "PLUS" [1-1]
+2
+  "plus" := lexemes "PLUS" • [1-2]
+  "sum" := rules "sum" "plus" • "sum" [0-2]
+  "sum" := rules • "sum" "plus" "sum" [2-2]
+  "sum" := lexemes • "INT" [2-2]
+3
+  "sum" := lexemes "INT" • [2-3]
+  "sum" := rules "sum" "plus" "sum" • [0-3]
+  "sum" := rules "sum" • "plus" "sum" [2-3]
+  "Γ" := rules "sum" • [0-3]
+  "sum" := rules "sum" • "plus" "sum" [0-3]
+  "plus" := lexemes • "PLUS" [3-3]
+4
+  "plus" := lexemes "PLUS" • [3-4]
+  "sum" := rules "sum" "plus" • "sum" [2-4]
+  "sum" := rules "sum" "plus" • "sum" [0-4]
+  "sum" := rules • "sum" "plus" "sum" [4-4]
+  "sum" := lexemes • "INT" [4-4]
+5
+  "sum" := lexemes "INT" • [4-5]
+  "sum" := rules "sum" "plus" "sum" • [2-5]
+  "sum" := rules "sum" "plus" "sum" • [0-5]
+  "sum" := rules "sum" • "plus" "sum" [4-5]
+  "sum" := rules "sum" • "plus" "sum" [2-5]
+  "Γ" := rules "sum" • [0-5]
+  "sum" := rules "sum" • "plus" "sum" [0-5]
+  "plus" := lexemes • "PLUS" [5-5]

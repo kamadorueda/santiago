@@ -81,15 +81,15 @@
 //! - Token kind
 //! - Contents
 //! - Position (line and column number)
+//!
+//! In this case we have two kinds of tokens, an `INT` and a `PLUS`:
 //! ```text
 #![doc = include_str!("../tests/ambiguous_integer_addition/cases/addition/lexemes")]
 //! ```
 //! 
 //! At this point all we are missing is creating a parser.
 //!
-//! Let's create a grammar to recognize the addition of integer numbers.
-//!
-//! In code this would be:
+//! Let's create a grammar to recognize the addition of integer numbers:
 //! ```rust
 #![doc = include_str!("../tests/ambiguous_integer_addition/grammar.rs")]
 //! ```
@@ -101,11 +101,11 @@
 //! #   include!("../tests/ambiguous_integer_addition/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "10 + 20 + 30";
-//!
-//! let lexer_rules = lexer_rules();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
-//!
+//! # let input = "10 + 20 + 30";
+//! #
+//! # let lexer_rules = lexer_rules();
+//! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! #
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
@@ -138,11 +138,11 @@
 //! #   include!("../tests/integer_addition/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "10 + 20 + 30";
-//!
-//! let lexer_rules = lexer_rules();
-//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
-//!
+//! # let input = "10 + 20 + 30";
+//! #
+//! # let lexer_rules = lexer_rules();
+//! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! #
 //! let grammar = grammar();
 //! let abstract_syntax_trees = santiago::parser::parse(&grammar, &lexemes).unwrap();
 //! ```
@@ -154,6 +154,85 @@
 #![doc = include_str!("../tests/integer_addition/cases/addition/forest")]
 //! ```
 //! 
+//! All we are missing now is evaluating the addition,
+//! for this let's modify the grammar
+//! so that each time a rule matches
+//! we produce an amenable data-structure:
+//! ```rust
+#![doc = include_str!("../tests/integer_addition_with_value/grammar.rs")]
+//! ```
+//! 
+//! We just need to call Santiago's builtin-function `evaluate()`.
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/integer_addition_with_value/eval.rs");
+//! #   include!("../tests/integer_addition_with_value/grammar.rs");
+//! #   include!("../tests/integer_addition_with_value/lexer.rs");
+//! # }
+//! # use m::*;
+//! # let input = "10 + 20 + 30";
+//! #
+//! # let lexer_rules = lexer_rules();
+//! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! #
+//! # let grammar = grammar();
+//! # let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! use Value::*;
+//!
+//! let value = abstract_syntax_tree.evaluate();
+//!
+//! assert_eq!(
+//!     value,
+//!     BinaryOperation(vec![
+//!         BinaryOperation(vec![
+//!             Int(10),
+//!             OperatorAdd,
+//!             Int(20),
+//!         ]),
+//!         OperatorAdd,
+//!         Int(30),
+//!     ]),
+//! )
+//! ```
+//! 
+//! And now we can traverse this data-structure and compute a result:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/integer_addition_with_value/grammar.rs");
+//! # }
+//! # use m::*;
+//! #
+#![doc = include_str!("../tests/integer_addition_with_value/eval.rs")]
+//! #
+//! ```
+//! 
+//! Like this:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/integer_addition_with_value/eval.rs");
+//! #   include!("../tests/integer_addition_with_value/grammar.rs");
+//! #   include!("../tests/integer_addition_with_value/lexer.rs");
+//! # }
+//! # use m::*;
+//! # let input = "10 + 20 + 30";
+//! #
+//! # let lexer_rules = lexer_rules();
+//! # let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//! #
+//! # let grammar = grammar();
+//! # let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//! #
+//! let value = abstract_syntax_tree.evaluate();
+//!
+//! assert_eq!(eval(&value), 60);
+//! ```
+//! 
+//! How nice is that?
+//!
+//! We just created:
+//! - Our own programming language (a calculator)
+//! - An interpreter for our language!
+//!
 //! # Technical details
 //!
 //! ## Lexical Analysis
@@ -267,7 +346,7 @@
 //!
 //! This lexer can handle integer arithmetic in the form:
 //!
-//! - `1 + 2 * 3 / 4 - 5`
+//! - `1 + 2 * 3 / 6 - 7`
 //!
 //! Similar to those you find in a basic calculator.
 //! ```rust
@@ -280,7 +359,7 @@
 //! #   include!("../tests/calculator/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "1 + 2 * 3 / 4 - 5";
+//! let input = "1 + 2 * 3 / 6 - 7";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
@@ -303,7 +382,7 @@
 //! #   include!("../tests/calculator/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "1 + 2 * 3 / 4 - 5";
+//! let input = "1 + 2 * 3 / 6 - 7";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
@@ -315,6 +394,44 @@
 //! Which outputs:
 //! ```text
 #![doc = include_str!("../tests/calculator/cases/example/forest")]
+//! ```
+//! 
+//! We can also create an interpreter that performs the indicated
+//! additions, subtractions, multiplications and divisions.
+//!
+//! For this let's create a more complete grammar:
+//! ```rust
+#![doc = include_str!("../tests/calculator_with_value/grammar.rs")]
+//! ```
+//! 
+//! And a function to perform the arithmetic:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/calculator_with_value/grammar.rs");
+//! # }
+//! # use m::*;
+#![doc = include_str!("../tests/calculator_with_value/eval.rs")]
+//! ```
+//! 
+//! Now the interpreter can be used like:
+//! ```rust
+//! # mod m {
+//! #   include!("../tests/calculator_with_value/eval.rs");
+//! #   include!("../tests/calculator_with_value/grammar.rs");
+//! #   include!("../tests/calculator_with_value/lexer.rs");
+//! # }
+//! # use m::*;
+//! let input = "1 + 2 * 3 / 6 - 7";
+//!
+//! let lexer_rules = lexer_rules();
+//! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
+//!
+//! let grammar = grammar();
+//! let abstract_syntax_tree = &santiago::parser::parse(&grammar, &lexemes).unwrap()[0];
+//!
+//! let value = abstract_syntax_tree.evaluate();
+//!
+//! assert_eq!(eval(&value), -6);
 //! ```
 //! 
 //! ## JavaScript string interpolations

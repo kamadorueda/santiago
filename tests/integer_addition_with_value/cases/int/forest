@@ -1,0 +1,3 @@
+---
+sum := lexemes "INT"
+  INT "1" (1, 1)

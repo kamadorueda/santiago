@@ -16,8 +16,8 @@ bin_op := rules "expr" "subtract" "expr"
     divide := lexemes "/"
       / "/" (1, 11)
     int := lexemes "INT"
-      INT "4" (1, 13)
+      INT "6" (1, 13)
   subtract := lexemes "-"
     - "-" (1, 15)
   int := lexemes "INT"
-    INT "5" (1, 17)
+    INT "7" (1, 17)
