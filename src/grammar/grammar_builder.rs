@@ -53,7 +53,9 @@ impl<Value> GrammarBuilder<Value> {
                 START_RULE_NAME,
                 &[&rule_name],
                 ProductionKind::Rules,
-                ProductionAction::Rules(Rc::new(|_| todo!())),
+                ProductionAction::Rules(Rc::new(|mut values| {
+                    values.swap_remove(0)
+                })),
             );
         }
 
@@ -289,6 +291,18 @@ macro_rules! __grammar_helper {
             $rule_name,
             &[$( $production_symbols ),*],
             $production_action,
+        );
+    };
+    (
+        $grammar:ident
+        $rule_name:literal
+        => rules $production_symbol:literal
+    ) => {
+        santiago::__grammar_helper!(
+            $grammar
+            $rule_name
+            => rules $production_symbol
+            => |mut values| values.swap_remove(0)
         );
     };
     (

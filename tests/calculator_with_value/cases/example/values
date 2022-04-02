@@ -1,0 +1,2 @@
+---
+BinaryOperation([BinaryOperation([BinaryOperation([BinaryOperation([Int(1), OperatorAdd, Int(2)]), OperatorMultiply, Int(3)]), OperatorDivide, Int(4)]), OperatorSubtract, Int(5)])

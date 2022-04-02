@@ -1,6 +1,7 @@
 use santiago::grammar::Associativity;
 use santiago::grammar::Grammar;
 
+#[derive(Debug)]
 pub enum Value {
     Int(isize),
     BinaryOperation(Vec<Value>),
@@ -8,22 +9,6 @@ pub enum Value {
     OperatorSubtract,
     OperatorMultiply,
     OperatorDivide,
-}
-
-impl Value {
-    pub fn eval(&self) -> isize {
-        match self {
-            Value::Int(int) => *int,
-            Value::BinaryOperation(args) => match &args[1] {
-                Value::OperatorAdd => args[0].eval() + args[2].eval(),
-                Value::OperatorSubtract => args[0].eval() - args[2].eval(),
-                Value::OperatorMultiply => args[0].eval() * args[2].eval(),
-                Value::OperatorDivide => args[0].eval() / args[2].eval(),
-                _ => unreachable!(),
-            },
-            _ => unreachable!(),
-        }
-    }
 }
 
 pub fn grammar() -> Grammar<Value> {

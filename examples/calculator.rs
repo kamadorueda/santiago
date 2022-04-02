@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-include!("../tests/calculator/lexer.rs");
-include!("../tests/calculator/grammar_with_value.rs");
+include!("../tests/calculator_with_value/lexer.rs");
+include!("../tests/calculator_with_value/grammar.rs");
+include!("../tests/calculator_with_value/eval.rs");
 
 fn main() -> Result<(), ()> {
     use std::io::Read;
@@ -30,7 +31,7 @@ fn main() -> Result<(), ()> {
                     let value = ast.evaluate();
 
                     println!("Evaluated:");
-                    println!("{}", value.eval());
+                    println!("{}", eval(&value));
 
                     Ok(())
                 }

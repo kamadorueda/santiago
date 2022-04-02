@@ -43,9 +43,9 @@
 //! For this example
 //! we are interested in lexing and parsing the addition of integer numbers
 //! like:
-//! - `11 + 22 + 33`
+//! - `10 + 20 + 30`
 //!
-//! And evaluating it to a single value: `66`.
+//! And evaluating it to a single value: `60`.
 //!
 //! In the process we will create an
 //! [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
@@ -71,7 +71,7 @@
 //! #   include!("../tests/ambiguous_integer_addition/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "11 + 22 + 33";
+//! let input = "10 + 20 + 30";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
@@ -101,7 +101,7 @@
 //! #   include!("../tests/ambiguous_integer_addition/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "11 + 22 + 33";
+//! let input = "10 + 20 + 30";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();
@@ -138,7 +138,7 @@
 //! #   include!("../tests/integer_addition/lexer.rs");
 //! # }
 //! # use m::*;
-//! let input = "11 + 22 + 33";
+//! let input = "10 + 20 + 30";
 //!
 //! let lexer_rules = lexer_rules();
 //! let lexemes = santiago::lexer::lex(&lexer_rules, &input).unwrap();

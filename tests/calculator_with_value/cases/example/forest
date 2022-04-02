@@ -1,0 +1,23 @@
+---
+bin_op := rules "expr" "subtract" "expr"
+  bin_op := rules "expr" "divide" "expr"
+    bin_op := rules "expr" "multiply" "expr"
+      bin_op := rules "expr" "add" "expr"
+        int := lexemes "INT"
+          INT "1" (1, 1)
+        add := lexemes "+"
+          + "+" (1, 3)
+        int := lexemes "INT"
+          INT "2" (1, 5)
+      multiply := lexemes "*"
+        * "*" (1, 7)
+      int := lexemes "INT"
+        INT "3" (1, 9)
+    divide := lexemes "/"
+      / "/" (1, 11)
+    int := lexemes "INT"
+      INT "4" (1, 13)
+  subtract := lexemes "-"
+    - "-" (1, 15)
+  int := lexemes "INT"
+    INT "5" (1, 17)
