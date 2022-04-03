@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
-include!("../tests/calculator_with_value/lexer.rs");
-include!("../tests/calculator_with_value/grammar.rs");
-include!("../tests/calculator_with_value/eval.rs");
+include!("../tests/calculator_with_ast/lexer.rs");
+include!("../tests/calculator_with_ast/grammar.rs");
+include!("../tests/calculator_with_ast/eval.rs");
 
 fn main() -> Result<(), ()> {
     use std::io::Read;

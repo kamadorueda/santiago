@@ -4,9 +4,9 @@
 
 mod ambiguous_integer_addition;
 mod calculator;
-mod calculator_with_value;
+mod calculator_with_ast;
 mod integer_addition;
-mod integer_addition_with_value;
+mod integer_addition_with_ast;
 mod javascript_string_interpolation;
 mod nix;
 mod smallest;
@@ -32,11 +32,11 @@ fn calculator() {
 }
 
 #[test]
-fn calculator_with_value() {
+fn calculator_with_ast() {
     run(
-        "calculator_with_value",
-        &calculator_with_value::lexer::lexer_rules(),
-        &calculator_with_value::grammar::grammar(),
+        "calculator_with_ast",
+        &calculator_with_ast::lexer::lexer_rules(),
+        &calculator_with_ast::grammar::grammar(),
         true,
     );
 }
@@ -62,11 +62,11 @@ fn integer_addition() {
 }
 
 #[test]
-fn integer_addition_with_value() {
+fn integer_addition_with_ast() {
     run(
-        "integer_addition_with_value",
-        &integer_addition_with_value::lexer::lexer_rules(),
-        &integer_addition_with_value::grammar::grammar(),
+        "integer_addition_with_ast",
+        &integer_addition_with_ast::lexer::lexer_rules(),
+        &integer_addition_with_ast::grammar::grammar(),
         true,
     );
 }
@@ -110,7 +110,7 @@ fn run<AST>(
         let path_lexemes = format!("{cases_dir}/{case}/lexemes");
         let path_earley = format!("{cases_dir}/{case}/earley");
         let path_parse_trees = format!("{cases_dir}/{case}/parse_trees");
-        let path_asts = format!("{cases_dir}/{case}/values");
+        let path_asts = format!("{cases_dir}/{case}/asts");
 
         let input = std::fs::read_to_string(&path_input)
             .unwrap()

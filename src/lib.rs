@@ -169,7 +169,7 @@
 //! we produce an amenable data-structure
 //! that can be turned into an Abstract Syntax Tree:
 //! ```rust
-#![doc = include_str!("../tests/integer_addition_with_value/grammar.rs")]
+#![doc = include_str!("../tests/integer_addition_with_ast/grammar.rs")]
 //! ```
 //! 
 //! Now, the next time we parse,
@@ -178,9 +178,9 @@
 //! by calling Santiago's builtin-function `as_abstract_syntax_tree()`.
 //! ```rust
 //! # mod m {
-//! #   include!("../tests/integer_addition_with_value/eval.rs");
-//! #   include!("../tests/integer_addition_with_value/grammar.rs");
-//! #   include!("../tests/integer_addition_with_value/lexer.rs");
+//! #   include!("../tests/integer_addition_with_ast/eval.rs");
+//! #   include!("../tests/integer_addition_with_ast/grammar.rs");
+//! #   include!("../tests/integer_addition_with_ast/lexer.rs");
 //! # }
 //! # use m::*;
 //! # let input = "10 + 20 + 30";
@@ -211,20 +211,20 @@
 //! And now we can traverse this data-structure and compute a result:
 //! ```rust
 //! # mod m {
-//! #   include!("../tests/integer_addition_with_value/grammar.rs");
+//! #   include!("../tests/integer_addition_with_ast/grammar.rs");
 //! # }
 //! # use m::*;
 //! #
-#![doc = include_str!("../tests/integer_addition_with_value/eval.rs")]
+#![doc = include_str!("../tests/integer_addition_with_ast/eval.rs")]
 //! #
 //! ```
 //! 
 //! Like this:
 //! ```rust
 //! # mod m {
-//! #   include!("../tests/integer_addition_with_value/eval.rs");
-//! #   include!("../tests/integer_addition_with_value/grammar.rs");
-//! #   include!("../tests/integer_addition_with_value/lexer.rs");
+//! #   include!("../tests/integer_addition_with_ast/eval.rs");
+//! #   include!("../tests/integer_addition_with_ast/grammar.rs");
+//! #   include!("../tests/integer_addition_with_ast/lexer.rs");
 //! # }
 //! # use m::*;
 //! # let input = "10 + 20 + 30";
@@ -414,24 +414,24 @@
 //!
 //! For this let's create a more complete grammar:
 //! ```rust
-#![doc = include_str!("../tests/calculator_with_value/grammar.rs")]
+#![doc = include_str!("../tests/calculator_with_ast/grammar.rs")]
 //! ```
 //! 
 //! And a function to perform the arithmetic:
 //! ```rust
 //! # mod m {
-//! #   include!("../tests/calculator_with_value/grammar.rs");
+//! #   include!("../tests/calculator_with_ast/grammar.rs");
 //! # }
 //! # use m::*;
-#![doc = include_str!("../tests/calculator_with_value/eval.rs")]
+#![doc = include_str!("../tests/calculator_with_ast/eval.rs")]
 //! ```
 //! 
 //! Now the interpreter can be used like:
 //! ```rust
 //! # mod m {
-//! #   include!("../tests/calculator_with_value/eval.rs");
-//! #   include!("../tests/calculator_with_value/grammar.rs");
-//! #   include!("../tests/calculator_with_value/lexer.rs");
+//! #   include!("../tests/calculator_with_ast/eval.rs");
+//! #   include!("../tests/calculator_with_ast/grammar.rs");
+//! #   include!("../tests/calculator_with_ast/lexer.rs");
 //! # }
 //! # use m::*;
 //! let input = "1 + 2 * 3 / 6 - 7";
