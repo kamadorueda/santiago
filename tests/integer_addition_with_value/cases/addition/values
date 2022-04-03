@@ -1,2 +1,20 @@
 ---
-BinaryOperation([BinaryOperation([Int(10), OperatorAdd, Int(20)]), OperatorAdd, Int(30)])
+BinaryOperation(
+    [
+        BinaryOperation(
+            [
+                Int(
+                    10,
+                ),
+                OperatorAdd,
+                Int(
+                    20,
+                ),
+            ],
+        ),
+        OperatorAdd,
+        Int(
+            30,
+        ),
+    ],
+)

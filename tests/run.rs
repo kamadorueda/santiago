@@ -90,7 +90,7 @@ fn run<AST>(
     name: &str,
     lexer_rules: &santiago::lexer::LexerRules,
     grammar: &santiago::grammar::Grammar<AST>,
-    test_values: bool,
+    test_ast: bool,
 ) where
     AST: std::fmt::Debug,
 {
@@ -110,7 +110,7 @@ fn run<AST>(
         let path_lexemes = format!("{cases_dir}/{case}/lexemes");
         let path_earley = format!("{cases_dir}/{case}/earley");
         let path_parse_trees = format!("{cases_dir}/{case}/parse_trees");
-        let path_values = format!("{cases_dir}/{case}/values");
+        let path_asts = format!("{cases_dir}/{case}/values");
 
         let input = std::fs::read_to_string(&path_input)
             .unwrap()
@@ -173,14 +173,14 @@ fn run<AST>(
             std::fs::read_to_string(&path_parse_trees).unwrap()
         );
 
-        if test_values {
-            let values: Vec<AST> = parse_trees
+        if test_ast {
+            let ast: Vec<AST> = parse_trees
                 .iter()
                 .map(|parse_tree| parse_tree.as_abstract_syntax_tree())
                 .collect();
-            let values_str: String = values
+            let ast_str: String = ast
                 .iter()
-                .map(|parse_tree| format!("---\n{parse_tree:?}"))
+                .map(|ast| format!("---\n{ast:#?}"))
                 .collect::<String>()
                 .lines()
                 .collect::<Vec<&str>>()
@@ -188,16 +188,13 @@ fn run<AST>(
 
             #[cfg(not(tarpaulin))]
             if should_update {
-                std::fs::File::create(&path_values)
+                std::fs::File::create(&path_asts)
                     .unwrap()
-                    .write_all(values_str.as_bytes())
+                    .write_all(ast_str.as_bytes())
                     .unwrap();
             }
 
-            assert_eq!(
-                values_str,
-                std::fs::read_to_string(&path_values).unwrap()
-            );
+            assert_eq!(ast_str, std::fs::read_to_string(&path_asts).unwrap());
         }
     }
 }

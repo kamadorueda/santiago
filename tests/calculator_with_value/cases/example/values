@@ -1,2 +1,36 @@
 ---
-BinaryOperation([BinaryOperation([BinaryOperation([BinaryOperation([Int(1), OperatorAdd, Int(2)]), OperatorMultiply, Int(3)]), OperatorDivide, Int(6)]), OperatorSubtract, Int(7)])
+BinaryOperation(
+    [
+        BinaryOperation(
+            [
+                BinaryOperation(
+                    [
+                        BinaryOperation(
+                            [
+                                Int(
+                                    1,
+                                ),
+                                OperatorAdd,
+                                Int(
+                                    2,
+                                ),
+                            ],
+                        ),
+                        OperatorMultiply,
+                        Int(
+                            3,
+                        ),
+                    ],
+                ),
+                OperatorDivide,
+                Int(
+                    6,
+                ),
+            ],
+        ),
+        OperatorSubtract,
+        Int(
+            7,
+        ),
+    ],
+)
