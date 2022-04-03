@@ -1,2 +1,3 @@
 ---
-chars := rules 
+Γ := rules "chars"
+  chars := rules 

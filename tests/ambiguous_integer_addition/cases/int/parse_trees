@@ -1,3 +1,4 @@
 ---
-sum := lexemes "INT"
-  INT "1" (1, 1)
+Γ := rules "sum"
+  sum := lexemes "INT"
+    INT "1" (1, 1)

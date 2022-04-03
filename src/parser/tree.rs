@@ -218,10 +218,6 @@ fn build_parse_trees_helper<AST>(
     end_column: usize,
 ) -> Vec<Rc<Tree<AST>>> {
     if symbol_index == usize::MAX {
-        if leaves.len() == 1 && matches!(*leaves[0], Tree::Node { .. }) {
-            return leaves;
-        }
-
         return vec![Rc::new(Tree::Node {
             rule_name: state.rule_name.clone(),
             production: state.production.clone(),

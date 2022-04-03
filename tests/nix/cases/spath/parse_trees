@@ -1,13 +1,24 @@
 ---
-expr_app := rules "expr_app" "expr_select"
-  expr_app := rules "expr_app" "expr_select"
-    ID := lexemes "ID"
-      ID "import" (1, 1)
-    SPATH := lexemes "SPATH"
-      SPATH "<nixpkgs>" (1, 8)
-  expr_simple := rules "{" "binds" "}"
-    { := lexemes "{"
-      { "{" (1, 18)
-    binds := rules 
-    } := lexemes "}"
-      } "}" (1, 19)
+Γ := rules "expr"
+  expr := rules "expr_function"
+    expr_function := rules "expr_if"
+      expr_if := rules "expr_op"
+        expr_op := rules "expr_app"
+          expr_app := rules "expr_app" "expr_select"
+            expr_app := rules "expr_app" "expr_select"
+              expr_app := rules "expr_select"
+                expr_select := rules "expr_simple"
+                  expr_simple := rules "ID"
+                    ID := lexemes "ID"
+                      ID "import" (1, 1)
+              expr_select := rules "expr_simple"
+                expr_simple := rules "SPATH"
+                  SPATH := lexemes "SPATH"
+                    SPATH "<nixpkgs>" (1, 8)
+            expr_select := rules "expr_simple"
+              expr_simple := rules "{" "binds" "}"
+                { := lexemes "{"
+                  { "{" (1, 18)
+                binds := rules 
+                } := lexemes "}"
+                  } "}" (1, 19)

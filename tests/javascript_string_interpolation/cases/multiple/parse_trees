@@ -1,22 +1,23 @@
 ---
-string := rules "string_start" "str_content" "string_end"
-  string_start := lexemes "STRING_START"
-    STRING_START "'" (1, 1)
-  str_content := rules "str_content" "str"
-    str_content := rules "str_content" "var"
-      str_content := rules "str_content" "str"
-        str_content := rules "str_content" "var"
-          str_content := rules "str_content" "str"
-            str_content := rules 
-            str := lexemes "STR"
-              STR "a" (1, 2)
-          var := lexemes "VAR"
-            VAR "b" (1, 6)
-        str := lexemes "STR"
-          STR "c" (1, 9)
-      var := lexemes "VAR"
-        VAR "d" (1, 13)
-    str := lexemes "STR"
-      STR "e" (1, 16)
-  string_end := lexemes "STRING_END"
-    STRING_END "'" (1, 17)
+Γ := rules "string"
+  string := rules "string_start" "str_content" "string_end"
+    string_start := lexemes "STRING_START"
+      STRING_START "'" (1, 1)
+    str_content := rules "str_content" "str"
+      str_content := rules "str_content" "var"
+        str_content := rules "str_content" "str"
+          str_content := rules "str_content" "var"
+            str_content := rules "str_content" "str"
+              str_content := rules 
+              str := lexemes "STR"
+                STR "a" (1, 2)
+            var := lexemes "VAR"
+              VAR "b" (1, 6)
+          str := lexemes "STR"
+            STR "c" (1, 9)
+        var := lexemes "VAR"
+          VAR "d" (1, 13)
+      str := lexemes "STR"
+        STR "e" (1, 16)
+    string_end := lexemes "STRING_END"
+      STRING_END "'" (1, 17)

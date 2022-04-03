@@ -1,13 +1,14 @@
 ---
-sum := rules "sum" "plus" "sum"
+Γ := rules "sum"
   sum := rules "sum" "plus" "sum"
-    sum := lexemes "INT"
-      INT "10" (1, 1)
+    sum := rules "sum" "plus" "sum"
+      sum := lexemes "INT"
+        INT "10" (1, 1)
+      plus := lexemes "PLUS"
+        PLUS "+" (1, 4)
+      sum := lexemes "INT"
+        INT "20" (1, 6)
     plus := lexemes "PLUS"
-      PLUS "+" (1, 4)
+      PLUS "+" (1, 9)
     sum := lexemes "INT"
-      INT "20" (1, 6)
-  plus := lexemes "PLUS"
-    PLUS "+" (1, 9)
-  sum := lexemes "INT"
-    INT "30" (1, 11)
+      INT "30" (1, 11)

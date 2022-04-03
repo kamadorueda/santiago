@@ -1,37 +1,61 @@
 ---
-expr_op := rules "expr_op" "OR" "expr_op"
-  expr_op := rules "NOT" "expr_op"
-    NOT := lexemes "!"
-      ! "!" (1, 1)
-    expr_op := rules "expr_op" "?" "attrpath"
-      ID := lexemes "ID"
-        ID "builtins" (1, 3)
-      ? := lexemes "?"
-        ? "?" (1, 12)
-      ID := lexemes "ID"
-        ID "nixVersion" (1, 14)
-  OR := lexemes "OR"
-    OR "||" (1, 25)
-  expr_op := rules "expr_op" "EQ" "expr_op"
-    expr_app := rules "expr_app" "expr_select"
-      expr_app := rules "expr_app" "expr_select"
-        expr_select := rules "expr_simple" "." "attrpath"
-          ID := lexemes "ID"
-            ID "builtins" (1, 28)
-          . := lexemes "."
-            . "." (1, 36)
-          ID := lexemes "ID"
-            ID "compareVersions" (1, 37)
-        ID := lexemes "ID"
-          ID "requiredVersion" (1, 53)
-      expr_select := rules "expr_simple" "." "attrpath"
-        ID := lexemes "ID"
-          ID "builtins" (1, 69)
-        . := lexemes "."
-          . "." (1, 77)
-        ID := lexemes "ID"
-          ID "nixVersion" (1, 78)
-    EQ := lexemes "EQ"
-      EQ "==" (1, 89)
-    INT := lexemes "INT"
-      INT "1" (1, 92)
+Γ := rules "expr"
+  expr := rules "expr_function"
+    expr_function := rules "expr_if"
+      expr_if := rules "expr_op"
+        expr_op := rules "expr_op" "OR" "expr_op"
+          expr_op := rules "NOT" "expr_op"
+            NOT := lexemes "!"
+              ! "!" (1, 1)
+            expr_op := rules "expr_op" "?" "attrpath"
+              expr_op := rules "expr_app"
+                expr_app := rules "expr_select"
+                  expr_select := rules "expr_simple"
+                    expr_simple := rules "ID"
+                      ID := lexemes "ID"
+                        ID "builtins" (1, 3)
+              ? := lexemes "?"
+                ? "?" (1, 12)
+              attrpath := rules "attr"
+                attr := rules "ID"
+                  ID := lexemes "ID"
+                    ID "nixVersion" (1, 14)
+          OR := lexemes "OR"
+            OR "||" (1, 25)
+          expr_op := rules "expr_op" "EQ" "expr_op"
+            expr_op := rules "expr_app"
+              expr_app := rules "expr_app" "expr_select"
+                expr_app := rules "expr_app" "expr_select"
+                  expr_app := rules "expr_select"
+                    expr_select := rules "expr_simple" "." "attrpath"
+                      expr_simple := rules "ID"
+                        ID := lexemes "ID"
+                          ID "builtins" (1, 28)
+                      . := lexemes "."
+                        . "." (1, 36)
+                      attrpath := rules "attr"
+                        attr := rules "ID"
+                          ID := lexemes "ID"
+                            ID "compareVersions" (1, 37)
+                  expr_select := rules "expr_simple"
+                    expr_simple := rules "ID"
+                      ID := lexemes "ID"
+                        ID "requiredVersion" (1, 53)
+                expr_select := rules "expr_simple" "." "attrpath"
+                  expr_simple := rules "ID"
+                    ID := lexemes "ID"
+                      ID "builtins" (1, 69)
+                  . := lexemes "."
+                    . "." (1, 77)
+                  attrpath := rules "attr"
+                    attr := rules "ID"
+                      ID := lexemes "ID"
+                        ID "nixVersion" (1, 78)
+            EQ := lexemes "EQ"
+              EQ "==" (1, 89)
+            expr_op := rules "expr_app"
+              expr_app := rules "expr_select"
+                expr_select := rules "expr_simple"
+                  expr_simple := rules "INT"
+                    INT := lexemes "INT"
+                      INT "1" (1, 92)
