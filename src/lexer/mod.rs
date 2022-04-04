@@ -60,10 +60,14 @@ pub enum NextLexeme {
 
 impl<'a> Lexer<'a> {
     fn next_lexeme(&mut self, rules: &'a LexerRules) -> NextLexeme {
-        if self.current_byte_index < self.input.len() {
+        let state = self.states_stack.back().unwrap();
+        let input_len = self.input.len();
+
+        if self.current_byte_index < input_len
+            || (self.current_byte_index == input_len && *state != "DEFAULT")
+        {
             let mut matches_: LinkedList<(usize, usize)> = LinkedList::new();
             let input = &self.input[self.current_byte_index..];
-            let state = self.states_stack.back().unwrap();
             let active_rules = match rules.rules.get(*state) {
                 Some(rules) => rules.as_slice(),
                 None => &[],
