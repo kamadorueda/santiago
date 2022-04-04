@@ -107,7 +107,7 @@ fn complete<AST>(
 /// Return all possible Parse Trees.
 pub fn parse<AST>(
     grammar: &Grammar<AST>,
-    lexemes: &[Lexeme],
+    lexemes: &[Rc<Lexeme>],
 ) -> Result<Vec<Rc<Tree<AST>>>, ParseError<AST>> {
     let mut columns: Vec<ParserColumn<AST>> = earley(grammar, lexemes);
 
@@ -150,7 +150,7 @@ pub fn parse<AST>(
 /// and the [Earley algorithm](https://en.wikipedia.org/wiki/Earley_parser).
 pub fn earley<AST>(
     grammar: &Grammar<AST>,
-    lexemes: &[Lexeme],
+    lexemes: &[Rc<Lexeme>],
 ) -> Vec<ParserColumn<AST>> {
     let mut columns: Vec<ParserColumn<AST>> = (0..=lexemes.len())
         .map(|index| {

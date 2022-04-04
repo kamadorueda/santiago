@@ -120,7 +120,7 @@ fn run<AST>(
         let lexemes = santiago::lexer::lex(lexer_rules, &input).unwrap();
         let lexemes_str: String = lexemes
             .iter()
-            .map(santiago::lexer::Lexeme::to_string)
+            .map(|lexeme| lexeme.to_string())
             .collect::<Vec<String>>()
             .join("\n");
 

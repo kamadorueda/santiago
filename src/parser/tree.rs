@@ -18,7 +18,7 @@ use std::rc::Rc;
 /// than can be turned into an Abstract Syntax Tree.
 pub enum Tree<AST> {
     /// Leaf nodes of the tree, containing a [Lexeme].
-    Leaf(Lexeme),
+    Leaf(Rc<Lexeme>),
     /// Group of many [Tree::Leaf].
     Node {
         /// Name of the [GrammarRule](crate::grammar::GrammarRule) that produced this node.
@@ -72,7 +72,7 @@ impl<AST> Tree<AST> {
     /// defined in the [Grammar].
     pub fn as_abstract_syntax_tree(&self) -> AST {
         let mut values: LinkedList<AST> = LinkedList::new();
-        let mut lexemes: LinkedList<&Lexeme> = LinkedList::new();
+        let mut lexemes: LinkedList<&Rc<Lexeme>> = LinkedList::new();
 
         for tree in self.traverse_in_post_order() {
             match tree {
@@ -84,7 +84,7 @@ impl<AST> Tree<AST> {
 
                     match &*production.action {
                         ProductionAction::Lexemes(evaluator) => {
-                            let args: Vec<&Lexeme> = (0..symbols)
+                            let args: Vec<&Rc<Lexeme>> = (0..symbols)
                                 .map(|_| lexemes.pop_front().unwrap())
                                 .collect();
 
@@ -155,7 +155,7 @@ impl<AST> Tree<AST> {
 
 pub(crate) fn build<AST>(
     grammar: &Grammar<AST>,
-    lexemes: &[Lexeme],
+    lexemes: &[Rc<Lexeme>],
     columns: &[ParserColumn<AST>],
     state: &ParserState<AST>,
 ) -> Vec<Rc<Tree<AST>>> {
@@ -179,7 +179,7 @@ pub(crate) fn build<AST>(
 fn build_parse_trees<AST>(
     cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<AST>>>>>,
     grammar: &Grammar<AST>,
-    lexemes: &[Lexeme],
+    lexemes: &[Rc<Lexeme>],
     columns: &[ParserColumn<AST>],
     state: &ParserState<AST>,
 ) -> Rc<Vec<Rc<Tree<AST>>>> {
@@ -209,7 +209,7 @@ fn build_parse_trees<AST>(
 fn build_parse_trees_helper<AST>(
     cache: &mut HashMap<u64, Rc<Vec<Rc<Tree<AST>>>>>,
     grammar: &Grammar<AST>,
-    lexemes: &[Lexeme],
+    lexemes: &[Rc<Lexeme>],
     columns: &[ParserColumn<AST>],
 
     leaves: Vec<Rc<Tree<AST>>>,

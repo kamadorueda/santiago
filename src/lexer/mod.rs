@@ -20,6 +20,7 @@ pub(crate) use lexer_rule::LexerRule;
 pub use lexer_rules::LexerRules;
 pub use position::Position;
 use std::collections::LinkedList;
+use std::rc::Rc;
 
 /// Core implementation of the algorithm.
 ///
@@ -223,7 +224,10 @@ impl<'a> Lexer<'a> {
 }
 
 /// Perform lexical analysis of the given input according to the provided rules.
-pub fn lex(rules: &LexerRules, input: &str) -> Result<Vec<Lexeme>, LexerError> {
+pub fn lex(
+    rules: &LexerRules,
+    input: &str,
+) -> Result<Vec<Rc<Lexeme>>, LexerError> {
     let mut lexer = Lexer {
         input,
         current_byte_index: 0,
@@ -245,7 +249,7 @@ pub fn lex(rules: &LexerRules, input: &str) -> Result<Vec<Lexeme>, LexerError> {
                 return Err(error);
             }
             NextLexeme::Lexeme { kind, raw } => {
-                lexemes.push_back(Lexeme { kind, position, raw })
+                lexemes.push_back(Rc::new(Lexeme { kind, position, raw }))
             }
             NextLexeme::Skip => {}
             NextLexeme::Finished => {

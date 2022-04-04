@@ -94,7 +94,7 @@ impl<AST> GrammarBuilder<AST> {
         action: Action,
     ) -> &mut GrammarBuilder<AST>
     where
-        Action: Fn(&[&Lexeme]) -> AST,
+        Action: Fn(&[&Rc<Lexeme>]) -> AST,
     {
         self.rule_to_symbols(
             rule_name,

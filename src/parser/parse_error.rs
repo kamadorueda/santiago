@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
+use std::rc::Rc;
+
 use crate::lexer::Lexeme;
 use crate::parser::ParserState;
 
 /// Internal representation of an error encountered by [crate::parser::parse()].
 pub struct ParseError<AST> {
     /// [Lexeme] where the error was found.
-    pub at:     Option<Lexeme>,
+    pub at:     Option<Rc<Lexeme>>,
     /// Matched, partially matched, and expected lexemes up at this point.
     pub states: Vec<ParserState<AST>>,
 }

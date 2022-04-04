@@ -60,7 +60,7 @@ impl<AST> std::hash::Hash for Production<AST> {
 /// Action that a production will perform once evaluated.
 pub enum ProductionAction<AST> {
     /// Action to execute when this [Production] is of kind [ProductionKind::Lexemes].
-    Lexemes(Rc<dyn Fn(&[&Lexeme]) -> AST>),
+    Lexemes(Rc<dyn Fn(&[&Rc<Lexeme>]) -> AST>),
     /// Action to execute when this [Production] is of kind [ProductionKind::Rules]
     Rules(Rc<dyn Fn(Vec<AST>) -> AST>),
 }
