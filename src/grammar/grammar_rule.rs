@@ -12,20 +12,11 @@ use std::rc::Rc;
 /// [GrammarRule] is exposed so you can use its type and traits
 /// but normally you create a [GrammarRule]
 /// by using a [GrammarBuilder](crate::grammar::GrammarBuilder).
+#[derive(Clone)]
 pub struct GrammarRule<AST> {
     pub(crate) name:           Rc<String>,
     pub(crate) disambiguation: Option<Disambiguation>,
     pub(crate) productions:    Vec<Rc<Production<AST>>>,
-}
-
-impl<AST> std::clone::Clone for GrammarRule<AST> {
-    fn clone(&self) -> GrammarRule<AST> {
-        GrammarRule {
-            name:           self.name.clone(),
-            disambiguation: self.disambiguation.clone(),
-            productions:    self.productions.clone(),
-        }
-    }
 }
 
 impl<AST> std::fmt::Display for GrammarRule<AST> {
