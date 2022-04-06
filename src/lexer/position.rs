@@ -10,8 +10,10 @@
 /// Please read the [crate documentation](crate) for more information and examples.
 #[derive(Clone, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Position {
-    pub(crate) line:   usize,
-    pub(crate) column: usize,
+    /// Line number.
+    pub line:   usize,
+    /// Column number.
+    pub column: usize,
 }
 
 impl std::fmt::Debug for Position {
@@ -27,7 +29,8 @@ impl std::fmt::Display for Position {
 }
 
 impl Position {
-    pub(crate) fn consume(&mut self, input: &str) {
+    /// Iterates the `input` updating the [Position] accordingly.
+    pub fn consume(&mut self, input: &str) {
         for char in input.chars() {
             if char == '\n' {
                 self.line += 1;
