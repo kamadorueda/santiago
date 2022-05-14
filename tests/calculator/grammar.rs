@@ -3,13 +3,12 @@ use santiago::grammar::Grammar;
 
 pub fn grammar() -> Grammar<()> {
     santiago::grammar!(
-        "expr" => rules "bin_op";
         "expr" => rules "int";
 
-        "bin_op" => rules "expr" "add" "expr";
-        "bin_op" => rules "expr" "subtract" "expr";
-        "bin_op" => rules "expr" "multiply" "expr";
-        "bin_op" => rules "expr" "divide" "expr";
+        "expr" => rules "expr" "add" "expr";
+        "expr" => rules "expr" "subtract" "expr";
+        "expr" => rules "expr" "multiply" "expr";
+        "expr" => rules "expr" "divide" "expr";
 
         "int" => lexemes "INT";
 

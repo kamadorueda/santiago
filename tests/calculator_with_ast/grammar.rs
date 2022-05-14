@@ -13,16 +13,15 @@ pub enum AST {
 
 pub fn grammar() -> Grammar<AST> {
     santiago::grammar!(
-        "expr" => rules "bin_op";
         "expr" => rules "int";
 
-        "bin_op" => rules "expr" "add" "expr" =>
+        "expr" => rules "expr" "add" "expr" =>
             AST::BinaryOperation;
-        "bin_op" => rules "expr" "subtract" "expr" =>
+        "expr" => rules "expr" "subtract" "expr" =>
             AST::BinaryOperation;
-        "bin_op" => rules "expr" "multiply" "expr" =>
+        "expr" => rules "expr" "multiply" "expr" =>
             AST::BinaryOperation;
-        "bin_op" => rules "expr" "divide" "expr" =>
+        "expr" => rules "expr" "divide" "expr" =>
             AST::BinaryOperation;
 
         "add" => lexemes "+" =>

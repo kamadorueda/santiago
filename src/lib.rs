@@ -15,7 +15,8 @@
 //! It provides you:
 //! - A library for defining any
 //!  [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar),
-//! - A [Lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) module,
+//! - A [Lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis)
+//!   module,
 //! - And facilities for building interpreters or compilers of the language.
 //!
 //! With Santiago you have everything that is needed
@@ -444,7 +445,7 @@
 //!
 //! let ast = parse_tree.as_abstract_syntax_tree();
 //!
-//! assert_eq!(eval(&ast), -6);
+//! assert_eq!(eval(&ast), -5);
 //! ```
 //! 
 //! ## JavaScript string interpolations
@@ -562,8 +563,7 @@
 //! # Next steps
 //!
 //! This tutorial ends here,
-//! you should now have everything to lex,
-//! parse, and as_abstract_syntax_tree the world,
+//! you should now have everything to lex and parse the world,
 //! and build your own programming languages, compilers and interpreters!
 //!
 //! You can checkout more examples in the tests folder:

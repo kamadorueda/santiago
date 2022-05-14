@@ -3,28 +3,28 @@ BinaryOperation(
     [
         BinaryOperation(
             [
+                Int(
+                    1,
+                ),
+                OperatorAdd,
                 BinaryOperation(
                     [
                         BinaryOperation(
                             [
                                 Int(
-                                    1,
-                                ),
-                                OperatorAdd,
-                                Int(
                                     2,
+                                ),
+                                OperatorMultiply,
+                                Int(
+                                    3,
                                 ),
                             ],
                         ),
-                        OperatorMultiply,
+                        OperatorDivide,
                         Int(
-                            3,
+                            6,
                         ),
                     ],
-                ),
-                OperatorDivide,
-                Int(
-                    6,
                 ),
             ],
         ),

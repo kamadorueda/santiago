@@ -31,7 +31,7 @@ fn main() -> Result<(), ()> {
                     let ast = parse_tree.as_abstract_syntax_tree();
 
                     println!("Abstract Syntax Tree:");
-                    println!("{ast:?}");
+                    println!("{ast:#?}");
 
                     println!("Evaluated:");
                     println!("{}", eval(&ast));
