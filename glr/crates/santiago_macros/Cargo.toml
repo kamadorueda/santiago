@@ -1,0 +1,20 @@
+[package]
+name = "santiago_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+regex = { version = "*", default-features = false, features = ["std"] }
+quote = { version = "*", default-features = false, features = [] }
+santiago_parser = { path = "../santiago_parser" }
+santiago_sorted_vec = { path = "../santiago_sorted_vec" }
+santiago_types = { path = "../santiago_types" }
+syn = { version = "*", default-features = false, features = [
+  "full",
+  "parsing",
+  "printing",
+  "proc-macro"
+] }

@@ -1,0 +1,11 @@
+[package]
+name = "santiago_parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quote = { version = "*", default-features = false, features = [] }
+santiago_dag = { path = "../santiago_dag" }
+santiago_lexer = { path = "../santiago_lexer" }
+santiago_sorted_vec = { path = "../santiago_sorted_vec" }
+santiago_types = { path = "../santiago_types" }

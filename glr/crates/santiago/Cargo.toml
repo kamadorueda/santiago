@@ -1,0 +1,15 @@
+[package]
+name = "santiago"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lazy_static = { version = "*", default-features = false, features = [] }
+regex = { version = "*", default-features = false, features = [
+  "std",
+  "unicode-perl"
+] }
+santiago_lexer = { path = "../santiago_lexer" }
+santiago_macros = { path = "../santiago_macros" }
+santiago_parser = { path = "../santiago_parser" }
+santiago_types = { path = "../santiago_types" }
