@@ -39,6 +39,7 @@ pub struct Lexer<'a> {
     current_rule_name:     &'a str,
     position:              Position,
     states_stack:          LinkedList<&'a str>,
+    marks:                 LinkedList<Position>,
 }
 
 /// Return type of a lexer rule action.
@@ -100,6 +101,11 @@ impl<'a> Lexer<'a> {
                         .states_stack
                         .iter()
                         .map(|state| state.to_string())
+                        .collect(),
+                    marks: self
+                        .marks
+                        .iter()
+                        .map(|mark| mark.clone())
                         .collect(),
                 });
             }
@@ -223,7 +229,22 @@ impl<'a> Lexer<'a> {
                 .iter()
                 .map(|state| state.to_string())
                 .collect(),
+            marks: self
+                .marks
+                .iter()
+                .map(|mark| mark.clone())
+                .collect(),
         })
+    }
+
+    /// Adds a new position to the [Lexer]'s marks stack.
+    pub fn push_mark(&mut self) {
+        self.marks.push_back(self.position.clone());
+    }
+
+    /// Removes the last position from the [Lexer]'s marks stack.
+    pub fn pop_mark(&mut self) {
+        self.marks.pop_back();
     }
 }
 
@@ -239,6 +260,7 @@ pub fn lex(
         current_rule_name: "",
         position: Position { column: 1, line: 1 },
         states_stack: LinkedList::new(),
+        marks: LinkedList::new(),
     };
 
     lexer.push_state("DEFAULT");

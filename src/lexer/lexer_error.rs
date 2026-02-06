@@ -19,12 +19,15 @@ pub struct LexerError {
     pub position:     Position,
     /// Current stack of states in the [Lexer](crate::lexer::Lexer).
     pub states_stack: Vec<String>,
+    /// Current marked positions in the [Lexer](crate::lexer::Lexer).
+    pub marks: Vec<Position>,
 }
 
 impl std::fmt::Display for LexerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "Error: {}", &self.message)?;
         writeln!(f, "At: {}", self.position)?;
-        write!(f, "With states stack: {:?}", self.states_stack)
+        writeln!(f, "With states stack: {:?}", self.states_stack)?;
+        write!(f, "With marks: {:?}", self.marks)
     }
 }
